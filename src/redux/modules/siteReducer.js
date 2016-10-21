@@ -1,6 +1,6 @@
 import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
-import apiHelper from './apiHelper';
+import apiHelper from '../utils/apiHelper';
 import { Promise as BPromise } from 'bluebird';
 import config from 'config';
 
@@ -27,8 +27,8 @@ export const SITE_LOCAL_AGG_START = 'SITE_LOCAL_AGG_START';
 export const SITE_LOCAL_AGG_FAILED = 'SITE_LOCAL_AGG_FAILED';
 export const SITE_VULNERABILITY_AGG_START = 'SITE_VULNERABILITY_AGG_START';
 export const SITE_VULNERABILITY_AGG_FAILED = 'SITE_VULNERABILITY_AGG_FAILED';
-export const SITE_REFRESH_START = 'SITE_REFRESH_START';
-export const SITE_REFRESH_FAILED = 'SITE_REFRESH_FAILED';
+// export const SITE_REFRESH_START = 'SITE_REFRESH_START';
+// export const SITE_REFRESH_FAILED = 'SITE_REFRESH_FAILED';
 export const SITE_LOADED = 'SITE_LOADED';
 
 // ------------------------------------
@@ -115,15 +115,15 @@ export function siteVulnerabilityAggFailed (error: object): Action {
   return { type: SITE_VULNERABILITY_AGG_FAILED, error: error };
 }
 
-// Changes site mode
-export function siteRefreshStart (mode: string): Action {
-  return { type: SITE_REFRESH_START, mode: mode };
-}
+// // Changes site mode
+// export function siteRefreshStart (mode: string): Action {
+//   return { type: SITE_REFRESH_START, mode: mode };
+// }
 
-// Changes site status
-export function siteRefreshFailed (mode: string, error: object): Action {
-  return { type: SITE_REFRESH_FAILED, mode: mode, error: error };
-}
+// // Changes site status
+// export function siteRefreshFailed (mode: string, error: object): Action {
+//   return { type: SITE_REFRESH_FAILED, mode: mode, error: error };
+// }
 
 // Changes site status
 export function siteLoaded (mode: string): Action {

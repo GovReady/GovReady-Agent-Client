@@ -1,5 +1,5 @@
 import objectAssign from 'object-assign';
-import apiHelper from './apiHelper';
+import apiHelper from '../utils/apiHelper';
 
 // ------------------------------------
 // Constants

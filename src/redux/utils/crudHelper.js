@@ -127,7 +127,7 @@ export function crudSyncActions(types) {
   });
 }
 
-export function crudAsyncActions(syncActions, success = {}, error = {}) {
+export function crudAsyncActions(syncActions, success = {}, errors = {}) {
   return objectAssign({}, {
     // Fired when widget should get data
     fetchRemote: function (url: string): Function {

@@ -1,12 +1,12 @@
 import objectAssign from 'object-assign';
 import config from 'config';
-import apiHelper from './apiHelper';
+import apiHelper from '../utils/apiHelper';
 import {
   crudActionTypes, 
   crudSyncActions, 
   crudAsyncActions, 
   crudActionHandlers
-} from './crudHelper';
+} from '../utils/crudHelper';
 
 // ------------------------------------
 // Constants
