@@ -30,7 +30,11 @@ const routes = makeRoutes(store);
 
 // Now that redux and react-router have been configured, we can render the
 // React application to the DOM!
-ReactDOM.render(
-  <Root history={history} routes={routes} store={store} />,
-  document.getElementById('root')
-);
+
+if (window.govready == undefined || !window.govready.connectUrl || window.govready.access_token) {
+  ReactDOM.render(
+    <Root history={history} routes={routes} store={store} />,
+    document.getElementById('root')
+  );
+}
+
