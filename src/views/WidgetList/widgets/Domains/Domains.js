@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import config from 'config';
+import { default as config } from 'config';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as siteActions } from 'redux/modules/siteReducer';
 import { hashHistory } from 'react-router';

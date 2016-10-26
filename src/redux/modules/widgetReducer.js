@@ -51,8 +51,16 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
   return (dispatch: Function) => {
     // Call loading action
     dispatch(widgetLoading(widgetName));
+    // Are we in no-agg direct communication mode?
+    let requestMethod = 'POST';
+    if(config.mode === 'agent' || config.mode === 'standalone') {
+      requestMethod = 'GET';
+    }
+    else {
+      url += '&method=GET';
+    }
     // Load data
-    return fetch(url + '&method=GET', apiHelper.requestParams('post')).then((response: object) => {
+    return fetch(url, apiHelper.requestParams(requestMethod)).then((response: object) => {
       return apiHelper.responseCheck(response);
     }).then((json: object) => {
       const error = apiHelper.jsonCheck(json);
@@ -76,7 +84,7 @@ export function widgetPostData (widgetName: string, url: string, method: string 
     // Call ;posting action
     dispatch(widgetPosting(widgetName));
     // Load data
-    return fetch(url + '&method=' + method, apiHelper.requestParams('post', data)).then((response: object) => {
+    return fetch(url + '&method=' + method, apiHelper.requestParams('POST', data)).then((response: object) => {
       return apiHelper.responseCheck(response);
     }).then((json: object) => {
       const error = apiHelper.jsonCheck(json);

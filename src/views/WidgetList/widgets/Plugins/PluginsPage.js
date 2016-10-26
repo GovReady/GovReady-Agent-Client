@@ -1,7 +1,7 @@
 import React, { PropTypes as PT, Component } from 'react';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
-import config from 'config';
+import { default as config } from 'config';
 import Vulnerability from 'components/Vulnerability';
 
 class PluginsPage extends Component {

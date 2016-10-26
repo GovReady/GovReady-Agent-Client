@@ -1,5 +1,5 @@
 import objectAssign from 'object-assign';
-import config from 'config';
+import { default as config } from 'config';
 import apiHelper from '../utils/apiHelper';
 import {
   crudActionTypes, 
@@ -25,7 +25,7 @@ export const actions = objectAssign(syncActions, asyncActions, {
     return (dispatch: Function) => {
       dispatch(fetchStart());
       // Post to create default
-      return fetch(url + '&method=POST', apiHelper.requestParams('post', {
+      return fetch(url + '&method=POST', apiHelper.requestParams('POST', {
         'siteId': config.siteId
       })).then((response: object) => {
         return apiHelper.responseCheck(response);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import config from 'config';
+import { default as config } from 'config';
 import Widget from '../Widget';
 import StackWidget from './StackWidget';
 // import StackPage from './StackPage';

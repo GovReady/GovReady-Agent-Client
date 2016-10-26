@@ -1,4 +1,4 @@
-import config from 'config';
+import { default as config } from 'config';
 
 // date in form: 2016-06-06T07:00:00.000Z
 export function isoToDate(date: string) {

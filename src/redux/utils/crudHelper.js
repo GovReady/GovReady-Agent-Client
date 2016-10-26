@@ -1,6 +1,6 @@
 import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
-import config from 'config';
+import { default as config } from 'config';
 import cuid from 'cuid';
 import apiHelper from './apiHelper';
 import {default as uniqueArr} from 'utils/unique';
@@ -133,8 +133,16 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     fetchRemote: function (url: string): Function {
       return (dispatch: Function) => {
         dispatch(syncActions['fetchStart']());
+        // Are we in no-agg direct communication mode?
+        let requestMethod = 'POST';
+        if(config.mode === 'agent' || config.mode === 'standalone') {
+          requestMethod = 'GET';
+        }
+        else {
+          url += '&method=GET';
+        }
         // Load data
-        return fetch(url + '&method=GET', apiHelper.requestParams('post')).then((response: object) => {
+        return fetch(url, apiHelper.requestParams(requestMethod)).then((response: object) => {
           return apiHelper.responseCheck(response);
         }).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
@@ -155,7 +163,7 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
         const genId = cuid();
         dispatch(syncActions['createStart'](record, genId));
         // Load data
-        return fetch(url, apiHelper.requestParams('post', record)).then((response: object) => {
+        return fetch(url, apiHelper.requestParams('POST', record)).then((response: object) => {
           return apiHelper.responseCheck(response);
         }).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
@@ -178,8 +186,13 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     updateRemote: function (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
       return (dispatch: Function) => {
         dispatch(syncActions['updateStart'](record));
+        // Are we in no-agg direct communication mode?
+        let requestMethod = 'POST';
+        if(config.mode === 'agent' || config.mode === 'standalone') {
+          requestMethod = 'PATCH';
+        }
         // Load data
-        return fetch(url, apiHelper.requestParams('post', record)).then((response: object) => {
+        return fetch(url, apiHelper.requestParams(requestMethod, record)).then((response: object) => {
           return apiHelper.responseCheck(response);
         }).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
@@ -200,25 +213,27 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     },
 
     deleteRemote: function (url: string, record: object, redirect: string = false): Function { 
-      dispatch(syncActions['deleteStart'](record));
-      // Load data
-      return fetch(url + '&method=DELETE', apiHelper.requestParams('post', record)).then((response: object) => {
-        return apiHelper.responseCheck(response);
-      }).then((json: object) => {
-        const error = apiHelper.jsonCheck(json);
-        if(error) {
-          dispatch(syncActions['deleteError'](json, record));
-        }
-        else {
-          dispatch(syncActions['deleteSuccess'](json));
-          if(redirect) {
-            // Redirect
-            hashHistory.push(redirect);
+      return (dispatch: Function) => {
+        dispatch(syncActions['deleteStart'](record));
+        // Load data
+        return fetch(url + '&method=DELETE', apiHelper.requestParams('POST', record)).then((response: object) => {
+          return apiHelper.responseCheck(response);
+        }).then((json: object) => {
+          const error = apiHelper.jsonCheck(json);
+          if(error) {
+            dispatch(syncActions['deleteError'](json, record));
           }
-        }
-      }).catch(function (error) {
-        dispatch(syncActions['deleteError'](error, record));
-      });
+          else {
+            dispatch(syncActions['deleteSuccess'](json));
+            if(redirect) {
+              // Redirect
+              hashHistory.push(redirect);
+            }
+          }
+        }).catch(function (error) {
+          dispatch(syncActions['deleteError'](error, record));
+        });
+      }
     }
   });
 }

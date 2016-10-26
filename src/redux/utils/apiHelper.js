@@ -1,21 +1,33 @@
 import { hashHistory } from 'react-router';
-import {default as config, updateNonce} from 'config';
+import {default as config, configUpdateNonce} from 'config';
 
 const apiHelper = {
 
   // Generates request params
   requestParams: (method, data = {}) => {
     let params = {
-      method: method,
-      credentials: 'same-origin'
+      method: method
     }
-    // Init nonce
-    data.govready_nonce = config.govready_nonce;
-    let form_data = new FormData();
-    for(let key of Object.keys(data)) {
-      form_data.append(key, data[key]);
+    // Are we in no-agg direct communication mode?
+    if(config.mode === 'agent' || config.mode === 'standalone') {
+      params.headers = {
+        'Authorization': 'Bearer ' + config.access_token
+      };
     }
-    params.body = form_data;
+    else {
+      // Init nonce
+      data.govready_nonce = config.govready_nonce;
+      // Add same origin
+      params.credentials = 'same-origin';
+    }
+    // Do we have data?
+    if(Object.keys(data).length) {
+      let form_data = new FormData();
+      for(let key of Object.keys(data)) {
+        form_data.append(key, data[key]);
+      }
+      params.body = form_data;
+    }
     return params;
   },
     
@@ -45,7 +57,7 @@ const apiHelper = {
       error.error = json;
     }
     else {
-      // updateNonce(json.govready_nonce);
+      // configUpdateNonce(json.govready_nonce);
       return;
     }
     return error;

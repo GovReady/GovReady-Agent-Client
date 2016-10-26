@@ -1,5 +1,5 @@
 import React, { Component, PropTypes as PT } from 'react';
-import config from 'config';
+import { default as config } from 'config';
 import Widget from '../Widget';
 import EmptyPage from 'components/EmptyPage';
 import NewsWidget from './NewsWidget';

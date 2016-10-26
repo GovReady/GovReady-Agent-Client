@@ -1,5 +1,5 @@
 import objectAssign from 'object-assign';
-import config from 'config';
+import { default as config } from 'config';
 import apiHelper from '../utils/apiHelper';
 import {
   crudActionTypes, 

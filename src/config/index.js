@@ -1,44 +1,82 @@
+// Init config
 let config = {};
 
 // CMS specific
 if(window.govready) {
   config = window.govready;
-  config.cms = 'wordpress';
-  config.pluginText = 'Plugin';
-  config.cmsNice = 'Wordpress';
-  let url = '/wp-admin/admin-ajax.php?';
-  if(process.env.NODE_ENV === 'development') {
-    url = 'http://localhost:8080/wp-admin/admin-ajax.php?';
+  if(config.isWordpress) {
+    configCmsLanguage('wordpress');
+    configCmsPaths('wordpress'); 
   }
-  config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
-  config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
-  config.apiTrigger = url + 'action=govready_v1_trigger';
-  config.pluginUrl = 'https://wordpress.org/plugins/';
+  else {
+    configCmsLanguage();
+    configCmsPaths(); 
+  }
 }
 else if(window.Drupal && window.Drupal.settings.govready) {
   config = window.Drupal.settings.govready;
-  config.cms = 'drupal';
-  config.pluginText = 'Module';
-  config.cmsNice = 'Drupal';
-  let url = '/govready/api?';
-  config.apiTrigger = '/govready/trigger?endpoint=/sites/' + config.siteId + '/';
-  if(process.env.NODE_ENV === 'development') {
-    url = 'http://govready.local/govready/api?';
-    config.apiTrigger = 'http://govready.local/govready/trigger?endpoint=/sites/' + config.siteId + '/';
+  configCmsLanguage('drupal');
+  configCmsPaths('drupal'); 
+}
+
+// Assign common props
+Object.assign(config, {
+  dateFormat: 'MMMM Do YYYY' // for use with moment, display
+});
+
+// @TODO change site
+export function configChangeSite(site) {
+  // config.siteId = 
+}
+
+// Switches CMS language fragments
+export function configCmsLanguage(cms) {
+  if(cms === 'wordpress') {
+    config.cms = 'wordpress';
+    config.pluginText = 'Plugin';
+    config.cmsNice = 'Wordpress';
   }
-  config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
-  config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
-  config.pluginUrl = 'https://drupal.org/project/';
-}
-else {
-  config = {};
+  else if(cms === 'drupal') {
+    config.cms = 'drupal';
+    config.pluginText = 'Module';
+    config.cmsNice = 'Drupal';
+  }
+  return config;
 }
 
-// Date format
-config.dateFormat = 'MMMM Do YYYY';
+// Switches CMS endpoints
+export function configCmsPaths(cms) {
+  if(cms === 'wordpress') {
+    let url = '/wp-admin/admin-ajax.php?';
+    if(process.env.NODE_ENV === 'development') {
+      url = 'http://localhost:8080/wp-admin/admin-ajax.php?';
+    }
+    config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
+    config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
+    config.apiTrigger = url + 'action=govready_v1_trigger';
+    config.pluginUrl = 'https://wordpress.org/plugins/';
+  }
+  else if(cms === 'drupal') {
+    let url = '/govready/api?';
+    config.apiTrigger = '/govready/trigger?endpoint=/sites/' + config.siteId + '/';
+    if(process.env.NODE_ENV === 'development') {
+      url = 'http://govready.local/govready/api?';
+      config.apiTrigger = 'http://govready.local/govready/trigger?endpoint=/sites/' + config.siteId + '/';
+    }
+    config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
+    config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
+    config.pluginUrl = 'https://drupal.org/project/';
+  }
+  else {
+    let url = 'https://plugin.govready.com/v1.0';
+    config.apiUrl = url + '/sites/' + config.siteId + '/';
+    config.apiUrlNoSite = url;
+  }
+}
 
-export function updateNonce(nonce) {
-  config.govready_nonce = none;
+// Updates CMS token
+export function configUpdateNonce(nonce) {
+  config.govready_nonce = nonce;
 }
 
 export default config;

@@ -1,6 +1,6 @@
 import React, { PropTypes as PT, Component } from 'react';
 import DatePicker from 'react-datepicker';
-import config from 'config';
+import { default as config } from 'config';
 
 // Css
 require('react-datepicker/dist/react-datepicker.css');
@@ -10,6 +10,8 @@ class DatePickerWrap extends Component {
     const { field, ...rest } = this.props
     let selected;
     if(field.value && field.value !== 'undefined' && field.value !== 'null') {
+      console.log(window.moment(field.value, config.dateFormat).isValid());
+      console.log(config.dateFormat);
       selected = field.value._isAMomentObject 
                ? field.value 
                : window.moment(field.value, config.dateFormat).isValid()

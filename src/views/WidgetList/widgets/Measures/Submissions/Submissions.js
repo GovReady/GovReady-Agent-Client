@@ -1,5 +1,5 @@
 import React, { PropTypes as PT, Component } from 'react';
-import config from 'config';
+import { default as config } from 'config';
 import Widget from '../../Widget';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

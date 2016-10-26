@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { WidgetList } from '../WidgetList';
 import { bindActionCreators } from 'redux';
-import config from 'config';
+import { default as config } from 'config';
 import { 
   actions,
   SITE_INIT,
