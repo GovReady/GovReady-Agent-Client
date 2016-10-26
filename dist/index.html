@@ -1,11 +1,90 @@
-<!doctype html><html lang="en"><head><title>GovReady Dashboard</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="shortcut icon" href="/favicon.ico"><link href="/app.dist.css" rel="stylesheet"></head><script>// window.Drupal = {};
-  // window.Drupal.settings = {};
-  // window.Drupal.settings.govready = {
-  //   siteId: '5743670d4a66c61b7f4289b9'
-  // };
-  window.govready = {
-    siteId: '5797c1b02a9497b44ac16239',
-    govready_nonce: '94883239ed',
-    mode: 'local',
-    connectUrl: 'https://plugin.govready.com/v1.0'
-  };</script><body><div id="root" style="height: 100%"></div><script type="text/javascript" src="/vendor.dist.js"></script><script type="text/javascript" src="/app.dist.js"></script></body></html>
+<!doctype html><html lang="en"><head><title>GovReady Dashboard</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="shortcut icon" href="/favicon.ico"><link href="/app.dist.css" rel="stylesheet"></head><script></script><body><div class="container" id="auth0-widget" style="display: none"><p>To get started, create a new GovReady account (or login with your existing account) and we'll connect your site to our monitoring API.</p><!-- WIDGET --><div id="widget-container" class="widget-container"></div><p>By creating and connecting to an account, you are opting in to the GovReady Terms of Service (@todo: link to Terms of Service). GovReady will contact your site periodically to collect information about your WordPress plugins, users and server information. Learn more (@todo: links to GitHub/README with information about the info we collect, etc).</p></div><div id="root" style="height: 100%"></div><!-- jQuery is only needed for the temporary demonistration code below --><script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script><script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script><script>/**
+ * Add the Auth0 Lock plugin if the user has not set up their credentials.
+ */
+
+// Creates a new cookie
+function setCookie(cname, cvalue, exmins) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exmins*60*1000));
+  var expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+// Gets the value of a cookie
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') {
+          c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+          return c.substring(name.length,c.length);
+      }
+  }
+  return "";
+}
+
+
+// Add the settings
+// window.Drupal = {};
+// window.Drupal.settings = {};
+// window.Drupal.settings.govready = {
+//   siteId: '5743670d4a66c61b7f4289b9'
+// };
+window.govready = {
+  siteId: '5797c1b02a9497b44ac16239',
+  mode: 'standalone', // Embedded in GovReady Q, is only Manual Measures, etc
+  //mode: 'agent' : Embeded in GovReady Q, but has a agent (WP/Drupal)
+  connectUrl: 'https://plugin.govready.com/v1.0', // If this is set, then we need to talk to the GovReady API directly.
+  domain: 'govready.auth0.com',
+  client_id: 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH',
+  access_token: getCookie('govreadyDashboardToken')
+};
+console.log(window.govready);
+
+
+
+// Show the Auth0 Authenicate box if necessary
+if (!window.govready.access_token) {
+  //jQuery('#auth0-widget').show();
+  document.getElementById("auth0-widget").style.display = 'block';
+  document.getElementById("root").style.display = 'none';
+
+  var lock = new Auth0Lock(window.govready.client_id, window.govready.domain);
+
+
+  // Show the Auth0 signin modal, and deal with the response
+  lock.show({
+    icon: 'https://avatars1.githubusercontent.com/u/6815262?v=3&s=200',
+    container: 'widget-container',
+    focusInput: false,
+    popup: false,
+    authParams: {
+      scope: 'openid'
+    },
+    device: 'govready-q'
+  }, function (err, profile, token) {
+    if (err) {
+      return;
+    }
+
+    setCookie('govreadyDashboardToken', token, 60);
+
+    // @todo: remove. This is only temporary (for demonistration purposes).
+    // Make authenticated call to GovReady API
+    console.log(window.govready.connectUrl + '/users');
+    jQuery.ajax({
+      url: window.govready.connectUrl + '/users',
+      headers: {"Authentication": "Bearer " + token},
+      success: function(data) { 
+        console.log('CALL TO GOVREADY API /users', data);
+      }
+    });
+
+
+    location.reload();
+  });
+
+}</script><script type="text/javascript" src="/vendor.dist.js"></script><script type="text/javascript" src="/app.dist.js"></script></body></html>
