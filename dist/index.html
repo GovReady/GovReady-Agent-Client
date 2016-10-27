@@ -35,7 +35,7 @@ function getCookie(cname) {
 // };
 window.govready = {
   siteId: '5797c1b02a9497b44ac16239',
-  mode: 'standalone', // Embedded in GovReady Q, is only Manual Measures, etc
+  mode: 'agent', // Embedded in GovReady Q, is only Manual Measures, etc
   //mode: 'agent' : Embeded in GovReady Q, but has a agent (WP/Drupal)
   connectUrl: 'https://plugin.govready.com/v1.0', // If this is set, then we need to talk to the GovReady API directly.
   domain: 'govready.auth0.com',
@@ -72,16 +72,16 @@ if (!window.govready.access_token) {
 
     setCookie('govreadyDashboardToken', token, 60);
 
-    // @todo: remove. This is only temporary (for demonistration purposes).
-    // Make authenticated call to GovReady API
-    console.log(window.govready.connectUrl + '/users');
-    jQuery.ajax({
-      url: window.govready.connectUrl + '/users',
-      headers: {"Authentication": "Bearer " + token},
-      success: function(data) { 
-        console.log('CALL TO GOVREADY API /users', data);
-      }
-    });
+    // // @todo: remove. This is only temporary (for demonistration purposes).
+    // // Make authenticated call to GovReady API
+    // console.log(window.govready.connectUrl + '/users');
+    // jQuery.ajax({
+    //   url: window.govready.connectUrl + '/users',
+    //   headers: {"Authentication": "Bearer " + token},
+    //   success: function(data) { 
+    //     console.log('CALL TO GOVREADY API /users', data);
+    //   }
+    // });
 
 
     location.reload();
