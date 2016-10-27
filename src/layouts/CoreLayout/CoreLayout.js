@@ -1,5 +1,6 @@
 import React, { PropTypes as PT } from 'react';
-import config from 'config';
+import { default as config } from 'config';
+import SitesList from 'views/SiteState/SitesList';
 import '../../styles/bootstrap-partial.scss';
 import '../../styles/core.scss';
 
@@ -26,6 +27,7 @@ function CoreLayout ({ children }) {
         )}
         <br />
         <br />
+        <SitesList />
         <p className="well well-sm well-faint text-center">
           <small>Dashboard connected to {config.connectUrl}</small>
         </p>

@@ -62,11 +62,32 @@ class Domains extends Component {
     }
 
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget || !widget.status || widget.status === 'loading') {
       return Widget.loadingDisplay();
     }
 
     let ssl = {};
+
+    // Loading failed, display
+    if(widget.status === 'load_failed') {
+      if(this.props.display === 'page') {
+        let domains = [];
+
+        return (
+          <DomainsPage 
+            header={Widget.titleSection('Domains and SSL', false, 'h2', false, true)} 
+            domains={domains} 
+            ssl={ssl} />
+        )
+      }
+      else {
+        return (
+          <DomainsWidget 
+            footer={Widget.panelFooter('Could not fetch domain')} />
+        )
+      }
+    }
+
     if(widget.data.ssl.allowed) {
       ssl.expires = window.moment(widget.data.ssl.expires).format('MMMM Do YYYY, h:mm:ss a');
       ssl.domain = widget.data.ssl.cert.subject['CN'];

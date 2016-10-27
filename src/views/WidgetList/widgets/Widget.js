@@ -155,8 +155,8 @@ class Widget {
             {text} <i className='fa fa-chevron-right'></i>
           </a>
         }
-        {!pageUrl &&
-          {text}
+        {!pageUrl && 
+          <div>{text}</div>
         } 
       </div>
     );

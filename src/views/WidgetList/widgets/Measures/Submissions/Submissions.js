@@ -13,7 +13,7 @@ import SubmissionEditPage from './SubmissionEditPage';
 class Submissions extends Component {
 
   componentWillMount() {
-    if(this.props.measureId) {
+    if(this.props.measureId && this.props.display === 'list') {
       this.fetchSubmissionsByMeasure(this.props.measureId);
     }
     else if(this.props.display === 'recent') {

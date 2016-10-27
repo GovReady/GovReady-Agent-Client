@@ -41,13 +41,13 @@ class WidgetsListPage extends Component {
     return (
       <div className='widget-layout'>
         <div className='row row-first'>
-          <div className='col-sm-3'>
+          <div className='col-sm-4'>
             {renderWidget('Plugins')}
           </div>
-          <div className='col-sm-3'>
+          <div className='col-sm-4'>
             {renderWidget('Domains')}
           </div>
-          <div className='col-sm-3'>
+          <div className='col-sm-4'>
             {renderWidget('Accounts', {widgetType: 'default'})}
           </div>
         </div>

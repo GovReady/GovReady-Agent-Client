@@ -35,7 +35,7 @@ class SiteState extends Component {
 
   goLocalClick(event) {
     event.preventDefault();
-    this.props.actions.siteLocalAggAll();
+    this.props.actions.siteAggAll('local');
   }
 
   render () {

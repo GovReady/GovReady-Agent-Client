@@ -36,7 +36,7 @@ PluginsWidget.propTypes = {
   cms: PT.string.isRequired,
   pluginText: PT.string.isRequired,
   updates: PT.number.isRequired,
-  coreUpdate: PT.bool,
+  coreUpdate: PT.string,
   footer: PT.object.isRequired
 };
 

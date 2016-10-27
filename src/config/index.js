@@ -25,8 +25,15 @@ Object.assign(config, {
 });
 
 // @TODO change site
-export function configChangeSite(site) {
-  // config.siteId = 
+export function configChangeSite(siteId) {
+  config.siteId = siteId;
+  return config;
+}
+
+// @TODO change site
+export function configChangeMode(mode) {
+  config.mode = mode;
+  return config;
 }
 
 // Switches CMS language fragments
@@ -35,11 +42,13 @@ export function configCmsLanguage(cms) {
     config.cms = 'wordpress';
     config.pluginText = 'Plugin';
     config.cmsNice = 'Wordpress';
+    config.pluginUrl = 'https://wordpress.org/plugins/';
   }
   else if(cms === 'drupal') {
     config.cms = 'drupal';
     config.pluginText = 'Module';
     config.cmsNice = 'Drupal';
+    config.pluginUrl = 'https://drupal.org/project/';
   }
   return config;
 }
@@ -54,7 +63,6 @@ export function configCmsPaths(cms) {
     config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
     config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
     config.apiTrigger = url + 'action=govready_v1_trigger';
-    config.pluginUrl = 'https://wordpress.org/plugins/';
   }
   else if(cms === 'drupal') {
     let url = '/govready/api?';
@@ -65,7 +73,6 @@ export function configCmsPaths(cms) {
     }
     config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
     config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
-    config.pluginUrl = 'https://drupal.org/project/';
   }
   else {
     let url = 'https://plugin.govready.com/v1.0';

@@ -1,11 +1,13 @@
 import objectAssign from 'object-assign';
 import apiHelper from '../utils/apiHelper';
+import { default as config } from 'config';
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 
 export const WIDGET_IMPORTED = 'WIDGET_IMPORTED';
+export const WIDGET_CLEAR_DATA = 'WIDGET_CLEAR_DATA';
 export const WIDGET_LOADING = 'WIDGET_LOADING';
 export const WIDGET_LOADED = 'WIDGET_LOADED';
 export const WIDGET_LOAD_FAILED = 'WIDGET_LOAD_FAILED';
@@ -19,6 +21,10 @@ export const WIDGET_POST_FAILED = 'WIDGET_POST_FAILED';
 // Fired when widgets are ready
 export function widgetImported (widgetName: string): Action {
   return { type: WIDGET_IMPORTED, widgetName: widgetName };
+}
+
+export function widgetClearData (widgetName: string): Action {
+  return { type: WIDGET_CLEAR_DATA };
 }
 
 // Fired when individual widget fetching data
@@ -111,6 +117,7 @@ export const actions = {
   widgetImported,
   widgetLoading,
   widgetLoaded,
+  widgetClearData,
   widgetLoadData,
   widgetLoadFailed,
   widgetPosting,
@@ -122,6 +129,10 @@ export const actions = {
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
+
+const initialState = {
+  widgets: {}
+};
 
 const assignWidgetState = (state, widgetName, widget) => {
   let newWidget = {};
@@ -139,6 +150,9 @@ const ACTION_HANDLERS = {
       data: {}
     }
     return assignWidgetState(state, action.widgetName, widget);
+  },
+  [WIDGET_CLEAR_DATA]: (state: object, action: {}): object => {
+    return initialState
   },
   [WIDGET_LOADING]: (state: object, action: {widgetName: string}): object => {
     let widget = objectAssign({}, state.widgets[action.widgetName], {
@@ -181,10 +195,6 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-
-const initialState = {
-  widgets: {}
-};
 
 export default function widgetReducer (state: object = initialState, action: Action): object {
   const handler = ACTION_HANDLERS[action.type];

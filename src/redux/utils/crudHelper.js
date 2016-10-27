@@ -250,11 +250,11 @@ export function crudActionHandlers(types) {
     [types['FETCH_SUCCESS']]: (state: object, action: {records: Array}): object => {
       let records = action.records;
       // Try to combine
-      if(state && state.length) {
-        return uniqueArr(state.concat(records), '_id');
-      }
+      // if(state && state.length) {
+      //   return uniqueArr(state.concat(records), '_id');
+      // }
       // just return
-      return action.records;
+      return records;
     },
     [types['FETCH_ERROR']]: (state: object, action: {error: object}): object => {
       // @todo log error ?

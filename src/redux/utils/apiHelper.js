@@ -13,20 +13,29 @@ const apiHelper = {
       params.headers = {
         'Authorization': 'Bearer ' + config.access_token
       };
+      if(Object.keys(data).length) {
+        // Add form header
+        params.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        // Build form params
+        const searchParams = Object.keys(data).map((key) => {
+          return encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+        }).join('&');
+        params.body = searchParams;
+      }
     }
+    // CMS agent
     else {
       // Init nonce
       data.govready_nonce = config.govready_nonce;
       // Add same origin
       params.credentials = 'same-origin';
-    }
-    // Do we have data?
-    if(Object.keys(data).length) {
-      let form_data = new FormData();
-      for(let key of Object.keys(data)) {
-        form_data.append(key, data[key]);
+      if(Object.keys(data).length) {
+        let form_data = new FormData();
+        for(let key of Object.keys(data)) {
+          form_data.append(key, data[key]);
+        }
+        params.body = form_data;
       }
-      params.body = form_data;
     }
     return params;
   },
