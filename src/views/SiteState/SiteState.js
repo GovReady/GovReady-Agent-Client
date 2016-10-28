@@ -7,6 +7,8 @@ import { default as config } from 'config';
 import { 
   actions,
   SITE_INIT,
+  SITE_CREATE_FORM,
+  SITE_UPDATE_START,
   SITE_AGG_FAILED, 
   SITE_PING_FAILED,
   SITE_LOCAL_AGG_FAILED, 
@@ -18,7 +20,7 @@ class SiteState extends Component {
     let { siteState } = this.props; 
     // Need to check site availability
     if(siteState.status === SITE_INIT) {
-      this.props.actions.sitePre(siteState.mode);
+      this.props.actions.siteInit(siteState.mode);
     }
     // We're loaded, so redirect
     else if (siteState.status === SITE_LOADED) {
@@ -41,7 +43,7 @@ class SiteState extends Component {
   render () {
     let { siteState } = this.props;
     switch(siteState.status) {
-      
+
       case SITE_AGG_FAILED:
       case SITE_PING_FAILED:
         return (

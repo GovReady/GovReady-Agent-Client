@@ -18,6 +18,7 @@ function CoreLayout ({ children }) {
   return (
     <div className='page-container govready-container'>
       <div className='view-container container'>
+        <SitesList />
         {config.siteId && children}
         {!config.siteId && (
           <div>
@@ -27,7 +28,6 @@ function CoreLayout ({ children }) {
         )}
         <br />
         <br />
-        <SitesList />
         <p className="well well-sm well-faint text-center">
           <small>Dashboard connected to {config.connectUrl}</small>
         </p>

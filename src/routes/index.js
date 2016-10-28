@@ -10,9 +10,10 @@ import AccessDenied from 'components/AccessDenied';
 import EmptyPage from 'components/EmptyPage'; 
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import SiteState from 'views/SiteState';
+import SiteEdit from 'views/SiteState/SiteEdit';
 import WidgetList from 'views/WidgetList/WidgetList';
 import WidgetPage from 'views/WidgetList/WidgetPage';
-import { SITE_LOADED, sitePre, isSiteLoaded } from 'redux/modules/siteReducer';
+import { SITE_LOADED, siteInit, isSiteLoaded } from 'redux/modules/siteReducer';
 
 export default (store) => {
 
@@ -26,7 +27,7 @@ export default (store) => {
     }
     // Not loaded, try to dispatch before redirect
     if(!isSiteLoaded(store.getState())) {
-      store.dispatch(sitePre()).then(checkInit);
+      store.dispatch(siteInit()).then(checkInit);
     }
     else{
       cb();
@@ -36,6 +37,7 @@ export default (store) => {
   return (
     <Route path='/' component={CoreLayout}>
       <IndexRoute component={SiteState} />
+      <Route path="/site-edit" component={SiteEdit}/>
       { /* Routes requiring init */ }
       <Route onEnter={requireSiteInit}>
         <Route path="/dashboard" component={WidgetList}/>

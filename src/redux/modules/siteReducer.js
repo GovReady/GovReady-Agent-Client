@@ -21,9 +21,14 @@ export const SITE_RESET = 'SITE_RESET';
 export const SITE_SITES_START = 'SITE_SITES_START';
 export const SITE_SITES_SUCCESS = 'SITE_SITES_SUCCESS';
 export const SITE_SITES_FAILED = 'SITE_SITES_FAILED';
+export const SITE_CREATE_FORM = 'SITE_CREATE_FORM';
+export const SITE_UPDATE_START = 'SITE_UPDATE_START';
+export const SITE_UPDATE_SUCCESS = 'SITE_UPDATE_SUCCESS';
+export const SITE_UPDATE_FAILED = 'SITE_UPDATE_FAILED';
 export const SITE_USER_START = 'SITE_USER_START';
 export const SITE_USER_FAILED = 'SITE_USER_FAILED';
 export const SITE_PRE_START = 'SITE_PRE_START';
+export const SITE_PRE_SUCCESS = 'SITE_PRE_SUCCESS';
 export const SITE_PRE_FAILED = 'SITE_PRE_FAILED';
 export const SITE_PING_START = 'SITE_PING_START';
 export const SITE_PING_FAILED = 'SITE_PING_FAILED';
@@ -41,13 +46,18 @@ export const SITE_LOADED = 'SITE_LOADED';
 export const siteStates = {
   SITE_INIT,
   SITE_RESET,
-  SITE_USER_START,
-  SITE_USER_FAILED,
-  SITE_PRE_START,
-  SITE_PRE_FAILED,
   SITE_SITES_START,
   SITE_SITES_SUCCESS,
   SITE_SITES_FAILED,
+  SITE_CREATE_FORM,
+  SITE_UPDATE_START,
+  SITE_UPDATE_SUCCESS,
+  SITE_UPDATE_FAILED,
+  SITE_USER_START,
+  SITE_USER_FAILED,
+  SITE_PRE_START,
+  SITE_PRE_SUCCESS,
+  SITE_PRE_FAILED,
   SITE_PING_START,
   SITE_PING_FAILED,
   SITE_MODE_CHANGE_START,
@@ -71,6 +81,42 @@ export function siteReset (): Action {
   return { type: SITE_RESET };
 }
 
+// Changes site status
+export function siteSitesStart (): Action {
+  return { type: SITE_SITES_START };
+}
+
+// Changes site status, saves sites
+export function siteSitesSuccess (sites: array): Action {
+  return { type: SITE_SITES_SUCCESS, sites: sites };
+}
+
+// Changes site status
+export function siteSitesFailed (error: object): Action {
+  return { type: SITE_SITES_FAILED, error: error };
+}
+
+// Switches to create mode
+export function siteCreateForm (editSite: string): Action {
+  hashHistory.push('/site-edit');
+  return { type: SITE_CREATE_FORM, editSite: editSite };
+}
+
+// Starts 
+export function siteUpdateStart (): Action {
+  return { type: SITE_UPDATE_START };
+}
+
+// Changes site status, saves sites
+export function siteUpdateSuccess (siteId: string): Action {
+  return { type: SITE_UPDATE_SUCCESS, sitesID: siteID };
+}
+
+// Changes site status
+export function siteUpdateFailed (siteId: string, error: object): Action {
+  return { type: SITE_UPDATE_FAILED, siteId: string, error: error };
+}
+
 // Attempts to attach user
 export function siteUserStart (): Action {
   return { type: SITE_USER_START };
@@ -87,23 +133,13 @@ export function sitePreStart (): Action {
 }
 
 // Changes site status
+export function sitePreSuccess (currentSite: string): Action {
+  return { type: SITE_PRE_SUCCESS, currentSite: currentSite };
+}
+
+// Changes site status
 export function sitePreFailed (error: object): Action {
   return { type: SITE_PRE_FAILED, error: error };
-}
-
-// Changes site status
-export function siteSitesStart (): Action {
-  return { type: SITE_SITES_START };
-}
-
-// Changes site status, saves sites
-export function siteSitesSuccess (sites: array): Action {
-  return { type: SITE_SITES_SUCCESS, sites: sites };
-}
-
-// Changes site status
-export function siteSitesFailed (error: object): Action {
-  return { type: SITE_SITES_FAILED, error: error };
 }
 
 // Changes site status
@@ -220,36 +256,138 @@ export function sitePost (url: string, appendUrl: boolean, data: object, method:
 }
 
 //
+// Inits site 
+//
+export function siteInit( mode: string = config.mode ): Function {
+  return (dispatch: Function) => {
+    // const initPromise = new Promise(function(resolve, reject) {
+    //   // Catch no-agg modes
+    //   if(mode === 'agent' || mode === 'standalone') {
+    //     dispatch(siteSites(config.mode)).then(resolve());
+    //   }
+    //   // Agent mode
+    //   else {
+    //     dispatch(sitePre()).then(resolve());
+    //   }
+      
+    // });
+    // return initPromise;
+    if(mode === 'agent' || mode === 'standalone') {
+      return dispatch(siteSites(config.mode));
+    }
+    // Agent mode
+    else {
+      return dispatch(sitePre());
+    }
+  }
+}
+
+//
+// Grabs other user sites
+//
+export function siteSites(): Function {
+  return (dispatch: Function) => {
+    // Failed to get all sites, load anyways
+    const failed = (error) => {
+      dispatch(siteSitesFailed(error));
+      // dispatch(sitePre(config.mode));
+    }
+    dispatch(siteSitesStart());
+    return dispatch(sitePost('/sites', true, {}, 'GET')
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        return failed(res);
+      }
+      dispatch(siteSitesSuccess(res));
+      // no sites so go to create
+      if(!res || !res.length) {
+        return dispatch(siteCreateForm());
+      }
+      // Sites loaded, load page
+      else {
+        dispatch(sitePre(config.mode));
+      }
+    }).catch((error) => {
+      failed(error);
+    });
+  }
+}
+
+//
+// Grabs other user sites
+//
+export function siteUpdate(data: object): Function {
+  return (dispatch: Function) => {
+    // Failed to get all sites, load anyways
+    const failed = (error) => {
+      dispatch(siteUpdateFailed(error));
+    }
+    dispatch(siteUpdateStart());
+    return dispatch(sitePost('/sites', true, data, 'POST')
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        return failed(res);
+      }
+      // Sites loaded, load page
+      dispatch(siteUpdateSuccess(res._id));
+      dispatch(siteChangeSite(res._id));
+    }).catch((error) => {
+      failed(error);
+    });
+  }
+}
+
+//
+// Changes the active site
+//
+export function siteChangeSite(siteId: string): Function {
+  return (dispatch: Function) => {
+    configChangeSite(siteId);
+    configChangeMode('agent');
+    configCmsPaths();
+    dispatch(siteReset());
+    hashHistory.push('/');
+  }
+}
+
+//
 // Calls site enpoint
 //
-export function sitePre( mode: string = config.mode ): Function {
+export function sitePre( ): Function {
   return (dispatch: Function) => {
+    // Someting went wrong, so dispatch failed
+    // Then try the ping check
+    const failed = (error) => {
+      dispatch(sitePreFailed(error));
+
+    }
     dispatch(sitePreStart());
     return dispatch(sitePost('/sites/' + config.siteId, true, {}, 'GET')
     ).then((res) => {
-      if(!(res instanceof Error)) {
-
-        // If we're in read-only mode, go to user
-        if(config.mode === 'agent' || config.mode === 'standalone') {
-          // We have an application
-          if(res.stack && res.stack.application && res.stack.application.platform) {
-            // change cms language if available
-            configCmsLanguage(res.stack.application.platform.toLowerCase());
-            configChangeMode('agent');
-          }
-          else {
-            configChangeMode('standalone');
-          }
-          dispatch(siteUser());
-          return;
+      if(res instanceof Error) {
+        return failed(res);
+      }
+      let allSet = true;
+      // If we're in read-only mode, go to user
+      if(config.mode === 'agent' || config.mode === 'standalone') {
+        // We have an application
+        if(res.stack && res.stack.application && res.stack.application.platform) {
+          // change cms language if available
+          configCmsLanguage(res.stack.application.platform.toLowerCase());
+          configChangeMode('agent');
         }
-
+        else {
+          configChangeMode('standalone');
+        }
+      }
+      else {
         // @TODO Cache all these endpoints
-        let allSet = true;
         let endpoints = []; 
         endpoints = [ 'stack', 'accounts', 'plugins'];
         // If we're not in local, check domains
-        if(mode === 'remote') {
+        if(config.mode === 'remote') {
           endpoints.push('domain');
         }
         endpoints.map((endpoint) => {
@@ -259,20 +397,19 @@ export function sitePre( mode: string = config.mode ): Function {
             allSet = false;
           }
         });
-        if(allSet || forceDispatch) {
-          dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
-          return;
-        }
       }
-      // Someting went wrong, so dispatch failed
-      // Then try the ping check
-      dispatch(sitePreFailed());
-      dispatch(siteUser());
+      // Dispatch Current site
+      dispatch(sitePreSuccess(res._id));
+      // Load
+      if(allSet || forceDispatch) {
+        dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
+      }
+      // Need to ping / compile
+      else {
+        dispatch(sitePing());
+      }
     }).catch((error) => {
-      // Someting went wrong, so dispatch failed
-      // Then try the ping check
-      dispatch(sitePreFailed());
-      dispatch(siteUser());
+      failed(error);
     });
   }
 }
@@ -309,45 +446,6 @@ export function siteUser(): Function {
       dispatch(siteUserFailed(error));
       dispatch(sitePing());
     });
-  }
-}
-
-//
-// Grabs other user sites
-//
-export function siteSites(): Function {
-  return (dispatch: Function) => {
-    dispatch(siteSitesStart());
-    return dispatch(sitePost('/sites', true, {}, 'GET')
-    ).then((res) => {
-      // We have an error
-      if(res instanceof Error) {
-        // Failed to get all sites, load anyways
-        dispatch(siteSitesFailed(res));
-        dispatch(siteLoaded(config.mode));
-        return;
-      }
-      // Sites loaded, load page
-      dispatch(siteSitesSuccess(res));
-      dispatch(siteLoaded(config.mode));
-    }).catch((error) => {
-      // Failed to get all sites, load anyways
-      dispatch(siteSitesFailed(error));
-      dispatch(siteLoaded(config.mode));
-    });
-  }
-}
-
-//
-// Changes the active site
-//
-export function siteChangeSite(siteId: string): Function {
-  return (dispatch: Function) => {
-    configChangeSite(siteId);
-    configChangeMode('agent');
-    configCmsPaths();
-    dispatch(siteReset());
-    hashHistory.push('/');
   }
 }
 
@@ -551,6 +649,9 @@ export function siteVulnerabilityAgg(mode: string): Function {
 
 export const actions = {
   siteReset,
+  siteInit,
+  siteCreateForm,
+  siteUpdate,
   sitePre,
   sitePing,
   siteModeChange,
@@ -583,23 +684,42 @@ const actionHandler = (
   if(action.sites && action.sites.length) {
     newState['sites'] = action.sites;
   }
-  // Action?
+  // Mode?
   if(action.mode) {
     newState['mode'] = action.mode;
   }
-  // Error?
-  if(action.error) {
-    newState['error'] = action.error;
+  // Current site 
+  if(action.currentSite) {
+    newState['currentSite'] = action.currentSite;
   }
+  // Site ID being acted on
+  newState['siteId'] = action.siteId ? action.siteId : '';
+  // Site edit? 
+  newState['editSite'] = action.editSite ? action.editSite : '';
+  // Error?
+  newState['error'] = action.error ?  action.error : {};
   return objectAssign({}, state, newState);
 }
 
 // ------------------------------------
-// Helper
+// Helpers
 // ------------------------------------
 
 export function isSiteLoaded(globalState) {
   return globalState.siteState && globalState.siteState.status === SITE_LOADED;
+}
+
+export function getSiteFromSites(sites, siteId) {
+   if(!sites || !sites.length) {
+      return null;
+   }
+   let theSite = null;
+   sites.map((site) => {
+      if(site.siteId == siteId) {
+        theSite = site;
+      }
+   });
+   return theSite;
 }
 
 // ------------------------------------
