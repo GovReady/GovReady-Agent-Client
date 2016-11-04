@@ -151,7 +151,7 @@ class Widget {
           </Link>
         }
         {pageUrl && absolute &&
-          <a href={pageUrl} className="title-text">
+          <a href={pageUrl} target="_blank" className="title-text">
             {text} <i className='fa fa-chevron-right'></i>
           </a>
         }

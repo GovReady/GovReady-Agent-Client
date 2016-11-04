@@ -5,17 +5,17 @@ let config = {};
 if(window.govready) {
   config = window.govready;
   if(config.isWordpress) {
-    configCmsLanguage('wordpress');
+    configCmsSettings('wordpress');
     configCmsPaths('wordpress'); 
   }
   else {
-    configCmsLanguage();
+    configCmsSettings();
     configCmsPaths(); 
   }
 }
 else if(window.Drupal && window.Drupal.settings.govready) {
   config = window.Drupal.settings.govready;
-  configCmsLanguage('drupal');
+  configCmsSettings('drupal');
   configCmsPaths('drupal'); 
 }
 
@@ -37,7 +37,8 @@ export function configChangeMode(mode) {
 }
 
 // Switches CMS language fragments
-export function configCmsLanguage(cms) {
+export function configCmsSettings(cms, url = '') {
+  config.siteUrl = url;
   if(cms === 'wordpress') {
     config.cms = 'wordpress';
     config.pluginText = 'Plugin';

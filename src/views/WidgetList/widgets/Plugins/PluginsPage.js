@@ -56,7 +56,7 @@ class PluginsPage extends Component {
         {header}
         <hr/>
         <p>{pluginText + 's'} displayed below represent a heads-up-display of your site health. Those marked in yellow are behind the most current version, and should probably be updated.</p> 
-        <p><a className="btn btn-default btn-sml" href={cmsUrl}>Go to CMS page</a></p>
+        <p><a className="btn btn-default btn-sml" target="_blank" href={cmsUrl}>Go to CMS page</a></p>
         <hr/>
         <div className="alert-region">
           {coreUpdate()}

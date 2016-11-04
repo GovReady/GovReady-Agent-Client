@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
 import SiteEditForm from './SiteEditForm';
 import { 
-  actions
+  actions,
+  SITE_UPDATE_START
 } from '../../redux/modules/siteReducer';
 
 class SiteEdit extends Component {
@@ -23,14 +24,44 @@ class SiteEdit extends Component {
     }
     return {
       '_id': '',
+      'type': '',
       'title': '',
-      'url': ''
+      'url': '',
+      'accessible': '',
+      'application': ''
     };
   }
 
   // Submits a site form
   siteSubmit(data) {
-    console.log('yolo');
+    
+    let { siteState, actions }  = this.props;
+
+    const submitFields = [
+      'title',
+      'url',
+      'application'
+    ];
+
+    const assignProps = (toSet, setData) => {
+      submitFields.map((field) => {
+        if(setData[field] || setData[field] === false) {
+          toSet[field] = setData[field];
+        }
+      });
+      return toSet;
+    }
+
+    if(siteState.status !== SITE_UPDATE_START) {
+      // Existing record
+      if(data._id) {
+        this.props.actions.siteUpdate(data);
+      } 
+      // New item
+      else {
+        this.props.actions.siteUpdate(assignProps({}, data));
+      }
+    }
   }
 
   // Deletes a site

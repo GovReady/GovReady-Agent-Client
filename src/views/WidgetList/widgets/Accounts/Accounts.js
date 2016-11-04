@@ -67,13 +67,15 @@ class Accounts extends Component {
     switch(config.cms) {  
       case 'wordpress':
         adminRole = 'administrator';
-        userUrl = '/wp-admin/users.php';
+        userUrl = config.siteUrl + '/wp-admin/users.php';
         break;
       case 'drupal':
         adminRole = 'administrator'; 
-        userUrl = '/admin/people';
+        userUrl = config.siteUrl + '/admin/people';
         break;
     }
+
+
 
     // Inactive
     if(this.props.widgetType === 'inactive') {
@@ -86,7 +88,10 @@ class Accounts extends Component {
       else {
         const subHeader = () => {
           return (
-            <h5>Are these users still in your organization?  <a href={userUrl}>Edit them</a>.  If not, <a href={userUrl}>delete them</a>.</h5>
+            <h5>
+              Are these users still in your organization?  <a target="_blank" href={userUrl}>Edit them</a>.  
+              If not, <a target="_blank" href={userUrl}>delete them</a>.
+            </h5>
           );
         }
         return (

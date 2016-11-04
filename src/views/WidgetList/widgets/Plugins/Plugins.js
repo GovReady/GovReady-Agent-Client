@@ -52,10 +52,10 @@ class Plugins extends Component {
     // CMS Specific
     switch(config.cms) {  
       case 'wordpress':
-        cmsUrl = '/wp-admin/plugins.php';
+        cmsUrl = config.siteUrl + '/wp-admin/plugins.php';
         break;
       case 'drupal': 
-        cmsUrl = '/admin/modules';
+        cmsUrl = config.siteUrl + '/admin/modules';
         break;
     }
 

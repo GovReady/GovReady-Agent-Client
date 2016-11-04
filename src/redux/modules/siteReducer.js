@@ -7,7 +7,7 @@ import {
   configChangeSite, 
   configChangeMode, 
   configCmsPaths,
-  configCmsLanguage 
+  configCmsSettings 
 } from 'config';
 
 // var BPromise = require('bluebird');
@@ -109,12 +109,12 @@ export function siteUpdateStart (): Action {
 
 // Changes site status, saves sites
 export function siteUpdateSuccess (siteId: string): Action {
-  return { type: SITE_UPDATE_SUCCESS, sitesID: siteID };
+  return { type: SITE_UPDATE_SUCCESS, siteId: siteId };
 }
 
 // Changes site status
 export function siteUpdateFailed (siteId: string, error: object): Action {
-  return { type: SITE_UPDATE_FAILED, siteId: string, error: error };
+  return { type: SITE_UPDATE_FAILED, siteId: siteId, error: error };
 }
 
 // Attempts to attach user
@@ -321,10 +321,17 @@ export function siteUpdate(data: object): Function {
   return (dispatch: Function) => {
     // Failed to get all sites, load anyways
     const failed = (error) => {
-      dispatch(siteUpdateFailed(error));
+      let siteId = data._id ? data._id : '';
+      dispatch(siteUpdateFailed(siteId, error));
     }
     dispatch(siteUpdateStart());
-    return dispatch(sitePost('/sites', true, data, 'POST')
+    let url = '/sites';
+    let requestMethod = 'POST';
+    if(data._id) {
+      url = url + '/' + data._id;
+      requestMethod = 'PATCH';
+    }
+    return dispatch(sitePost(url, true, data, requestMethod)
     ).then((res) => {
       // We have an error
       if(res instanceof Error) {
@@ -375,7 +382,7 @@ export function sitePre( ): Function {
         // We have an application
         if(res.stack && res.stack.application && res.stack.application.platform) {
           // change cms language if available
-          configCmsLanguage(res.stack.application.platform.toLowerCase());
+          configCmsSettings(res.stack.application.platform.toLowerCase(), res.url);
           configChangeMode('agent');
         }
         else {
