@@ -21,6 +21,7 @@ export const SITE_RESET = 'SITE_RESET';
 export const SITE_SITES_START = 'SITE_SITES_START';
 export const SITE_SITES_SUCCESS = 'SITE_SITES_SUCCESS';
 export const SITE_SITES_FAILED = 'SITE_SITES_FAILED';
+export const SITE_SELECT = 'SITE_SELECT';
 export const SITE_CREATE_FORM = 'SITE_CREATE_FORM';
 export const SITE_UPDATE_START = 'SITE_UPDATE_START';
 export const SITE_UPDATE_SUCCESS = 'SITE_UPDATE_SUCCESS';
@@ -94,6 +95,12 @@ export function siteSitesSuccess (sites: array): Action {
 // Changes site status
 export function siteSitesFailed (error: object): Action {
   return { type: SITE_SITES_FAILED, error: error };
+}
+
+// Switches to create mode
+export function siteSelect (editSite: string): Action {
+  hashHistory.push('/site-list');
+  return { type: SITE_SELECT };
 }
 
 // Switches to create mode
@@ -260,19 +267,8 @@ export function sitePost (url: string, appendUrl: boolean, data: object, method:
 //
 export function siteInit( mode: string = config.mode ): Function {
   return (dispatch: Function) => {
-    // const initPromise = new Promise(function(resolve, reject) {
-    //   // Catch no-agg modes
-    //   if(mode === 'agent' || mode === 'standalone') {
-    //     dispatch(siteSites(config.mode)).then(resolve());
-    //   }
-    //   // Agent mode
-    //   else {
-    //     dispatch(sitePre()).then(resolve());
-    //   }
-      
-    // });
-    // return initPromise;
-    if(mode === 'agent' || mode === 'standalone') {
+    // No site id, or standalone, query sites
+    if(mode === 'agent' || mode === 'standalone' || !config.siteId) {
       return dispatch(siteSites(config.mode));
     }
     // Agent mode
@@ -303,6 +299,10 @@ export function siteSites(): Function {
       // no sites so go to create
       if(!res || !res.length) {
         return dispatch(siteCreateForm());
+      }
+      // no siteId go to select
+      else if(!config.siteId) {
+        return dispatch(siteSelect());
       }
       // Sites loaded, load page
       else {
@@ -516,13 +516,15 @@ export function siteModeChange(mode: string, reset: boolean = '', redirect: stri
 //
 // Triggers aggregation in local or remote mode
 //
-export function siteAggAll(mode: string): Function {
+export function siteAggAll(mode: string, calls: array): Function {
   return (dispatch: Function) => {
-    let calls;
+    // Set up default call stack if none is passed
+    let calls = calls || ['changeMode', 'stack', 'domain', 'accounts', 'plugins'], 
+        callStack;
     // Local mode
     if(mode === 'local') {
-      calls = [
-        {
+      callStack = {
+        changeMode: {
           url: config.apiTrigger,
           data: {
             key: 'changeMode',
@@ -530,7 +532,7 @@ export function siteAggAll(mode: string): Function {
             siteId: config.siteId
           }
         },
-        {
+        stack: {
           url: config.apiTrigger,
           data: {
             key: 'stack',
@@ -538,7 +540,7 @@ export function siteAggAll(mode: string): Function {
             siteId: config.siteId
           }
         },
-        {
+        accounts: {
           url: config.apiTrigger,
           data: {
             key: 'accounts',
@@ -546,7 +548,7 @@ export function siteAggAll(mode: string): Function {
             siteId: config.siteId
           }
         },
-        {
+        plugins: {
           url: config.apiTrigger,
           data: {
             key: 'plugins',
@@ -554,12 +556,12 @@ export function siteAggAll(mode: string): Function {
             siteId: config.siteId
           }
         },
-      ];
+      };
     }
     // Remote mode
     else {
-      calls = [
-        {
+      callStack = {
+        changeMode: {
           url: config.apiTrigger,
           data: {
             key: 'changeMode',
@@ -567,31 +569,35 @@ export function siteAggAll(mode: string): Function {
             siteId: config.siteId
           }
         },
-        {
+        stack: {
           url: '/monitor/' + config.siteId + '/stack',
           data: {},
           appendUrl: true
         },
-        {
+        domain: {
           url:  '/monitor/' + config.siteId + '/domain',
           data: {},
           appendUrl: true
         },
-        {
+        accounts: {
           url: '/monitor/' + config.siteId + '/accounts',
           data: {},
           appendUrl: true
         },
-        {
+        plugins: {
           url: '/monitor/' + config.siteId + '/plugins',
           data: {},
           appendUrl: true
         },
-      ];
+      };
     }
 
     dispatch(siteAggStart());
-    return BPromise.each(calls, (call) => {
+    const finalCalls = calls.map((call, key) => {
+      return callStack['']
+    }).filter((call) => { return call });
+
+    return BPromise.each(finalCalls, (call) => {
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
     }).then((returns) => {
       let error;
@@ -712,11 +718,23 @@ const actionHandler = (
 // Helpers
 // ------------------------------------
 
-export function isSiteLoaded(globalState) {
+// Returns if site is in LOADED state
+export function isSiteLoaded(globalState: object) {
   return globalState.siteState && globalState.siteState.status === SITE_LOADED;
 }
 
-export function getSiteFromSites(sites, siteId) {
+// Helper function redirects to '/' if we're not still loading 
+export function isSitesLoading(globalState: object, redirect: Function) {
+  return globalState.siteState
+      && globalState.siteState.status
+      && ( globalState.siteState.status === SITE_SITES_SUCCESS
+        || globalState.siteState.status === SITE_SELECT
+        || globalState.siteState.status === SITE_CREATE_FORM 
+         );
+}
+
+// Returns site info from a site ID
+export function getSiteFromSites(sites: array, siteId: string) {
    if(!sites || !sites.length) {
       return null;
    }

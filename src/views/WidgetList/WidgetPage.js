@@ -1,10 +1,21 @@
 import React, { Component, PropTypes as PT } from 'react';
 import EmptyPage from 'components/EmptyPage';
+import { default as config } from 'config';
 import widgets from './widgets';
 
 class WidgetPage extends Component {
 
   render () {
+    
+    // We aren't loaded
+    if(!config.siteId) {
+      return (
+        <div className='loading'>
+          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
+        </div>
+      )
+    }
+
     const showEmpty = () => {
       // Widget not found
       if(!widgets[this.props.routeParams.widget]) {

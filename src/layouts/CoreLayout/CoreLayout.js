@@ -1,6 +1,6 @@
 import React, { PropTypes as PT } from 'react';
 import { default as config } from 'config';
-import SitesList from 'views/SiteState/SitesList';
+import SiteList from 'views/SiteState/SiteList';
 import '../../styles/bootstrap-partial.scss';
 import '../../styles/core.scss';
 
@@ -18,14 +18,8 @@ function CoreLayout ({ children }) {
   return (
     <div className='page-container govready-container'>
       <div className='view-container container'>
-        <SitesList />
-        {config.siteId && children}
-        {!config.siteId && (
-          <div>
-            <h2>Looks like something didn't load properly</h2>
-            <p>Please try refreshing the page</p>
-          </div>
-        )}
+        <SiteList offCanvas={true} />
+        {children}
         <br />
         <br />
         <p className="well well-sm well-faint text-center">

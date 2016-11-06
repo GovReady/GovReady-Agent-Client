@@ -9,7 +9,7 @@ import {
   SITE_LOADED 
 } from '../../redux/modules/siteReducer';
 
-class SitesList extends Component {
+class SiteList extends Component {
 
   componentWillMount () {
     this.setState({
@@ -40,7 +40,20 @@ class SitesList extends Component {
   }
 
   render () {
-    const { siteState } = this.props;
+    const { siteState, offCanvas } = this.props;
+
+    // Only show if we're in agent / standalone
+    // OR if there is no siteId
+    const show = ( config.mode === 'agent' || config.mode === 'standalone' || !config.siteId )
+               && siteState.sites && siteState.sites.length;
+
+    if ( !show ) {
+      return (
+        <div></div>
+      );
+    }
+
+    const wrapperClass = offCanvas ? ' off-canvas' : '';
     const openClass = this.state.open ? ' open' : '';
     const menuClass = this.state.open ? 'fa-times' : 'fa-bars';
 
@@ -50,17 +63,14 @@ class SitesList extends Component {
       title = (currentSite.title) ? currentSite.title : title;
     }
 
-    if (!siteState.sites || !siteState.sites.length ) {
-      return (
-        <div></div>
-      );
-    }
-
     return (
-      <div className="sites-list-wrapper">
-        <div className="sites-header clearfix">
-          <h3>{title}</h3><a href="#" onClick={this.openClick.bind(this)}><i className={"fa fa-2x " + menuClass}></i></a>
-        </div>
+      <div className={"sites-list-wrapper" + wrapperClass} >
+        {offCanvas && (
+          <div className="sites-header clearfix">
+            <h3>{title}</h3>
+            <a href="#" onClick={this.openClick.bind(this)}><i className={"fa fa-2x " + menuClass}></i></a>
+          </div>
+        )}
         <div className={"sites-list" + openClass}>
           <div className="list-group">
             <div key="new" className="list-group-item">
@@ -83,9 +93,10 @@ class SitesList extends Component {
   }
 }
 
-SitesList.propTypes = {
+SiteList.propTypes = {
   actions: PT.object.isRequired,
   siteState: PT.object.isRequired,
+  offCanvas: PT.bool,
   open: PT.bool
 };
 
@@ -105,4 +116,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SitesList);
+)(SiteList);

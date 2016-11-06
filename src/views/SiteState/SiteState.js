@@ -65,6 +65,9 @@ class SiteState extends Component {
           </div>
         )
       default:
+        // if (!config.siteId) {
+        //   return <div></div>
+        // }
         return (
           <div>
             <div className='loading'>

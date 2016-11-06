@@ -10,17 +10,28 @@ import AccessDenied from 'components/AccessDenied';
 import EmptyPage from 'components/EmptyPage'; 
 import CoreLayout from 'layouts/CoreLayout/CoreLayout';
 import SiteState from 'views/SiteState';
+import SiteList from 'views/SiteState/SiteList';
 import SiteEdit from 'views/SiteState/SiteEdit';
 import WidgetList from 'views/WidgetList/WidgetList';
 import WidgetPage from 'views/WidgetList/WidgetPage';
-import { SITE_LOADED, siteInit, isSiteLoaded } from 'redux/modules/siteReducer';
+import { SITE_LOADED, siteInit, isSiteLoaded, isSitesLoading } from 'redux/modules/siteReducer';
 
 export default (store) => {
 
   const requireSiteInit = (nextState, replace, cb) => {
+    // Not loaded, try to dispatch before redirect
+    if(!isSitesLoading(store.getState())) {
+      store.dispatch(siteInit()).then(cb());
+    }
+    else{
+      cb();
+    }
+  };
+
+  const requireSiteLoaded = (nextState, replace, cb) => {
     function checkInit() {
       // Still not working, so redirect
-      if (!isSiteLoaded(store.getState())) {
+      if (!isSitesLoading(store.getState())) {
         replace('/');
       }
       cb();
@@ -37,9 +48,13 @@ export default (store) => {
   return (
     <Route path='/' component={CoreLayout}>
       <IndexRoute component={SiteState} />
-      <Route path="/site-edit" component={SiteEdit}/>
       { /* Routes requiring init */ }
       <Route onEnter={requireSiteInit}>
+        <Route path="/site-list" component={SiteList}/>
+        <Route path="/site-edit" component={SiteEdit}/>
+      </Route>
+      { /* Routes requiring site fully loaded */ }
+      <Route onEnter={requireSiteLoaded}>
         <Route path="/dashboard" component={WidgetList}/>
         <Route path="/dashboard/:widget" component={WidgetPage}/>
         <Route path="/dashboard/:widget/:individual" component={WidgetPage}/>

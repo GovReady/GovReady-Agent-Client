@@ -15,6 +15,16 @@ class WidgetsListPage extends Component {
   }
   
   render () {
+
+    // We aren't loaded
+    if(!config.siteId) {
+      return (
+        <div className='loading'>
+          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
+        </div>
+      )
+    }
+
     // Simple render function from widgetName
     const renderWidget = (name, params = {}) => {
       params.widgetName = name;
