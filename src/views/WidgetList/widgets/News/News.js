@@ -8,13 +8,20 @@ import NewsPageIndividual from './NewsPageIndividual';
 
 class News extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: config.apiUrl + 'news',
+      process: (data) => {
+        return data;
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'news',
-        process: this.processData
-      }
+      true
     );
   }
 
@@ -61,6 +68,5 @@ class News extends Component {
 News.propTypes = Widget.propTypes({
   individual: PT.number
 });
-News.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(News);

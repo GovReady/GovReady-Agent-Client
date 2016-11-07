@@ -2,12 +2,12 @@ import React, { Component, PropTypes as PT } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
-import { actions as widgetActions } from '../../redux/modules/widgetReducer';
+import { actions as widgetActions } from 'redux/modules/widgetReducer';
 import { 
   actions,
   getSiteFromSites,
   SITE_LOADED 
-} from '../../redux/modules/siteReducer';
+} from 'redux/modules/siteReducer';
 
 class SiteList extends Component {
 
@@ -39,12 +39,18 @@ class SiteList extends Component {
     this.openClick();
   }
 
+  setSiteClick(event) {
+    event.preventDefault();
+    this.props.widgetActions.widgetClearData();
+    this.props.actions.siteSetSite(config.siteId);
+  }
+
   render () {
     const { siteState, offCanvas } = this.props;
 
     // Only show if we're in agent / standalone
     // OR if there is no siteId
-    const show = ( config.mode === 'agent' || config.mode === 'standalone' || !config.siteId )
+    const show = ( config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview'  || !config.siteId )
                && siteState.sites && siteState.sites.length;
 
     if ( !show ) {
@@ -53,22 +59,30 @@ class SiteList extends Component {
       );
     }
 
+    // CSS classes
     const wrapperClass = offCanvas ? ' off-canvas' : '';
     const openClass = this.state.open ? ' open' : '';
     const menuClass = this.state.open ? 'fa-times' : 'fa-bars';
 
+    // Gets title of site
     let title = 'Choose a site';
     if( siteState.currentSite && siteState.sites ) {
       const currentSite = getSiteFromSites(siteState.sites, siteState.currentSite);
       title = (currentSite.title) ? currentSite.title : title;
     }
 
+    // What text to display in sites list
+    const viewText = config.application ? 'Preview' : 'View';
+
     return (
       <div className={"sites-list-wrapper" + wrapperClass} >
         {offCanvas && (
           <div className="sites-header clearfix">
+            {(config.siteId && config.mode === 'preview' && siteState.status === SITE_LOADED) && (
+              <a href="#" className="btn btn-primary" onClick={this.setSiteClick.bind(this)}>Use this site</a>
+            )}
             <h3>{title}</h3>
-            <a href="#" onClick={this.openClick.bind(this)}><i className={"fa fa-2x " + menuClass}></i></a>
+            <a className="menu-toggle" href="#" onClick={this.openClick.bind(this)}><i className={"fa fa-2x " + menuClass}></i></a>
           </div>
         )}
         <div className={"sites-list" + openClass}>
@@ -80,7 +94,7 @@ class SiteList extends Component {
               <div key={key} className="list-group-item">
                 <h4 className="list-group-item-heading">{site.title}</h4>
                 <p><a href={site.url} target="_blank"><i className="fa fa-share"></i> {site.url}</a></p>
-                <a href="#" onClick={(event)=>this.viewClick(event, site)} className="btn btn-primary">View</a>
+                <a href="#" onClick={(event)=>this.viewClick(event, site)} className="btn btn-primary">{viewText}</a>
                 {false && (
                   <a href="#" onClick={(event)=>this.editClick(event, site)} className="btn btn-default">Edit</a>
                 )}

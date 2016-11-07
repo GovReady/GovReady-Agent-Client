@@ -352,10 +352,22 @@ export function siteUpdate(data: object): Function {
 export function siteChangeSite(siteId: string): Function {
   return (dispatch: Function) => {
     configChangeSite(siteId);
-    configChangeMode('agent');
-    configCmsPaths();
+    configChangeMode(config.mode ? config.mode : 'standalone');
+    configCmsPaths(config.application);
     dispatch(siteReset());
     hashHistory.push('/');
+  }
+}
+
+
+//
+// Sets the site in the cms
+//
+export function siteSetSite(siteId: string): Function {
+  return (dispatch: Function) => {
+    configChangeSite(siteId);
+    configChangeMode('remote');
+    dispatch(siteModeChange('remote', true, '/'));
   }
 }
 
@@ -482,7 +494,7 @@ export function sitePing(): Function {
 //
 // Changes CMS mode between local / remote
 //
-export function siteModeChange(mode: string, reset: boolean = '', redirect: string = '') {
+export function siteModeChange(mode: string, reset: boolean = false, redirect: string = '') {
   return (dispatch: Function) => {
     dispatch(siteModeChangeStart(mode));
     return dispatch(
@@ -519,8 +531,8 @@ export function siteModeChange(mode: string, reset: boolean = '', redirect: stri
 export function siteAggAll(mode: string, calls: array): Function {
   return (dispatch: Function) => {
     // Set up default call stack if none is passed
-    let calls = calls || ['changeMode', 'stack', 'domain', 'accounts', 'plugins'], 
-        callStack;
+    calls = calls || ['changeMode', 'stack', 'domain', 'accounts', 'plugins'];
+    let callStack;
     // Local mode
     if(mode === 'local') {
       callStack = {
@@ -594,8 +606,10 @@ export function siteAggAll(mode: string, calls: array): Function {
 
     dispatch(siteAggStart());
     const finalCalls = calls.map((call, key) => {
-      return callStack['']
-    }).filter((call) => { return call });
+      return callStack[call]
+    }).filter((call) => { 
+      return call 
+    });
 
     return BPromise.each(finalCalls, (call) => {
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
@@ -613,8 +627,8 @@ export function siteAggAll(mode: string, calls: array): Function {
         dispatch(siteAggFailed(error));
       }
       else {
-        // Aggregate vulnerabilities
-        dispatch(siteVulnerabilityAgg(mode));
+        // Load site
+        dispatch(siteLoaded(mode));
       }
       
     })
@@ -628,25 +642,25 @@ export function siteAggAll(mode: string, calls: array): Function {
 //
 // Triggers vulnerability compilation
 //
-export function siteVulnerabilityAgg(mode: string): Function {
-  return (dispatch: Function) => {
-    dispatch(siteVulnerabilityAggStart());
-    return dispatch(sitePost(config.apiUrl + 'vulnerabilities', false, {}, 'GET')
-    ).then((res) => {
-      // We have an error
-      if(res instanceof Error) {
-        // Dispatch to local mode
-        dispatch(siteVulnerabilityAggFailed(res));
-        return;
-      }
-      // Dispatch post all to get data
-      dispatch(siteLoaded(mode));
-    }).catch((error) => {
-      // Dispatch to local mode
-      dispatch(siteVulnerabilityAggFailed(error));
-    });
-  }
-}
+// export function siteVulnerabilityAgg(mode: string): Function {
+//   return (dispatch: Function) => {
+//     dispatch(siteVulnerabilityAggStart());
+//     return dispatch(sitePost(config.apiUrl + 'vulnerabilities', false, {}, 'GET')
+//     ).then((res) => {
+//       // We have an error
+//       if(res instanceof Error) {
+//         // Dispatch to local mode
+//         dispatch(siteVulnerabilityAggFailed(res));
+//         return;
+//       }
+//       // Dispatch post all to get data
+//       dispatch(siteLoaded(mode));
+//     }).catch((error) => {
+//       // Dispatch to local mode
+//       dispatch(siteVulnerabilityAggFailed(error));
+//     });
+//   }
+// }
 
 // export function siteRefreshData(): Function {
 //   calls = [
@@ -669,7 +683,8 @@ export const actions = {
   sitePing,
   siteModeChange,
   siteAggAll,
-  siteVulnerabilityAgg,
+  // siteVulnerabilityAgg,
+  siteSetSite,
   siteChangeSite
 }
 

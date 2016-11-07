@@ -4,7 +4,7 @@ let config = {};
 // CMS specific
 if(window.govready) {
   config = window.govready;
-  if(config.isWordpress) {
+  if(config.application === 'wordpress') {
     configCmsSettings('wordpress');
     configCmsPaths('wordpress'); 
   }

@@ -11,6 +11,7 @@ class AccountsWidget extends Component {
             <small>super admins</small>
           </h4>
         </div>
+        {this.props.refreshButton}
         {this.props.footer}
       </div>
     );

@@ -1,29 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import { default as config } from 'config';
 import Widget from '../Widget';
 import { Link } from 'react-router';
+import RefreshButton from 'components/RefreshButton';
 import PluginsWidget from './PluginsWidget';
 import PluginsPage from './PluginsPage';
 
 class Plugins extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'plugins',
+      process: (data) => {
+        return {
+          core: ( data.core && data.core.length ) ? data.core.pop() : {},
+          plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
+        }
+      } 
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'plugins',
-        process: this.processData
-      }
+      true
     );
   }
 
-  processData (data) {
-    return {
-      core: ( data.core && data.core.length ) ? data.core.pop() : {},
-      plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
-    }
-  }
-  
   render () {
 
     let { widget, widgetName, display } = this.props;
@@ -77,6 +81,7 @@ class Plugins extends Component {
         <PluginsWidget 
           cms={config.cmsNice}
           pluginText={config.pluginText}
+          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
           updates={updates} 
           coreUpdate={coreUpdate} 
           footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', widgetName, false)} />
@@ -85,7 +90,6 @@ class Plugins extends Component {
   }
 }
 
-Plugins.propTypes = Widget.propTypes();
-Plugins.defaultProps = Widget.defaultProps();
+Plugins.propTypes = Widget.propTypes({});
 
 export default Widget.connect(Plugins);

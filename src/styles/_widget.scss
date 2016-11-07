@@ -28,6 +28,41 @@
   }
 }
 
+// Refresh buttons
+.widget-layout {
+  .panel {
+    position: relative;
+  }
+
+  .widget {
+    position: relative;
+  }
+}
+
+.panel {
+  .refresh-button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    & + .panel-footer {
+      padding-right: 35px;
+    }
+  }
+}
+
+.widget {
+  .refresh-button {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+
+    & + .title {
+      padding-right: 35px;
+    }
+  }
+}
+
 // Teasers / borders
 
 $teaser-padding: 20px;

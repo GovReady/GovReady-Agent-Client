@@ -12,6 +12,15 @@ import SubmissionEditPage from './SubmissionEditPage';
 
 class Submissions extends Component {
 
+  static defaultProps = {
+    widget: {},
+    submitFields: [
+      'measureId',
+      'name',
+      'body'
+    ]
+  }
+
   componentWillMount() {
     if(this.props.measureId && this.props.display === 'list') {
       this.fetchSubmissionsByMeasure(this.props.measureId);
@@ -154,13 +163,6 @@ Submissions.propTypes = {
   measureId: PT.string,
   bodyTemplate: PT.string
 };
-Submissions.defaultProps = Widget.defaultProps({
-  submitFields: [
-    'measureId',
-    'name',
-    'body'
-  ]
-});
 
 // Hooked up to multiple reducers, so dont use stock Widget methods
 

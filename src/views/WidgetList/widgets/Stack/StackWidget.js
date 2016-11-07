@@ -35,9 +35,12 @@ class StackWidget extends Component {
 
   render () {
     return (
-      <div>
-        {this.props.header}
-        {this.systemTable(this.props.systemData, this.props.assessmentState)}
+      <div className='widget stack-widget'>
+        <div>
+          {this.props.refreshButton}
+          {this.props.header}
+          {this.systemTable(this.props.systemData, this.props.assessmentState)}
+        </div>
       </div>
     );
   }

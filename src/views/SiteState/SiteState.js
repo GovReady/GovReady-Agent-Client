@@ -18,13 +18,12 @@ import {
 class SiteState extends Component {
   componentWillMount () {
     let { siteState } = this.props; 
-    // Need to check site availability
-    if(siteState.status === SITE_INIT) {
-      this.props.actions.siteInit(siteState.mode);
-    }
     // We're loaded, so redirect
-    else if (siteState.status === SITE_LOADED) {
+    if (siteState.status === SITE_LOADED) {
       hashHistory.push('/dashboard');
+    }
+    else {
+      this.props.actions.siteInit(siteState.mode);
     }
   }
 

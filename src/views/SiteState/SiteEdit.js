@@ -28,7 +28,7 @@ class SiteEdit extends Component {
       'title': '',
       'url': '',
       'accessible': '',
-      'application': ''
+      'application': config.application ? config.application : ''
     };
   }
 
@@ -66,7 +66,7 @@ class SiteEdit extends Component {
 
   // Deletes a site
   siteDelete(data) {
-    console.log('yolo');
+    console.log('TODO');
   }
 
   render () {
@@ -75,6 +75,8 @@ class SiteEdit extends Component {
     return (
       <SiteEditForm 
         site={site}
+        locked={config.application ? true : false}
+        appDisabled={config.application ? true : false}
         siteSubmit={this.siteSubmit.bind(this)}
         siteDelete={this.siteDelete.bind(this)} />
     );

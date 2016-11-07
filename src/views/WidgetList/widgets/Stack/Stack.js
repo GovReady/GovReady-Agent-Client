@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
 import { default as config } from 'config';
 import Widget from '../Widget';
+import RefreshButton from 'components/RefreshButton';
 import StackWidget from './StackWidget';
 // import StackPage from './StackPage';
 
 class Stack extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'stack',
+      process: (data) => {
+        return data;
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'stack',
-        process: this.processData
-      }
+      true
     );
-  }
-
-  processData (data) {
-    return data;
   }
 
   assessmentState (scan) {
@@ -57,6 +61,7 @@ class Stack extends Component {
       return (
         <StackWidget 
           header={Widget.titleSection('System', false, 'h3')} 
+          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
           systemData={widget.data} 
           assessmentState={this.assessmentStateMarkup(widget.data.scan)} />
       )
@@ -65,6 +70,5 @@ class Stack extends Component {
 }
 
 Stack.propTypes = Widget.propTypes();
-Stack.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(Stack);

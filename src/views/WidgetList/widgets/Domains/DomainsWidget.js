@@ -20,6 +20,7 @@ class DomainsWidget extends Component {
             )}
           </h4>
         </div>
+        {this.props.refreshButton}
         {footer}
       </div>
     );

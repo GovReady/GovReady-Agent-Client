@@ -15,7 +15,7 @@ class PluginsPage extends Component {
         return '';
       }
       // Has security vulnerabilities
-      if(core.vulnerabilities.length) {
+      if(core.vulnerabilities && core.vulnerabilities.length) {
         return (
           <Panel className='panel panel-danger' header={cms + ' Core security update!'} eventKey="0">
             {core.vulnerabilities.map((vulnerability, index) => (

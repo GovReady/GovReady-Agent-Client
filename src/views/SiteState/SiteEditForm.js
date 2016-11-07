@@ -23,32 +23,34 @@ class SiteEditPage extends Component {
       url,
       accessible,
       application
-    }, handleSubmit, siteSubmit, siteDelete, submitting, site } = this.props;
+    }, handleSubmit, siteSubmit, siteDelete, submitting, site, locked, appDisabled } = this.props;
     return (
       <form onSubmit={handleSubmit(siteSubmit)}>
         <fieldset disabled={submitting}>
           <div className="row">
-            <div className="col-md-9">
-              <div className="form-group">
-                <div><label>What type of site?</label></div>
-                <div className="radio">
-                  <label>
-                    <input type="radio" {...type} value="drupal" checked={!type.value || type.value === 'drupal'}/> Drupal
-                  </label>
-                </div>
-                <div className="radio">
-                  <label>
-                    <input type="radio" {...type} value="wordpress" checked={type.value === 'wordpress'}/> WordPress
-                  </label>
-                </div>
-                <div className="radio">
-                  <label>
-                    <input type="radio" {...type} value="other" checked={type.value === 'other'}/> Other
-                  </label>
+            {!locked && (
+              <div className="col-md-9">
+                <div className="form-group">
+                  <div><label>What type of site?</label></div>
+                  <div className="radio">
+                    <label>
+                      <input type="radio" {...type} value="drupal" checked={!type.value || type.value === 'drupal'}/> Drupal
+                    </label>
+                  </div>
+                  <div className="radio">
+                    <label>
+                      <input type="radio" {...type} value="wordpress" checked={type.value === 'wordpress'}/> WordPress
+                    </label>
+                  </div>
+                  <div className="radio">
+                    <label>
+                      <input type="radio" {...type} value="other" checked={type.value === 'other'}/> Other
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-            {(!type.value || type.value === 'drupal') && (
+            )}
+            {(!locked && (!type.value || type.value === 'drupal')) && (
               <div className="col-md-9">
                 <div className="well">
                   <h3 className="margin-top-none">Drupal</h3>
@@ -58,7 +60,7 @@ class SiteEditPage extends Component {
                 </div>
               </div>
             )}
-            {type.value === 'wordpress' && (
+            {(!locked && type.value === 'wordpress') && (
               <div className="col-md-9">
                 <div className="well">
                   <h3 className="margin-top-none">WordPress</h3>
@@ -68,7 +70,7 @@ class SiteEditPage extends Component {
                 </div>
               </div>
             )}
-            {type.value === 'other' && (
+            {(locked || type.value === 'other') && (
               <div className="col-md-9">
                 <div className="well">
                   <div className="form-group">
@@ -92,7 +94,12 @@ class SiteEditPage extends Component {
                   <div className="form-group">
                     <div>
                       <label className="control-label">CMS / Application</label>
-                      <PureInput type="text" field={application}/>
+                      {appDisabled && (
+                        <PureInput disabled="disabled" type="text" field={application}/>
+                      )}
+                      {!appDisabled && (
+                        <PureInput type="text" field={application}/>
+                      )}
                       <span className="help-block">This information allows GovReady to determine what technology stacks are using the service.</span>
                     </div>
                   </div>
@@ -101,7 +108,7 @@ class SiteEditPage extends Component {
             )}
           </div>
         </fieldset>
-        {type.value === 'other' && (
+        {(locked || type.value === 'other') && (
           <div className="clearfix">
             <div className="pull-left">
               <button className="btn btn-primary" type="submit" disabled={submitting}>
@@ -138,6 +145,8 @@ class SiteEditPage extends Component {
 SiteEditPage.propTypes = {
   ...propTypes,
   site: PT.object.isRequired,
+  locked: PT.bool.isRequired,
+  appDisabled: PT.bool.isRequired,
   siteSubmit: PT.func.isRequired,
   siteDelete: PT.func.isRequired
 };

@@ -61,6 +61,7 @@ class InactiveAccountsWidget extends Component {
     return (
       <div className='widget account-widget'>
         <div>
+          {this.props.refreshButton}
           {this.props.header}
           {this.props.subHeader}
           {this.listUsersTable(this.props.accounts)}

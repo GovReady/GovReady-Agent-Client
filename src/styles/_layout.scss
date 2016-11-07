@@ -15,17 +15,25 @@
   margin-bottom: 20px;
   position: relative;
 
+  a {
+    margin-top: -19px;
+    top: 50%;
+    position: absolute;
+  }
+
   h3 {
     margin-top: 20px;
     margin-bottom: 20px;
     padding-right: 32px;
   }
 
-  a {
+  a + h3 {
+    padding-left: 112px;
+  }
+
+  .menu-toggle {
     margin-top: -16px;
-    top: 50%;
     right: 0;
-    position: absolute;
   }
 }
 

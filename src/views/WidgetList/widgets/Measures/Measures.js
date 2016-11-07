@@ -16,6 +16,16 @@ import { freqOptions } from './Measure/MeasureEditPage';
 
 class Measures extends Component {
 
+  static defaultProps = {
+    widget: {},
+    submitFields: [
+      'title',
+      'body',
+      'frequency',
+      'due'
+    ]
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
@@ -232,14 +242,6 @@ class Measures extends Component {
 Measures.propTypes = Widget.propTypes({
   individual: PT.number,
   isNew: PT.bool
-});
-Measures.defaultProps = Widget.defaultProps({
-  submitFields: [
-    'title',
-    'body',
-    'frequency',
-    'due'
-  ]
 });
 
 // Hooked up to multiple reducers, so dont use stock Widget methods

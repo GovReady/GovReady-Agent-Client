@@ -5,20 +5,23 @@ import RecommendedWidget from './RecommendedWidget';
 
 class Recommended extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'recommended',
+      process: (data) => {
+        return {
+          plugins: data
+        } 
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'recommended',
-        process: this.processData
-      }
+      true
     );
-  }
-
-  processData (data) {
-    return {
-      plugins: data
-    }
   }
 
   assessmentState (scan) {
@@ -67,6 +70,5 @@ class Recommended extends Component {
 }
 
 Recommended.propTypes = Widget.propTypes();
-Recommended.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(Recommended);

@@ -10,21 +10,24 @@ import CmsVulnerabilitiesWidget from './CmsVulnerabilitiesWidget';
 
 class CmsVulnerabilities extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'vulnerabilities',
+      process: (data) => {
+        return {
+          core: ( data.core && data.core.length ) ? data.core.pop() : {},
+          plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
+        }
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'vulnerabilities',
-        process: this.processData
-      }
+      true
     );
-  }
-
-  processData (data) {
-    return {
-      core: ( data.core && data.core.length ) ? data.core.pop() : {},
-      plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
-    }
   }
 
   getPluginDataWithVuln(data) {
@@ -70,7 +73,6 @@ class CmsVulnerabilities extends Component {
 }
 
 CmsVulnerabilities.propTypes = Widget.propTypes();
-CmsVulnerabilities.defaultProps = Widget.defaultProps();
 
 // export default Widget.connect(CmsVulnerabilities);
 

@@ -4,18 +4,31 @@ import Widget from '../Widget';
 
 class LogsWidget extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'logs',
+      process: (data) => {
+        return data;
+      }
+    }
+  }
+
+  componentWillMount () {
+    Widget.registerWidget(
+      this, 
+      true
+    );
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
       {
-        url: config.apiUrl + 'logs',
+        url: 'logs',
         process: this.processData
       }
     );
-  }
-
-  processData (data) {
-    return data;
   }
 
   printLogsList (widget, count) {
@@ -65,6 +78,5 @@ class LogsWidget extends Component {
 LogsWidget.propTypes = Widget.propTypes({
   logType: PT.string.isRequired
 });
-LogsWidget.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(LogsWidget);

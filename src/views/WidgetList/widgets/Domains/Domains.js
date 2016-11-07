@@ -5,6 +5,7 @@ import { default as config } from 'config';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as siteActions } from 'redux/modules/siteReducer';
 import { hashHistory } from 'react-router';
+import RefreshButton from 'components/RefreshButton';
 import Widget from '../Widget';
 import DomainsWidget from './DomainsWidget';
 import DomainsPage from './DomainsPage';
@@ -12,18 +13,21 @@ import DomainsLocalMode from './DomainsLocalMode';
 
 class Domains extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'domain',
+      process: (data) => {
+        return data;
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'domain',
-        process: this.processData
-      }
+      true
     );
-  }
-
-  processData (data) {
-    return data;
   }
 
   nextDomainsRenew (widget) {
@@ -115,6 +119,7 @@ class Domains extends Component {
         <DomainsWidget 
           nextExpires={this.nextDomainsRenew(widget)} 
           ssl={ssl}
+          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
           footer={Widget.panelFooter('Domains + SSL', this.props.widgetName)} />
       )
     }
@@ -122,7 +127,6 @@ class Domains extends Component {
 }
 
 Domains.propTypes = Widget.propTypes();
-Domains.defaultProps = Widget.defaultProps();
 
 const mapStateToProps = (state, ownProps) => {
   return {

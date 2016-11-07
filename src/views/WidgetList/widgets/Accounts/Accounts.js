@@ -2,43 +2,47 @@ import React, { Component } from 'react';
 import config from 'config/';
 import Widget from '../Widget';
 import AccountsWidget from './AccountsWidget';
+import RefreshButton from 'components/RefreshButton';
 import InactiveAccountsWidget from './InactiveAccountsWidget';
 import { Link } from 'react-router';
 
 class Accounts extends Component {
 
+  static defaultProps = {
+    widget: {},
+    widgetQuery: {
+      url: 'accounts',
+      process: (data) => {
+        return {
+          accounts: data.map((user) => {
+            if( !user.lastLogin ) {
+              return user;
+            }
+            let loginInt = parseInt(user.lastLogin);    
+            // string   
+            if(isNaN(loginInt)) {   
+              user.lastLogin = false;
+              return user; 
+            }   
+            // php timestamp convert
+            let lastLogin = window.moment(loginInt*1000);
+            if(!lastLogin || !lastLogin._isAMomentObject) {
+              user.lastLogin = false;
+              return user; 
+            }
+            user.lastLogin = lastLogin.format('MMMM Do YYYY, h:mm:ss a');
+            return user;
+          })
+        };
+      }
+    }
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
-      {
-        url: config.apiUrl + 'accounts',
-        process: this.processData
-      }
+      true
     );
-  }
-
-  processData (data) {
-    return {
-      accounts: data.map((user) => {
-        if( !user.lastLogin ) {
-          return user;
-        }
-        let loginInt = parseInt(user.lastLogin);    
-        // string   
-        if(isNaN(loginInt)) {   
-          user.lastLogin = false;
-          return user; 
-        }   
-        // php timestamp convert
-        let lastLogin = window.moment(loginInt*1000);
-        if(!lastLogin || !lastLogin._isAMomentObject) {
-          user.lastLogin = false;
-          return user; 
-        }
-        user.lastLogin = lastLogin.format('MMMM Do YYYY, h:mm:ss a');
-        return user;
-      })
-    };
   }
 
   // Returns accounts filtered by if they have lastLogin or not
@@ -49,7 +53,6 @@ class Accounts extends Component {
       }      
       const lastLogin = window.moment(user.lastLogin, 'MMMM Do YYYY, h:mm:ss a');
       const days = window.moment().diff(lastLogin, 'days');
-      console.log(days);
       return days && days % 1 === 0 && days > 30 && days < 10000;
     });
   }
@@ -98,6 +101,7 @@ class Accounts extends Component {
           <InactiveAccountsWidget
             header={Widget.titleSection('Inactive Accounts', userUrl, 'h3', true)} 
             subHeader={subHeader()}
+            refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
             accounts={this.getInactiveAccounts()} />
         )
       }
@@ -128,6 +132,7 @@ class Accounts extends Component {
           <AccountsWidget
             admins={admins}
             totalAccounts={totalAccounts} 
+            refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
             footer={Widget.panelFooter(totalAccounts + ' total accounts', userUrl, true)} />
         )
       }
@@ -136,6 +141,5 @@ class Accounts extends Component {
 }
 
 Accounts.propTypes = Widget.propTypes();
-Accounts.defaultProps = Widget.defaultProps();
 
 export default Widget.connect(Accounts);

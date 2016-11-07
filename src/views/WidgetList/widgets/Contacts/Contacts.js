@@ -14,6 +14,17 @@ import ContactsEditPage from './ContactsEditPage';
 
 class Contacts extends Component {
 
+  static defaultProps = {
+    widget: {},
+    submitFields: [
+      'name',
+      'email',
+      'responsibility',
+      'phone',
+      'lastConfirmed'
+    ]
+  }
+
   componentWillMount () {
     Widget.registerWidget(
       this, 
@@ -110,18 +121,8 @@ class Contacts extends Component {
 Contacts.propTypes = Widget.propTypes({
   submitFields: PT.array
 });
-Contacts.defaultProps = Widget.defaultProps({
-  submitFields: [
-    'name',
-    'email',
-    'responsibility',
-    'phone',
-    'lastConfirmed'
-  ]
-});
 
 // Hooked up to multiple reducers, so dont use stock Widget methods
-
 function mapStateToProps (state, ownProps) {
   return {
     widget: state.widgetState.widgets[ownProps.widgetName],

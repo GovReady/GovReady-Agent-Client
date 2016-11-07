@@ -7,13 +7,6 @@ import { default as config } from 'config';
 import { actions } from '../../redux/modules/siteReducer';
 
 class WidgetsListPage extends Component {
-
-  refreshData (e) {
-    e.preventDefault();
-    this.props.actions.sitePingCheck();
-    console.log('refreshing data');
-  }
-  
   render () {
 
     // We aren't loaded
@@ -31,7 +24,6 @@ class WidgetsListPage extends Component {
       params.display = 'widget';
       return React.createElement(widgets[name].component, params);
     }
-    //<div className="refresh-data"><Link to="/" onClick={this.refreshData.bind(this)}><i className="fa fa-refresh"></i> Refresh Data</Link></div>
 
     if(config.mode === 'standalone') {
       return(

@@ -30,9 +30,11 @@ function getCookie(cname) {
 // Add the settings
 window.govready = {
   mode: 'agent', // Embedded in GovReady Q, is only Manual Measures, etc
-  //mode: 'standalone' : Embeded in GovReady Q, but has a agent (WP/Drupal)
-  //mode: 'local' : Embeded in GovReady Q, but has a agent (WP/Drupal)
-  //mode: 'remote' : Embeded in GovReady Q, but has a agent (WP/Drupal)
+  //mode: 'standalone', // Embeded in GovReady Q, but has a agent (WP/Drupal)
+  //mode: 'preview', // Installed in CMS, but no site has been chosen yet (WP/Drupal)
+  //mode: 'local', // Installed in CMS, triggers calls to API, NOT publically accessible (WP/Drupal)
+  //mode: 'remote', // Installed in CMS, triggers calls to API, IS publically accessible domain (WP/Drupal)
+  //application: 'drupal', // Installed in CMS, allows preview mode to work before site selection
   connectUrl: 'https://plugin.govready.com/v1.0', // If this is set, then we need to talk to the GovReady API directly.
   domain: 'govready.auth0.com',
   client_id: 'HbYZO5QXKfgNshjKlhZGizskiaJH9kGH',

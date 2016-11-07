@@ -29,7 +29,6 @@ class CmsVulnerabilitiesWidget extends Component {
 
   render () {
     const indexMod = this.coreVulnerabilty(this.props.core) ? 1 : 0;
-    console.log(this.props);
     return (
       <div>
         {this.props.header}

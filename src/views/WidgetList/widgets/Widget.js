@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { hashHistory, RouterContext, Link } from 'react-router';
 import { push } from 'react-router-redux';
+import { default as config } from 'config';
 import { actions } from 'redux/modules/widgetReducer';
 import objectAssign from 'object-assign';
 
@@ -15,7 +16,11 @@ class Widget {
     }
     // Do we need to get payload?
     if(payload && (!widget.props.widget || widget.props.widget.status !== 'loaded')) {
-      widget.props.actions.widgetLoadData(widget.props.widgetName, payload.url, payload.process);
+      widget.props.actions.widgetLoadData(
+        widget.props.widgetName,
+        config.apiUrl + widget.props.widgetQuery.url, 
+        widget.props.widgetQuery.process
+      );
     }
   }
 
@@ -24,16 +29,11 @@ class Widget {
       widgetType: PT.string,
       display: PT.string.isRequired,
       widget: PT.object.isRequired,
+      widgetQuery: PT.object,
       widgetName: PT.string.isRequired,
       actions: PT.object.isRequired
     });
   }
-
-  static defaultProps(props = {}) {
-    props.widget = {};
-    return props;
-  }
-
 
   static mapStateToProps (state, ownProps) {
     return {
@@ -116,7 +116,7 @@ class Widget {
       else if(pageUrl) {
         return (
           <div>
-            <a className='title-text' href={pageUrl}>
+            <a className='title-text' href={pageUrl} target="_blank">
               {text}
             </a>
           </div>
@@ -142,9 +142,12 @@ class Widget {
     );
   }
 
-  static panelFooter (text, pageUrl, absolute = false) {
+  static panelFooter (text, pageUrl, absolute = false, refresh = false, widgetName) {
     return (
       <div className='panel-footer'>
+        {refresh && (
+          <RefreshButton refreshFunc={refresh} widgetName={widgetName} />
+        )}
         {pageUrl && !absolute &&
           <Link className='title-text' to={`/dashboard/${pageUrl}`}>
             {text} <i className='fa fa-chevron-right'></i>

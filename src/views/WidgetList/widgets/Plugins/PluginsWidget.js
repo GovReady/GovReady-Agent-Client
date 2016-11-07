@@ -26,6 +26,7 @@ class PluginsWidget extends Component {
             {coreUpdate()}
           </h4>
         </div>
+        {this.props.refreshButton}
         {this.props.footer}
       </div>
     );
