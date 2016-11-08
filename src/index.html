@@ -51,11 +51,19 @@ function getCookie(cname) {
   return "";
 }
 
+// Deletes a cookie
+function deleteCookie(cname) {
+  var cvalue = getCookie( cname );
+  if( cvalue ) {
+    document.cookie = cname + "=" + cvalue + ";expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/";
+  }
+}
+
 
 // Add the settings
 window.govready = {
-  mode: 'agent', // Embedded in GovReady Q, is only Manual Measures, etc
-  //mode: 'standalone', // Embeded in GovReady Q, but has a agent (WP/Drupal)
+  // mode: 'agent', // Embedded in GovReady Q, is only Manual Measures, etc
+  mode: 'standalone', // Embeded in GovReady Q, but has a agent (GovreadyQ)
   //mode: 'preview', // Installed in CMS, but no site has been chosen yet (WP/Drupal)
   //mode: 'local', // Installed in CMS, triggers calls to API, NOT publically accessible (WP/Drupal)
   //mode: 'remote', // Installed in CMS, triggers calls to API, IS publically accessible domain (WP/Drupal)

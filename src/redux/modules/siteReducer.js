@@ -690,6 +690,17 @@ export function siteAggAll(mode: string, calls: array): Function {
 //     },
 // }
 
+//
+// Grabs other user sites
+//
+export function siteLogOut(data: object): Function {
+  return (dispatch: Function) => {
+    deleteCookie('govreadyDashboardToken');
+    window.location = config.authUrl;
+  }
+}
+
+
 export const actions = {
   siteReset,
   siteInit,
@@ -700,7 +711,8 @@ export const actions = {
   siteModeChange,
   siteAggAll,
   siteSetSite,
-  siteChangeSite
+  siteChangeSite,
+  siteLogOut
 }
 
 // ------------------------------------

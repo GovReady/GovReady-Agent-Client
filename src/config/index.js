@@ -56,6 +56,9 @@ export function configCmsSettings(cms, url = '') {
 
 // Switches CMS endpoints
 export function configCmsPaths(cms) {
+  // To log out
+  config.authUrl = 'https://govready.auth0.com/v2/logout?returnTo=https%3A%2F%2Fplugin.govready.com';
+  // WP
   if(cms === 'wordpress') {
     let url = '/wp-admin/admin-ajax.php?';
     if(process.env.NODE_ENV === 'development') {
@@ -65,6 +68,7 @@ export function configCmsPaths(cms) {
     config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
     config.apiTrigger = url + 'action=govready_v1_trigger';
   }
+  // Drupal
   else if(cms === 'drupal') {
     let url = '/govready/api?';
     config.apiTrigger = '/govready/trigger?endpoint=/sites/' + config.siteId + '/';
@@ -75,6 +79,7 @@ export function configCmsPaths(cms) {
     config.apiUrl = url + 'action=govready_proxy&endpoint=/sites/' + config.siteId + '/';
     config.apiUrlNoSite = url + 'action=govready_proxy&endpoint=';
   }
+  // Agent + Standalone
   else {
     let url = 'https://plugin.govready.com/v1.0';
     config.apiUrl = url + '/sites/' + config.siteId + '/';

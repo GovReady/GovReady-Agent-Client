@@ -26,12 +26,20 @@ class SiteList extends Component {
     });
   }
 
+  // Logs out of proudcity
+  logOutClick(event) {
+    event.preventDefault();
+    this.props.actions.siteLogOut();
+  }
+
+  // Edit a site // @ TODO currently hidden
   editClick(event, site) {
     event.preventDefault();
     this.props.actions.siteCreateForm(site && site.siteId ? site.siteId : '');
     this.openClick();
   }
 
+  // View a site
   viewClick(event, site) {
     event.preventDefault();
     this.props.widgetActions.widgetClearData();
@@ -39,6 +47,7 @@ class SiteList extends Component {
     this.openClick();
   }
 
+  // On CMS, sets the siteId in the DB
   setSiteClick(event) {
     event.preventDefault();
     this.props.widgetActions.widgetClearData();
@@ -79,7 +88,10 @@ class SiteList extends Component {
         {offCanvas && (
           <div className="sites-header clearfix">
             {(config.siteId && config.mode === 'preview' && siteState.status === SITE_LOADED) && (
-              <a href="#" className="btn btn-primary" onClick={this.setSiteClick.bind(this)}>Use this site</a>
+              <a href="#" className="site-set btn btn-primary" onClick={this.setSiteClick.bind(this)}>Use this site</a>
+            )}
+            {config.mode === 'standalone' && (
+              <a className="log-out btn" href="#" onClick={this.logOutClick.bind(this)}>Log out</a>
             )}
             <h3>{title}</h3>
             <a className="menu-toggle" href="#" onClick={this.openClick.bind(this)}><i className={"fa fa-2x " + menuClass}></i></a>

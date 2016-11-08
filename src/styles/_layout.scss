@@ -27,8 +27,16 @@
     padding-right: 32px;
   }
 
-  a + h3 {
+  .site-set + h3 {
     padding-left: 112px;
+  }
+
+  .log-out + h3 {
+    padding-right: 60px;
+  }
+
+  .log-out {
+    right: 25px;
   }
 
   .menu-toggle {
