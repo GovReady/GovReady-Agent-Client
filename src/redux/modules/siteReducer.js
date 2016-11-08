@@ -286,7 +286,6 @@ export function siteSites(): Function {
     // Failed to get all sites, load anyways
     const failed = (error) => {
       dispatch(siteSitesFailed(error));
-      // dispatch(sitePre(config.mode));
     }
     dispatch(siteSitesStart());
     return dispatch(sitePost('/sites', true, {}, 'GET')
@@ -295,9 +294,17 @@ export function siteSites(): Function {
       if(res instanceof Error) {
         return failed(res);
       }
-      dispatch(siteSitesSuccess(res));
+      let sites = res;
+      // If we have active CMS (wp or drupal)
+      // Filter list by like types
+      if(config.mode === 'preview' && config.application) {
+        sites = sites.filter((site) => {
+          return config.application == site.application;
+        });
+      }
+      dispatch(siteSitesSuccess(sites));
       // no sites so go to create
-      if(!res || !res.length) {
+      if(!sites || !sites.length) {
         return dispatch(siteCreateForm());
       }
       // no siteId go to select
@@ -306,7 +313,7 @@ export function siteSites(): Function {
       }
       // Sites loaded, load page
       else {
-        dispatch(sitePre(config.mode));
+        dispatch(sitePre());
       }
     }).catch((error) => {
       failed(error);
@@ -339,7 +346,14 @@ export function siteUpdate(data: object): Function {
       }
       // Sites loaded, load page
       dispatch(siteUpdateSuccess(res._id));
-      dispatch(siteChangeSite(res._id));
+      // We're a CMS, so actually set the site
+      if(config.mode) {// === 'preview') {
+        dispatch(siteSetSite(res._id));
+      }
+      // Just go change the active site
+      else {
+        dispatch(siteChangeSite(res._id));
+      }
     }).catch((error) => {
       failed(error);
     });
@@ -420,7 +434,7 @@ export function sitePre( ): Function {
       // Dispatch Current site
       dispatch(sitePreSuccess(res._id));
       // Load
-      if(allSet || forceDispatch) {
+      if(allSet) {
         dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
       }
       // Need to ping / compile
@@ -433,40 +447,40 @@ export function sitePre( ): Function {
   }
 }
 
-//
-// Attaches site user 
-// @todo make work with proper errors... moving to ping no matter what
-// since the enpoint returns 500 if user is already created
-//
-export function siteUser(): Function {
-  return (dispatch: Function) => {
-    dispatch(siteUserStart());
-    return dispatch(sitePost('/user-site/' + config.siteId, true, {}, 'POST')
-    ).then((res) => {
-      // @TODO get better response from user
-      // We have an error
-      // if(res instanceof Error) {
-      //   // Dispatch to local mode
-      //   dispatch(sitePing());
-      //   dispatch(siteUserFailed(res));
-      //   return;
-      // }
-      dispatch(siteUserFailed(res));
-      // Catch no-agg modes
-      if(config.mode === 'agent' || config.mode === 'standalone') {
-        dispatch(siteSites(config.mode));
-      }
-      // Dispatch post all to get data
-      else {
-        dispatch(sitePing());
-      }
-    }).catch((error) => {
-      // Dispatch to local mode
-      dispatch(siteUserFailed(error));
-      dispatch(sitePing());
-    });
-  }
-}
+// //
+// // Attaches site user 
+// // @todo make work with proper errors... moving to ping no matter what
+// // since the enpoint returns 500 if user is already created
+// //
+// export function siteUser(): Function {
+//   return (dispatch: Function) => {
+//     dispatch(siteUserStart());
+//     return dispatch(sitePost('/user-site/' + config.siteId, true, {}, 'POST')
+//     ).then((res) => {
+//       // @TODO get better response from user
+//       // We have an error
+//       // if(res instanceof Error) {
+//       //   // Dispatch to local mode
+//       //   dispatch(sitePing());
+//       //   dispatch(siteUserFailed(res));
+//       //   return;
+//       // }
+//       dispatch(siteUserFailed(res));
+//       // Catch no-agg modes
+//       if(config.mode === 'agent' || config.mode === 'standalone') {
+//         dispatch(siteSites(config.mode));
+//       }
+//       // Dispatch post all to get data
+//       else {
+//         dispatch(sitePing());
+//       }
+//     }).catch((error) => {
+//       // Dispatch to local mode
+//       dispatch(siteUserFailed(error));
+//       dispatch(sitePing());
+//     });
+//   }
+// }
 
 //
 // Attempts to have exteral server ping this one
@@ -510,6 +524,8 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
         dispatch(siteModeChangeFailed(mode, res));
         return;
       }
+      // Call config change
+      configChangeMode(mode);
       // Dispatch post all to get data
       dispatch(siteModeChangeSuccess(mode));
       if(reset) {
@@ -683,7 +699,6 @@ export const actions = {
   sitePing,
   siteModeChange,
   siteAggAll,
-  // siteVulnerabilityAgg,
   siteSetSite,
   siteChangeSite
 }

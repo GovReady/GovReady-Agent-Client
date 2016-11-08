@@ -9,6 +9,7 @@ export const fields = [
   'title',
   'url',
   'accessible',
+  'otherApplication',
   'application'
 ];
 
@@ -22,6 +23,7 @@ class SiteEditPage extends Component {
       title,
       url,
       accessible,
+      otherApplication,
       application
     }, handleSubmit, siteSubmit, siteDelete, submitting, site, locked, appDisabled } = this.props;
     return (
@@ -92,16 +94,19 @@ class SiteEditPage extends Component {
                     </div>
                   </div>
                   <div className="form-group">
-                    <div>
-                      <label className="control-label">CMS / Application</label>
-                      {appDisabled && (
+                    {appDisabled && (
+                      <div>
+                        <label className="control-label">CMS</label>
                         <PureInput disabled="disabled" type="text" field={application}/>
-                      )}
-                      {!appDisabled && (
-                        <PureInput type="text" field={application}/>
-                      )}
-                      <span className="help-block">This information allows GovReady to determine what technology stacks are using the service.</span>
-                    </div>
+                      </div>
+                    )}
+                    {!appDisabled && (
+                      <div>
+                        <label className="control-label">CMS / Application</label>
+                        <PureInput type="text" field={otherApplication}/>
+                        <span className="help-block">This information allows GovReady to determine what technology stacks are using the service.</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

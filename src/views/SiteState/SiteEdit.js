@@ -28,6 +28,7 @@ class SiteEdit extends Component {
       'title': '',
       'url': '',
       'accessible': '',
+      'otherApplication': '',
       'application': config.application ? config.application : ''
     };
   }
@@ -59,7 +60,7 @@ class SiteEdit extends Component {
       } 
       // New item
       else {
-        this.props.actions.siteUpdate(assignProps({}, data));
+        this.props.actions.siteUpdate(assignProps({}, data)).then();
       }
     }
   }
