@@ -7,7 +7,7 @@
 
   .title {
     h2,h3 {
-      a {
+      a:not(.btn) {
         color: #317eac;
       }
     }

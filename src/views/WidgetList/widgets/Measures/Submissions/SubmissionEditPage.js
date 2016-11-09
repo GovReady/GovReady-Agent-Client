@@ -78,7 +78,7 @@ SubmissionEditPage.propTypes = {
   header: PT.object,
   submission: PT.object.isRequired,
   submissionSubmit: PT.func.isRequired,
-  backLink: PT.object.isRequired
+  backLink: PT.object
 };
 
 export default reduxForm({

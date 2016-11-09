@@ -132,8 +132,7 @@ class Submissions extends Component {
       return (
         <SubmissionEditPage
           submission={submission}
-          submissionSubmit={this.handleSubmit.bind(this)}
-          backLink="" />
+          submissionSubmit={this.handleSubmit.bind(this)} />
       )
     }
     // if(display === 'page') {
