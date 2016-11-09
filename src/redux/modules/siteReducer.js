@@ -328,6 +328,7 @@ export function siteChangeSite(siteId: string): Function {
 export function siteSetSite(siteId: string): Function {
   return (dispatch: Function) => {
     configChangeSite(siteId);
+    configChangeMode('remote');
     configCmsPaths(config.application);
     dispatch(siteModeChange('remote', true, '/'));
   }
@@ -412,7 +413,7 @@ export function sitePing(): Function {
     return dispatch(sitePost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
     ).then((res) => {
       // We have an error
-      if(res instanceof Error) {
+      if(res instanceof Error || res.error) {
         // Dispatch to local mode
         failed(res);
         return;
