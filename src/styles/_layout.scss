@@ -85,8 +85,17 @@
   }
 }
 
-.well.well-faint {
+.gov-footer.well-faint {
   background: #f9f9f9;
   border-color: #f2f2f2;
   box-shadow: inset 0 1px 1px rgba(0,0,0,.01);
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .govready-container {
+    .view-container {
+      min-height: 700px;
+    }
+  }
 }

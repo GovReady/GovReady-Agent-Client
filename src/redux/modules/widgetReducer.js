@@ -11,8 +11,6 @@ export const WIDGET_CLEAR_DATA = 'WIDGET_CLEAR_DATA';
 export const WIDGET_LOADING = 'WIDGET_LOADING';
 export const WIDGET_LOADED = 'WIDGET_LOADED';
 export const WIDGET_LOAD_FAILED = 'WIDGET_LOAD_FAILED';
-export const WIDGET_POSTING = 'WIDGET_POSTING';
-export const WIDGET_POST_FAILED = 'WIDGET_POST_FAILED';
 
 // ------------------------------------
 // Actions
@@ -42,16 +40,6 @@ export function widgetLoadFailed (widgetName: string, error: object): Action {
   return { type: WIDGET_LOAD_FAILED, widgetName: widgetName, error: error };
 }
 
-// Fired when individual widget fetching data
-export function widgetPosting (widgetName: string): Action {
-  return { type: WIDGET_POSTING, widgetName: widgetName };
-}
-
-// Fired when individual widget fetching data
-export function widgetPostFailed (widgetName: string, error: object): Action {
-  return { type: WIDGET_POST_FAILED, widgetName: widgetName, error: error };
-}
-
 // Fired when widget should get data
 export function widgetLoadData (widgetName: string, url: string, processData: Function): Function {
   return (dispatch: Function) => {
@@ -59,18 +47,8 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
     dispatch(widgetLoading(widgetName));
     // Add API settings to call
     url = config.apiUrl + url;
-    // Are we in no-agg direct communication mode?
-    let requestMethod = 'POST';
-    if(config.mode === 'agent' || config.mode === 'standalone') {
-      requestMethod = 'GET';
-    }
-    else {
-      url += '&method=GET';
-    }
     // Load data
-    return fetch(url, apiHelper.requestParams(requestMethod)).then((response: object) => {
-      return apiHelper.responseCheck(response);
-    }).then((json: object) => {
+    return apiHelper.fetch(url, 'GET').then((json: object) => {
       const error = apiHelper.jsonCheck(json);
       if(error) {
         dispatch(widgetLoadFailed(widgetName, json));
@@ -86,46 +64,13 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
   };
 }
 
-// Fired when widget should get data
-export function widgetPostData (widgetName: string, url: string, method: string = 'POST', data: object): Function {
-  return (dispatch: Function) => {
-    // Call ;posting action
-    dispatch(widgetPosting(widgetName));
-    // Load data
-    return fetch(url + '&method=' + method, apiHelper.requestParams('POST', data)).then((response: object) => {
-      return apiHelper.responseCheck(response);
-    }).then((json: object) => {
-      const error = apiHelper.jsonCheck(json);
-      if(error) {
-        dispatch(widgetPostFailed(widgetName, json));
-      }
-      else {
-        // Call loaded action
-        // dispatch(widgetLoaded(widgetName, null));
-      }
-    }).catch(function (error) {
-      dispatch(widgetPostFailed(widgetName, error));
-    });
-  };
-}
-
-export function widgetPostAllData(widgetName: string, calls: Array): Function {
-  return (dispatch: Function) => Promise.all(calls.map((call) => {
-    return dispatch(widgetPostData(widgetName, call.url, call.method, call.data));
-  }));
-}
-
 export const actions = {
   widgetImported,
   widgetLoading,
   widgetLoaded,
   widgetClearData,
   widgetLoadData,
-  widgetLoadFailed,
-  widgetPosting,
-  widgetPostData,
-  widgetPostAllData,
-  widgetPostFailed
+  widgetLoadFailed
 };
 
 // ------------------------------------
@@ -177,21 +122,7 @@ const ACTION_HANDLERS = {
       'error': action.error
     });
     return assignWidgetState(state, action.widgetName, widget);
-  },
-  [WIDGET_POSTING]: (state: object, action: {widgetName: string, data: object}): object => {
-    let widget = objectAssign({}, state.widgets[action.widgetName], {
-      'status': 'posting'
-    });
-    return assignWidgetState(state, action.widgetName, widget);
-  },
-  [WIDGET_POST_FAILED]: (state: object, action: {widgetName: string, error: object}): object => {
-    // @TODO handle this
-    let widget = objectAssign({}, state.widgets[action.widgetName], {
-      'status': 'post_failed',
-      'error': action.error
-    });
-    return assignWidgetState(state, action.widgetName, widget);
-  },
+  }
 };
 
 // ------------------------------------

@@ -3,6 +3,20 @@ import {default as config, configUpdateNonce} from 'config';
 
 const apiHelper = {
 
+  fetch: (url, method, data = {}) => {
+    // Are we in no-agg direct communication mode?
+    let requestMethod = 'POST';
+    if(config.mode === 'agent' || config.mode === 'standalone') {
+      requestMethod = method;
+    }
+    else {
+      url += '&method='+ method;
+    }
+    return fetch(url, apiHelper.requestParams(requestMethod, data)).then((response: object) => {
+      return apiHelper.responseCheck(response);
+    });
+  }, 
+
   // Generates request params
   requestParams: (method, data = {}) => {
     let params = {

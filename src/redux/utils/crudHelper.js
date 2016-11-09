@@ -133,18 +133,8 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     fetchRemote: function (url: string): Function {
       return (dispatch: Function) => {
         dispatch(syncActions['fetchStart']());
-        // Are we in no-agg direct communication mode?
-        let requestMethod = 'POST';
-        if(config.mode === 'agent' || config.mode === 'standalone') {
-          requestMethod = 'GET';
-        }
-        else {
-          url += '&method=GET';
-        }
         // Load data
-        return fetch(url, apiHelper.requestParams(requestMethod)).then((response: object) => {
-          return apiHelper.responseCheck(response);
-        }).then((json: object) => {
+        return apiHelper.fetch(url, 'GET').then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
             dispatch(syncActions['fetchError'](error));
@@ -162,10 +152,8 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
       return (dispatch: Function) => {
         const genId = cuid();
         dispatch(syncActions['createStart'](record, genId));
-        // Load data
-        return fetch(url, apiHelper.requestParams('POST', record)).then((response: object) => {
-          return apiHelper.responseCheck(response);
-        }).then((json: object) => {
+        // Post create
+        return apiHelper.fetch(url, 'POST', record).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
             dispatch(syncActions['createError'](error, record, genId));
@@ -186,15 +174,8 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     updateRemote: function (url: string, record: object, redirect: string = false, appendId: boolean = false): Function {
       return (dispatch: Function) => {
         dispatch(syncActions['updateStart'](record));
-        // Are we in no-agg direct communication mode?
-        let requestMethod = 'POST';
-        if(config.mode === 'agent' || config.mode === 'standalone') {
-          requestMethod = 'PATCH';
-        }
-        // Load data
-        return fetch(url, apiHelper.requestParams(requestMethod, record)).then((response: object) => {
-          return apiHelper.responseCheck(response);
-        }).then((json: object) => {
+        // Patch Update
+        return apiHelper.fetch(url, 'PATCH', record).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
             dispatch(syncActions['updateError'](json, record));
@@ -215,18 +196,8 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     deleteRemote: function (url: string, record: object, redirect: string = false): Function { 
       return (dispatch: Function) => {
         dispatch(syncActions['deleteStart'](record));
-        // Are we in no-agg direct communication mode?
-        let requestMethod = 'POST';
-        if(config.mode === 'agent' || config.mode === 'standalone') {
-          requestMethod = 'DELETE';
-        }
-        else {
-          url += '&method=DELETE';
-        }
-        // Load data
-        return fetch(url, apiHelper.requestParams(requestMethod, record)).then((response: object) => {
-          return apiHelper.responseCheck(response);
-        }).then((json: object) => {
+        // Delete remote
+        return apiHelper.fetch(url, 'DELETE', record).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
             dispatch(syncActions['deleteError'](json, record));

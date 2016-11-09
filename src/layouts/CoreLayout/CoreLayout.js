@@ -20,12 +20,10 @@ function CoreLayout ({ children }) {
       <div className='view-container container'>
         <SiteList offCanvas={true} />
         {children}
-        <br />
-        <br />
-        <p className="well well-sm well-faint text-center">
-          <small>Dashboard connected to {config.connectUrl}</small>
-        </p>
       </div>
+      <p className="gov-footer well well-sm well-faint text-center">
+        <small>Dashboard connected to {config.connectUrl}</small>
+      </p>
     </div>
   );
 }

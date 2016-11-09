@@ -27,15 +27,9 @@ export const actions = objectAssign(syncActions, asyncActions, {
         dispatch(syncActions.fetchError(error));
       }
       dispatch(syncActions.fetchStart());
-      // If CMS pass method
-      if(config.mode === 'local' || config.mode === 'remote') {
-        url = url + '&method=POST';
-      }
-      // Post to create default
-      return fetch(url, apiHelper.requestParams('POST', {
+      // Post create
+      return apiHelper.fetch(url, 'POST', {
         'siteId': config.siteId
-      })).then((response: object) => {
-        return apiHelper.responseCheck(response);
       }).then((json: object) => {
         const error = apiHelper.jsonCheck(json);
         if(error) {

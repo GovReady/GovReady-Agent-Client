@@ -177,27 +177,14 @@ export function siteLoaded (mode: string): Action {
 //
 // Helper function calls endpoint 
 //
-export function sitePost (url: string, appendUrl: boolean, data: object, method: string): Function {
+export function sitePost (url: string, appendUrl: boolean, data: object, method: string = 'POST'): Function {
   return (dispatch: Function) => {
-    let requestMethod = 'POST';
     // Add normal path? (trigger has seperate url)
     if(appendUrl) {
       url = config.apiUrlNoSite + url;
     }
-    // Are we in no-agg direct communication mode?
-    if(config.mode === 'agent' || config.mode === 'standalone') {
-      requestMethod = method;
-    }
-    else {
-      // Append method ?
-      if(method) {
-        url = url + '&method=' + method;
-      }
-    }
     // Load data
-    return fetch(url, apiHelper.requestParams(requestMethod, data)).then((response: object) => {
-      return apiHelper.responseCheck(response);
-    }).then((json: object) => {
+    return apiHelper.fetch(url, method, data).then((json: object) => {
       const error = apiHelper.jsonCheck(json);
       if(error) {
         return error;
@@ -281,10 +268,10 @@ export function siteUpdate(data: object): Function {
     // Dispatch update start
     dispatch(siteUpdateStart());
     // Compile Url
-    let url = '/sites';
-    let requestMethod = 'POST';
+    let requestMethod = 'POST',
+        url = '/sites';
     if(data._id) {
-      url = url + '/' + data._id;
+      url = '/' + data._id;
       requestMethod = 'PATCH';
     }
     return dispatch(sitePost(url, true, data, requestMethod)
@@ -295,14 +282,8 @@ export function siteUpdate(data: object): Function {
       }
       // Sites loaded, load page
       dispatch(siteUpdateSuccess(res._id));
-      // We're a CMS in preview, so actually set the site
-      if(config.mode === 'preview') {
-        dispatch(siteSetSite(res._id));
-      }
-      // Just view the site
-      else {
-        dispatch(siteChangeSite(res._id));
-      }
+      // Dispatch change site (if preview then set site id)
+      dispatch(siteChangeSite(res._id, (config.mode === 'preview')));
     }).catch((error) => {
       failed(error);
     });
@@ -311,32 +292,25 @@ export function siteUpdate(data: object): Function {
 
 //
 // Changes the active site
+// if setCms, then the instance posts to changeMode and sets the siteId
 //
-export function siteChangeSite(siteId: string, simple: boolean = false): Function {
+export function siteChangeSite(siteId: string, setCms: boolean = false): Function {
   return (dispatch: Function) => {
     // Clear widget data
     dispatch(widgetClearData());
     // Set up site
     configChangeSite(siteId);
     configCmsPaths(config.application);
-    configChangeMode(config.mode ? config.mode : 'standalone');
-    dispatch(siteReset());
-    hashHistory.push('/');
-  }
-}
-
-//
-// Sets the site in the cms
-//
-export function siteSetSite(siteId: string): Function {
-  return (dispatch: Function) => {
-    // Clear widget data
-    dispatch(widgetClearData());
-    // Set up site
-    configChangeSite(siteId);
-    configCmsPaths(config.application);
-    configChangeMode('remote');
-    dispatch(siteModeChange('remote', true, '/'));
+    // Set site id, remove "preview" mode
+    if(setCms) {
+      configChangeMode('remote');
+      dispatch(siteModeChange('remote', true, '/'));
+    }
+    else {
+      configChangeMode(config.mode ? config.mode : 'standalone');
+      dispatch(siteReset());
+      hashHistory.push('/');
+    }
   }
 }
 
@@ -358,11 +332,11 @@ export function sitePre( ): Function {
       }
       let allSet = true;
       // Set url / language if we're just viewing
-      if(config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview') {
+      if(config.mode === 'preview') {
         configCmsSettings(res.application, res.url);
-      } 
-      // If we're in read-only mode, go to user
-      if(config.mode === 'agent' || config.mode === 'standalone') {
+      }
+      else if(config.mode === 'agent' || config.mode === 'standalone') {
+        configCmsSettings(res.application, res.url);
         // We have an application
         if(res.application) {
           // change cms language if available
@@ -372,8 +346,8 @@ export function sitePre( ): Function {
           configChangeMode('standalone');
         }
       }
-      // If not in CMS in preview
-      else if(config.mode !== 'preview') {
+      // If we're CMS in local or remote
+      else {
         // @TODO Cache all these endpoints
         let endpoints = []; 
         endpoints = [ 'stack', 'accounts', 'plugins'];
@@ -442,7 +416,7 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
   return (dispatch: Function) => {
     // Someting went wrong, so dispatch failed
     const failed = (mode: string, error: object) => {
-      dispatch(siteModeChangeFailed(mode, error));
+      return dispatch(siteModeChangeFailed(mode, error));
     }
     // Start change mode
     dispatch(siteModeChangeStart(mode));
@@ -456,13 +430,10 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        failed(mode, res);
-        return;
+        return failed(mode, res);
       }
       // Call config change
       configChangeMode(mode);
-      // Dispatch post all to get data
-      dispatch(siteModeChangeSuccess(mode));
       // Reset sitre info (basically reload)
       if(reset) {
         dispatch(siteReset());
@@ -471,9 +442,11 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
       if(redirect) {
         hashHistory.push(redirect);
       }
+      // Dispatch post all to get data
+      return dispatch(siteModeChangeSuccess(mode));
     }).catch((error) => {
       // Dispatch to local mode
-      failed(mode, error);
+      return failed(mode, error);
     });
   }
 }
@@ -493,14 +466,7 @@ export function siteAggAll(mode: string, calls: array): Function {
     // Local mode
     if(mode === 'local') {
       callStack = {
-        changeMode: {
-          url: config.apiTrigger,
-          data: {
-            key: 'changeMode',
-            mode: 'local',
-            siteId: config.siteId
-          }
-        },
+        changeMode: 'changeMode',
         stack: {
           url: config.apiTrigger,
           data: {
@@ -530,14 +496,7 @@ export function siteAggAll(mode: string, calls: array): Function {
     // Remote mode
     else {
       callStack = {
-        changeMode: {
-          url: config.apiTrigger,
-          data: {
-            key: 'changeMode',
-            mode: 'remote',
-            siteId: config.siteId
-          }
-        },
+        changeMode: 'changeMode',
         stack: {
           url: '/monitor/' + config.siteId + '/stack',
           data: {},
@@ -568,8 +527,12 @@ export function siteAggAll(mode: string, calls: array): Function {
     }).filter((call) => { 
       return call 
     });
-    // Use Bluebird sync promise (need ordered stack -> )
+    // Use Bluebird sync promise (need ordered,  stack ->  ect)
     return BPromise.each(finalCalls, (call) => {
+      // Change site mode, so dispatch
+      if(call === 'changeMode') {
+        return dispatch(siteModeChange(mode));
+      }
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
     }).then((returns) => {
       let error;
@@ -585,10 +548,6 @@ export function siteAggAll(mode: string, calls: array): Function {
         failed(error);
       }
       else {
-        // Call config change if we need to update
-        if(mode !== config.mode) {
-          configChangeMode(mode);
-        }
         // Load site
         dispatch(siteLoaded(mode));
       }
@@ -620,7 +579,6 @@ export const actions = {
   sitePing,
   siteModeChange,
   siteAggAll,
-  siteSetSite,
   siteChangeSite,
   siteLogOut
 }

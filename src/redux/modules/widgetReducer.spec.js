@@ -3,8 +3,6 @@ import {
   WIDGET_LOADING,
   WIDGET_LOADED,
   WIDGET_LOAD_FAILED,
-  WIDGET_POSTING,
-  WIDGET_POST_FAILED,
   actions,
   default as widgetReducer
 } from './widgetReducer'
@@ -38,13 +36,11 @@ const testState = (status, data = {}, error = false) => {
 } 
 
 describe('(Redux Module) widgetReducer', function () {
-  it('Should export constants: WIDGET_IMPORTED, WIDGET_LOADING, WIDGET_LOADED, WIDGET_LOAD_FAILED, WIDGET_POSTING, WIDGET_POST_FAILED.', function () {
+  it('Should export constants: WIDGET_IMPORTED, WIDGET_LOADING, WIDGET_LOADED, WIDGET_LOAD_FAILED,.', function () {
     expect(WIDGET_IMPORTED).to.equal('WIDGET_IMPORTED');
     expect(WIDGET_LOADING).to.equal('WIDGET_LOADING');
     expect(WIDGET_LOADED).to.equal('WIDGET_LOADED');
     expect(WIDGET_LOAD_FAILED).to.equal('WIDGET_LOAD_FAILED');
-    expect(WIDGET_POSTING).to.equal('WIDGET_POSTING');
-    expect(WIDGET_POST_FAILED).to.equal('WIDGET_POST_FAILED');
   })
 
   describe('(Reducer)', function () {
@@ -138,44 +134,6 @@ describe('(Redux Module) widgetReducer', function () {
       state = widgetReducer(state, actions.widgetImported('test'));
       state = widgetReducer(state, actions.widgetLoadFailed('test', {error: 'failed'}));
       expect(state).to.deep.equal(testState('load_failed', {}, {error: 'failed'}));
-    })
-  })
-
-  describe('(Action) widgetPosting', function () {
-    it('Should create an action to set a widget to posting', () => {
-      const expectedAction = { 
-        type: WIDGET_POSTING, 
-        widgetName: 'test'
-      };
-     expect(actions.widgetPosting('test')).to.deep.equal(expectedAction);
-    })
-
-    it('Should set widget to posting.', function () {
-      let state = widgetReducer(undefined, {});
-      state = widgetReducer(state, actions.widgetImported('test'));
-      state = widgetReducer(state, actions.widgetPosting('test'));
-      expect(state).to.deep.equal(testState('posting'));
-    })
-  })
-
-  describe('(Action) widgetPostFailed', function () {
-    it('Should create an action to set a widget to post failed', () => {
-      const error = {
-        error: 'failed'
-      };
-      const expectedAction = { 
-        type: WIDGET_POST_FAILED, 
-        widgetName: 'test',
-        error: error
-      };
-     expect(actions.widgetPostFailed('test', error)).to.deep.equal(expectedAction);
-    })
-
-    it('Should set widget to load failed, with error.', function () {
-      let state = widgetReducer(undefined, {});
-      state = widgetReducer(state, actions.widgetImported('test'));
-      state = widgetReducer(state, actions.widgetPostFailed('test', {error: 'failed'}));
-      expect(state).to.deep.equal(testState('post_failed', {}, {error: 'failed'}));
     })
   })
 
