@@ -18,12 +18,14 @@ function CoreLayout ({ children }) {
   return (
     <div className='page-container govready-container'>
       <div className='view-container container'>
-        <SiteList offCanvas={true} />
-        {children}
+        <div className="content-container">
+          <SiteList offCanvas={true} />
+          {children}
+        </div>
+        <p className="gov-footer well well-sm well-faint text-center">
+          <small>Dashboard connected to {config.connectUrl}</small>
+        </p>
       </div>
-      <p className="gov-footer well well-sm well-faint text-center">
-        <small>Dashboard connected to {config.connectUrl}</small>
-      </p>
     </div>
   );
 }
