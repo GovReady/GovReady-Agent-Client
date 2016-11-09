@@ -2,6 +2,7 @@ import objectAssign from 'object-assign';
 import { hashHistory } from 'react-router';
 import apiHelper from '../utils/apiHelper';
 import { Promise as BPromise } from 'bluebird';
+import { widgetClearData } from './widgetReducer';
 import { 
   default as config, 
   configChangeSite, 
@@ -311,25 +312,30 @@ export function siteUpdate(data: object): Function {
 //
 // Changes the active site
 //
-export function siteChangeSite(siteId: string): Function {
+export function siteChangeSite(siteId: string, simple: boolean = false): Function {
   return (dispatch: Function) => {
+    // Clear widget data
+    dispatch(widgetClearData());
+    // Set up site
     configChangeSite(siteId);
-    configChangeMode(config.mode ? config.mode : 'standalone');
     configCmsPaths(config.application);
+    configChangeMode(config.mode ? config.mode : 'standalone');
     dispatch(siteReset());
     hashHistory.push('/');
   }
 }
-
 
 //
 // Sets the site in the cms
 //
 export function siteSetSite(siteId: string): Function {
   return (dispatch: Function) => {
+    // Clear widget data
+    dispatch(widgetClearData());
+    // Set up site
     configChangeSite(siteId);
-    configChangeMode('remote');
     configCmsPaths(config.application);
+    configChangeMode('remote');
     dispatch(siteModeChange('remote', true, '/'));
   }
 }
@@ -351,19 +357,22 @@ export function sitePre( ): Function {
         return failed(res);
       }
       let allSet = true;
+      // Set url / language if we're just viewing
+      if(config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview') {
+        configCmsSettings(res.application, res.url);
+      } 
       // If we're in read-only mode, go to user
       if(config.mode === 'agent' || config.mode === 'standalone') {
         // We have an application
         if(res.application) {
           // change cms language if available
-          configCmsSettings(res.application, res.url);
           configChangeMode('agent');
         }
         else {
           configChangeMode('standalone');
         }
       }
-      // If we're CMS in preview, just load
+      // If not in CMS in preview
       else if(config.mode !== 'preview') {
         // @TODO Cache all these endpoints
         let endpoints = []; 
@@ -413,7 +422,7 @@ export function sitePing(): Function {
     return dispatch(sitePost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
     ).then((res) => {
       // We have an error
-      if(res instanceof Error || res.error) {
+      if(res instanceof Error || res.error || res.err) {
         // Dispatch to local mode
         failed(res);
         return;
@@ -576,6 +585,10 @@ export function siteAggAll(mode: string, calls: array): Function {
         failed(error);
       }
       else {
+        // Call config change if we need to update
+        if(mode !== config.mode) {
+          configChangeMode(mode);
+        }
         // Load site
         dispatch(siteLoaded(mode));
       }

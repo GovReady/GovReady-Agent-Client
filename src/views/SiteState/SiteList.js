@@ -2,7 +2,6 @@ import React, { Component, PropTypes as PT } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
-import { actions as widgetActions } from 'redux/modules/widgetReducer';
 import { 
   actions,
   getSiteFromSites,
@@ -42,7 +41,6 @@ class SiteList extends Component {
   // View a site
   viewClick(event, site) {
     event.preventDefault();
-    this.props.widgetActions.widgetClearData();
     this.props.actions.siteChangeSite(site.siteId);
     this.openClick();
   }
@@ -50,7 +48,6 @@ class SiteList extends Component {
   // On CMS, sets the siteId in the DB
   setSiteClick(event) {
     event.preventDefault();
-    this.props.widgetActions.widgetClearData();
     this.props.actions.siteSetSite(config.siteId);
   }
 
@@ -134,8 +131,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch),
-    widgetActions: bindActionCreators(widgetActions, dispatch),
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 

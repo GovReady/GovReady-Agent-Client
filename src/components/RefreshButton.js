@@ -13,11 +13,12 @@ class RefreshButton extends Component {
     event.preventDefault();
     this.props.widgetActions.widgetLoading(widgetName);
     // Aggregate widget
+    console.log(config.mode);
     this.props.actions.siteAggAll(config.mode, [widgetName.toLowerCase()]).then(() => {
       // Reload widget data
       this.props.widgetActions.widgetLoadData(
         widgetName,
-        config.apiUrl + this.props.widgetQuery.url, 
+        this.props.widgetQuery.url, 
         this.props.widgetQuery.process
       )
     });
