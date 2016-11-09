@@ -110,7 +110,7 @@ class MeasuresEditPage extends Component {
             {this.props.backLink}
           </div>
           <div className="pull-left">
-            {_id.value && (
+            {(false && _id.value) && (
               <DeleteConfirm 
                 index={_id.value} 
                 confirmDelete={Boolean(confirmDelete.value)}

@@ -23,25 +23,32 @@ const asyncActions = crudAsyncActions(syncActions);
 export const actions = objectAssign(syncActions, asyncActions, {
   importDefault: function (url: string): Function {
     return (dispatch: Function) => {
-      dispatch(fetchStart());
+      const failed = (error) => {
+        dispatch(syncActions.fetchError(error));
+      }
+      dispatch(syncActions.fetchStart());
+      // If CMS pass method
+      if(config.mode === 'local' || config.mode === 'remote') {
+        url = url + '&method=POST';
+      }
       // Post to create default
-      return fetch(url + '&method=POST', apiHelper.requestParams('POST', {
+      return fetch(url, apiHelper.requestParams('POST', {
         'siteId': config.siteId
       })).then((response: object) => {
         return apiHelper.responseCheck(response);
       }).then((json: object) => {
         const error = apiHelper.jsonCheck(json);
         if(error) {
-          dispatch(syncActions['fetchError'](error));
+          return failed(error);
         }
         if(json && !json.error) {
-          dispatch(fetchRemote(config.apiUrl + 'measures'));
+          dispatch(asyncActions.fetchRemote(config.apiUrl + 'measures'));
         }
         else {
-          dispatch(fetchError(json));
+          failed(json);
         }
       }).catch(function (error) {
-        dispatch(fetchError(error));
+        failed(error);
       });
     };
   }

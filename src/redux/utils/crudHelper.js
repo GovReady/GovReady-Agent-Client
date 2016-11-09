@@ -215,8 +215,16 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
     deleteRemote: function (url: string, record: object, redirect: string = false): Function { 
       return (dispatch: Function) => {
         dispatch(syncActions['deleteStart'](record));
+        // Are we in no-agg direct communication mode?
+        let requestMethod = 'POST';
+        if(config.mode === 'agent' || config.mode === 'standalone') {
+          requestMethod = 'DELETE';
+        }
+        else {
+          url += '&method=DELETE';
+        }
         // Load data
-        return fetch(url + '&method=DELETE', apiHelper.requestParams('POST', record)).then((response: object) => {
+        return fetch(url, apiHelper.requestParams(requestMethod, record)).then((response: object) => {
           return apiHelper.responseCheck(response);
         }).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
