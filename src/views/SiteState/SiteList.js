@@ -48,7 +48,7 @@ class SiteList extends Component {
   // On CMS, sets the siteId in the DB
   setSiteClick(event) {
     event.preventDefault();
-    this.props.actions.siteSetSite(config.siteId, true);
+    this.props.actions.siteChangeSite(config.siteId, true);
   }
 
   render () {
