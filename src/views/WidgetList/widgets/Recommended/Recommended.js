@@ -58,12 +58,13 @@ class Recommended extends Component {
       )
     }
     else {
+      const plugins = widget.data && widget.data.plugins ? widget.data.plugins : [];
       return (
         <RecommendedWidget 
           pluginText={config.pluginText}
           pluginUrl={config.pluginUrl}
           header={Widget.titleSection('Recommended security ' + config.pluginText.toLowerCase() + 's' , false, 'h3')} 
-          plugins={widget.data.plugins} />
+          plugins={plugins} />
       )
     }
   }

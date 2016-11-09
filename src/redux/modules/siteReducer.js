@@ -38,10 +38,6 @@ export const SITE_MODE_CHANGE_SUCCESS = 'SITE_MODE_CHANGE_SUCCESS';
 export const SITE_MODE_CHANGE_FAILED = 'SITE_MODE_CHANGE_FAILED';
 export const SITE_AGG_START = 'SITE_AGG_START';
 export const SITE_AGG_FAILED = 'SITE_AGG_FAILED';
-export const SITE_LOCAL_AGG_START = 'SITE_LOCAL_AGG_START';
-export const SITE_LOCAL_AGG_FAILED = 'SITE_LOCAL_AGG_FAILED';
-export const SITE_VULNERABILITY_AGG_START = 'SITE_VULNERABILITY_AGG_START';
-export const SITE_VULNERABILITY_AGG_FAILED = 'SITE_VULNERABILITY_AGG_FAILED';
 export const SITE_LOADED = 'SITE_LOADED';
 
 export const siteStates = {
@@ -54,8 +50,6 @@ export const siteStates = {
   SITE_UPDATE_START,
   SITE_UPDATE_SUCCESS,
   SITE_UPDATE_FAILED,
-  SITE_USER_START,
-  SITE_USER_FAILED,
   SITE_PRE_START,
   SITE_PRE_SUCCESS,
   SITE_PRE_FAILED,
@@ -66,10 +60,6 @@ export const siteStates = {
   SITE_MODE_CHANGE_FAILED,
   SITE_AGG_START,
   SITE_AGG_FAILED,
-  SITE_LOCAL_AGG_START,
-  SITE_LOCAL_AGG_FAILED,
-  SITE_VULNERABILITY_AGG_START,
-  SITE_VULNERABILITY_AGG_FAILED,
   SITE_LOADED
 }
 
@@ -109,29 +99,19 @@ export function siteCreateForm (editSite: string): Action {
   return { type: SITE_CREATE_FORM, editSite: editSite };
 }
 
-// Starts 
+// Site update starting
 export function siteUpdateStart (): Action {
   return { type: SITE_UPDATE_START };
 }
 
-// Changes site status, saves sites
+// Site update succeeded
 export function siteUpdateSuccess (siteId: string): Action {
   return { type: SITE_UPDATE_SUCCESS, siteId: siteId };
 }
 
-// Changes site status
+// Site update failed
 export function siteUpdateFailed (siteId: string, error: object): Action {
   return { type: SITE_UPDATE_FAILED, siteId: siteId, error: error };
-}
-
-// Attempts to attach user
-export function siteUserStart (): Action {
-  return { type: SITE_USER_START };
-}
-
-// Changes site status
-export function siteUserFailed (error: object): Action {
-  return { type: SITE_USER_FAILED, error: error };
 }
 
 // Changes site status
@@ -185,43 +165,9 @@ export function siteAggFailed (error: object): Action {
 }
 
 // Changes site status
-export function siteVulnerabilityAggStart (): Action {
-  return { type: SITE_VULNERABILITY_AGG_START };
-}
-
-// Changes site status
-export function siteVulnerabilityAggFailed (error: object): Action {
-  return { type: SITE_VULNERABILITY_AGG_FAILED, error: error };
-}
-
-// // Changes site mode
-// export function siteRefreshStart (mode: string): Action {
-//   return { type: SITE_REFRESH_START, mode: mode };
-// }
-
-// // Changes site status
-// export function siteRefreshFailed (mode: string, error: object): Action {
-//   return { type: SITE_REFRESH_FAILED, mode: mode, error: error };
-// }
-
-// Changes site status
 export function siteLoaded (mode: string): Action {
   return { type: SITE_LOADED, mode: mode };
 }
-
-// ------------------------------------
-// Site mode arrays
-// ------------------------------------
-
-// const siteModeActions = {
-//   'full': {
-//     sitePre: siteUser,
-//     siteUser: 
-//   }
-//   'noagg': {
-
-//   }
-// }
 
 // ------------------------------------
 // ASYNC Actions
@@ -326,12 +272,14 @@ export function siteSites(): Function {
 //
 export function siteUpdate(data: object): Function {
   return (dispatch: Function) => {
-    // Failed to get all sites, load anyways
+    // Failed to update / create site
     const failed = (error) => {
       let siteId = data._id ? data._id : '';
       dispatch(siteUpdateFailed(siteId, error));
     }
+    // Dispatch update start
     dispatch(siteUpdateStart());
+    // Compile Url
     let url = '/sites';
     let requestMethod = 'POST';
     if(data._id) {
@@ -346,11 +294,11 @@ export function siteUpdate(data: object): Function {
       }
       // Sites loaded, load page
       dispatch(siteUpdateSuccess(res._id));
-      // We're a CMS, so actually set the site
-      if(config.mode) {// === 'preview') {
+      // We're a CMS in preview, so actually set the site
+      if(config.mode === 'preview') {
         dispatch(siteSetSite(res._id));
       }
-      // Just go change the active site
+      // Just view the site
       else {
         dispatch(siteChangeSite(res._id));
       }
@@ -380,7 +328,7 @@ export function siteChangeSite(siteId: string): Function {
 export function siteSetSite(siteId: string): Function {
   return (dispatch: Function) => {
     configChangeSite(siteId);
-    configChangeMode('remote');
+    configCmsPaths(config.application);
     dispatch(siteModeChange('remote', true, '/'));
   }
 }
@@ -394,7 +342,6 @@ export function sitePre( ): Function {
     // Then try the ping check
     const failed = (error) => {
       dispatch(sitePreFailed(error));
-
     }
     dispatch(sitePreStart());
     return dispatch(sitePost('/sites/' + config.siteId, true, {}, 'GET')
@@ -406,16 +353,17 @@ export function sitePre( ): Function {
       // If we're in read-only mode, go to user
       if(config.mode === 'agent' || config.mode === 'standalone') {
         // We have an application
-        if(res.stack && res.stack.application && res.stack.application.platform) {
+        if(res.application) {
           // change cms language if available
-          configCmsSettings(res.stack.application.platform.toLowerCase(), res.url);
+          configCmsSettings(res.application, res.url);
           configChangeMode('agent');
         }
         else {
           configChangeMode('standalone');
         }
       }
-      else {
+      // If we're CMS in preview, just load
+      else if(config.mode !== 'preview') {
         // @TODO Cache all these endpoints
         let endpoints = []; 
         endpoints = [ 'stack', 'accounts', 'plugins'];
@@ -435,7 +383,7 @@ export function sitePre( ): Function {
       dispatch(sitePreSuccess(res._id));
       // Load
       if(allSet) {
-        dispatch(siteLoaded(config.mode ? config.mode : 'remote'));
+        dispatch(siteLoaded(config.mode ? config.mode : 'local'));
       }
       // Need to ping / compile
       else {
@@ -447,60 +395,32 @@ export function sitePre( ): Function {
   }
 }
 
-// //
-// // Attaches site user 
-// // @todo make work with proper errors... moving to ping no matter what
-// // since the enpoint returns 500 if user is already created
-// //
-// export function siteUser(): Function {
-//   return (dispatch: Function) => {
-//     dispatch(siteUserStart());
-//     return dispatch(sitePost('/user-site/' + config.siteId, true, {}, 'POST')
-//     ).then((res) => {
-//       // @TODO get better response from user
-//       // We have an error
-//       // if(res instanceof Error) {
-//       //   // Dispatch to local mode
-//       //   dispatch(sitePing());
-//       //   dispatch(siteUserFailed(res));
-//       //   return;
-//       // }
-//       dispatch(siteUserFailed(res));
-//       // Catch no-agg modes
-//       if(config.mode === 'agent' || config.mode === 'standalone') {
-//         dispatch(siteSites(config.mode));
-//       }
-//       // Dispatch post all to get data
-//       else {
-//         dispatch(sitePing());
-//       }
-//     }).catch((error) => {
-//       // Dispatch to local mode
-//       dispatch(siteUserFailed(error));
-//       dispatch(sitePing());
-//     });
-//   }
-// }
-
 //
 // Attempts to have exteral server ping this one
 //
 export function sitePing(): Function {
   return (dispatch: Function) => {
+    // Ping on URL failed
+    const failed = (error: object) => {
+      // Dispatch failed
+      dispatch(sitePingFailed(error));
+      // Dispatch to local mode
+      dispatch(siteAggAll('local'));
+    }
+    // Start ping check
     dispatch(sitePingStart());
     return dispatch(sitePost('/monitor/' + config.siteId + '/ping', true, {}, 'POST')
     ).then((res) => {
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        dispatch(sitePingFailed(res));
+        failed(res);
         return;
       }
       // Dispatch post all to get data
       dispatch(siteAggAll());
     }).catch((error) => {
-      // Dispatch to local mode
-      dispatch(sitePingFailed(error));
+      failed(error);
     });
   }
 }
@@ -510,6 +430,11 @@ export function sitePing(): Function {
 //
 export function siteModeChange(mode: string, reset: boolean = false, redirect: string = '') {
   return (dispatch: Function) => {
+    // Someting went wrong, so dispatch failed
+    const failed = (mode: string, error: object) => {
+      dispatch(siteModeChangeFailed(mode, error));
+    }
+    // Start change mode
     dispatch(siteModeChangeStart(mode));
     return dispatch(
       sitePost(config.apiTrigger, false, {
@@ -521,22 +446,24 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        dispatch(siteModeChangeFailed(mode, res));
+        failed(mode, res);
         return;
       }
       // Call config change
       configChangeMode(mode);
       // Dispatch post all to get data
       dispatch(siteModeChangeSuccess(mode));
+      // Reset sitre info (basically reload)
       if(reset) {
         dispatch(siteReset());
       }
+      // Redirect?
       if(redirect) {
         hashHistory.push(redirect);
       }
     }).catch((error) => {
       // Dispatch to local mode
-      dispatch(siteModeChangeFailed(mode, error));
+      failed(mode, error);
     });
   }
 }
@@ -546,6 +473,10 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
 //
 export function siteAggAll(mode: string, calls: array): Function {
   return (dispatch: Function) => {
+    // Someting went wrong, so dispatch failed
+    const failed = (error: object) => {
+      dispatch(siteAggFailed(error));
+    }
     // Set up default call stack if none is passed
     calls = calls || ['changeMode', 'stack', 'domain', 'accounts', 'plugins'];
     let callStack;
@@ -619,14 +550,15 @@ export function siteAggAll(mode: string, calls: array): Function {
         },
       };
     }
-
+    // Dispatch start
     dispatch(siteAggStart());
+    // Compile final calls
     const finalCalls = calls.map((call, key) => {
       return callStack[call]
     }).filter((call) => { 
       return call 
     });
-
+    // Use Bluebird sync promise (need ordered stack -> )
     return BPromise.each(finalCalls, (call) => {
       return dispatch(sitePost(call.url, call.appendUrl, call.data, call.method));
     }).then((returns) => {
@@ -640,58 +572,22 @@ export function siteAggAll(mode: string, calls: array): Function {
       // we had some errors ?
       if(error) {
         // Dispatch failed
-        dispatch(siteAggFailed(error));
+        failed(error);
       }
       else {
         // Load site
         dispatch(siteLoaded(mode));
       }
-      
     })
     .catch((error) => {
       // Dispatch Failed
-      dispatch(siteAggFailed(error));
+      failed(error);
     });
   }
 }
 
 //
-// Triggers vulnerability compilation
-//
-// export function siteVulnerabilityAgg(mode: string): Function {
-//   return (dispatch: Function) => {
-//     dispatch(siteVulnerabilityAggStart());
-//     return dispatch(sitePost(config.apiUrl + 'vulnerabilities', false, {}, 'GET')
-//     ).then((res) => {
-//       // We have an error
-//       if(res instanceof Error) {
-//         // Dispatch to local mode
-//         dispatch(siteVulnerabilityAggFailed(res));
-//         return;
-//       }
-//       // Dispatch post all to get data
-//       dispatch(siteLoaded(mode));
-//     }).catch((error) => {
-//       // Dispatch to local mode
-//       dispatch(siteVulnerabilityAggFailed(error));
-//     });
-//   }
-// }
-
-// export function siteRefreshData(): Function {
-//   calls = [
-//     {
-//       url: config.apiTrigger,
-//       data: {
-//         key: 'stack',
-//         endpoint: 'stack',
-//         siteId: config.siteId
-//       }
-//     },
-// }
-
-//
-// Grabs other user sites
+// Logs out
 //
 export function siteLogOut(data: object): Function {
   return (dispatch: Function) => {
@@ -713,6 +609,39 @@ export const actions = {
   siteSetSite,
   siteChangeSite,
   siteLogOut
+}
+
+// ------------------------------------
+// Helpers
+// ------------------------------------
+
+// Returns if site is in LOADED state
+export function isSiteLoaded(globalState: object) {
+  return globalState.siteState && globalState.siteState.status === SITE_LOADED;
+}
+
+// Returns if site is loading still 
+export function isSitesLoading(globalState: object, redirect: Function) {
+  return globalState.siteState
+      && globalState.siteState.status
+      && ( globalState.siteState.status === SITE_SITES_SUCCESS
+        || globalState.siteState.status === SITE_SELECT
+        || globalState.siteState.status === SITE_CREATE_FORM 
+         );
+}
+
+// Returns site info from a site ID
+export function getSiteFromSites(sites: array, siteId: string) {
+   if(!sites || !sites.length) {
+      return null;
+   }
+   let theSite = null;
+   sites.map((site) => {
+      if(site.siteId == siteId) {
+        theSite = site;
+      }
+   });
+   return theSite;
 }
 
 // ------------------------------------
@@ -747,7 +676,7 @@ const actionHandler = (
   if(action.currentSite) {
     newState['currentSite'] = action.currentSite;
   }
-  // Site ID being acted on
+  // Site ID being acted on @TODO not really being used, what is use case?
   newState['siteId'] = action.siteId ? action.siteId : '';
   // Site edit? 
   newState['editSite'] = action.editSite ? action.editSite : '';
@@ -756,38 +685,6 @@ const actionHandler = (
   return objectAssign({}, state, newState);
 }
 
-// ------------------------------------
-// Helpers
-// ------------------------------------
-
-// Returns if site is in LOADED state
-export function isSiteLoaded(globalState: object) {
-  return globalState.siteState && globalState.siteState.status === SITE_LOADED;
-}
-
-// Helper function redirects to '/' if we're not still loading 
-export function isSitesLoading(globalState: object, redirect: Function) {
-  return globalState.siteState
-      && globalState.siteState.status
-      && ( globalState.siteState.status === SITE_SITES_SUCCESS
-        || globalState.siteState.status === SITE_SELECT
-        || globalState.siteState.status === SITE_CREATE_FORM 
-         );
-}
-
-// Returns site info from a site ID
-export function getSiteFromSites(sites: array, siteId: string) {
-   if(!sites || !sites.length) {
-      return null;
-   }
-   let theSite = null;
-   sites.map((site) => {
-      if(site.siteId == siteId) {
-        theSite = site;
-      }
-   });
-   return theSite;
-}
 
 // ------------------------------------
 // Reducer

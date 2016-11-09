@@ -57,6 +57,8 @@ export function widgetLoadData (widgetName: string, url: string, processData: Fu
   return (dispatch: Function) => {
     // Call loading action
     dispatch(widgetLoading(widgetName));
+    // Add API settings to call
+    url = config.apiUrl + url;
     // Are we in no-agg direct communication mode?
     let requestMethod = 'POST';
     if(config.mode === 'agent' || config.mode === 'standalone') {

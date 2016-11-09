@@ -50,7 +50,7 @@ class Domains extends Component {
 
   exitLocalMode(e) {
     e.preventDefault();
-    this.props.siteActions.siteModeChange('init', true, '/');
+    this.props.siteActions.siteModeChange('remote', true, '/');
   }
 
   render () {

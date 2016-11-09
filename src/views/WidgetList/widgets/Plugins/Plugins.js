@@ -34,7 +34,8 @@ class Plugins extends Component {
     
     // Return loading if not set
     if(!widget || widget.status !== 'loaded') {
-      return Widget.loadingDisplay();
+      let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
+      return errorDisplay ? errorDisplay : Widget.loadingDisplay();
     }
 
     let updates = 0;

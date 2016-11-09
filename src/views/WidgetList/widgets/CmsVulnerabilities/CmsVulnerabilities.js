@@ -46,10 +46,11 @@ class CmsVulnerabilities extends Component {
 
   render () {
 
-    let {widget, plugins} = this.props;
+    let {widget, widgetName, plugins} = this.props;
     // Return loading if not set
     if((!widget || widget.status !== 'loaded') || (!plugins || plugins.status !== 'loaded')) {
-      return Widget.loadingDisplay();
+      let errorDisplay = Widget.errorDisplay(widget.status, widgetName);
+      return errorDisplay ? errorDisplay : Widget.loadingDisplay();
     }
 
     let fullVuln = this.getPluginDataWithVuln(plugins.data);

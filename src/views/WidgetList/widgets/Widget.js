@@ -18,7 +18,7 @@ class Widget {
     if(payload && (!widget.props.widget || widget.props.widget.status !== 'loaded')) {
       widget.props.actions.widgetLoadData(
         widget.props.widgetName,
-        config.apiUrl + widget.props.widgetQuery.url, 
+        widget.props.widgetQuery.url, 
         widget.props.widgetQuery.process
       );
     }
@@ -54,6 +54,33 @@ class Widget {
     )(widget);
   }
 
+  // Displays a widget's error if applicable
+  static errorDisplay (status: string, widgetName: string, panel: bool = false) {
+    if(status !== 'load_failed') {
+      return '';
+    }
+    let text;
+    if(config.mode === 'remote' || config.mode === 'local') {
+      text = 'The data for "' + widgetName + '" could not be loaded.  Please try refreshing to re-aggregate.';
+    }
+    else {
+      text = 'The data for "' + widgetName 
+           + '" could not be loaded.  You need to navigate to an active install of the govready ' 
+           + config.pluginText.toLowerCase() + ' in order to run aggregation';
+    }
+    if(panel) {
+      return (
+        <div className="panel panel-default"><div className="panel-body">
+          <div className="alert alert-warning"><p>{text}</p></div>
+        </div></div>
+      )
+    }
+    return (
+      <div className="alert alert-warning"><p>{text}</p></div>
+    )
+  }
+
+  // Displays widget loading
   static loadingDisplay () {
     return (
       <div className='loading'>
