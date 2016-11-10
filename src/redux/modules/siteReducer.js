@@ -410,7 +410,7 @@ export function sitePing(): Function {
 export function siteModeChange(mode: string, reset: boolean = false, redirect: string = '') {
   return (dispatch: Function) => {
     // Someting went wrong, so dispatch failed
-    const failed = (mode: string, error: object) => {
+    const failed = (error: object) => {
       return dispatch(siteModeChangeFailed(mode, error));
     }
     // Start change mode
@@ -425,7 +425,7 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
       // We have an error
       if(res instanceof Error) {
         // Dispatch to local mode
-        return failed(mode, res);
+        return failed(res);
       }
       // Call config change
       configChangeMode(mode);
@@ -441,7 +441,7 @@ export function siteModeChange(mode: string, reset: boolean = false, redirect: s
       return dispatch(siteModeChangeSuccess(mode));
     }).catch((error) => {
       // Dispatch to local mode
-      return failed(mode, error);
+      return failed(error);
     });
   }
 }
