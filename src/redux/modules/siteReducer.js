@@ -597,20 +597,6 @@ export function isSitesLoading(globalState: object, redirect: Function) {
          );
 }
 
-// Returns site info from a site ID
-export function getSiteFromSites(sites: array, siteId: string) {
-   if(!sites || !sites.length) {
-      return null;
-   }
-   let theSite = null;
-   sites.map((site) => {
-      if(site.siteId == siteId) {
-        theSite = site;
-      }
-   });
-   return theSite;
-}
-
 // ------------------------------------
 // Action Handlers
 // ------------------------------------

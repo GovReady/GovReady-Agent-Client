@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
 import { 
   actions,
-  getSiteFromSites,
   SITE_LOADED 
 } from 'redux/modules/siteReducer';
 
