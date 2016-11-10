@@ -26,7 +26,7 @@ class SiteEdit extends Component {
       '_id': '',
       'type': '',
       'title': '',
-      'url': '',
+      'url': config.mode !== 'standalone' ? window.location.protocol + '//' + window.location.host  : '',
       'accessible': '',
       'otherApplication': '',
       'application': config.application ? config.application : ''

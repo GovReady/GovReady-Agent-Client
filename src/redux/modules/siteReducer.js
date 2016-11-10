@@ -121,7 +121,7 @@ export function sitePreStart (): Action {
 }
 
 // Changes site status
-export function sitePreSuccess (currentSite: string): Action {
+export function sitePreSuccess (currentSite: object): Action {
   return { type: SITE_PRE_SUCCESS, currentSite: currentSite };
 }
 
@@ -332,19 +332,8 @@ export function sitePre( ): Function {
       }
       let allSet = true;
       // Set url / language if we're just viewing
-      if(config.mode === 'preview') {
+      if(config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview') {
         configCmsSettings(res.application, res.url);
-      }
-      else if(config.mode === 'agent' || config.mode === 'standalone') {
-        configCmsSettings(res.application, res.url);
-        // We have an application
-        if(res.application) {
-          // change cms language if available
-          configChangeMode('agent');
-        }
-        else {
-          configChangeMode('standalone');
-        }
       }
       // If we're CMS in local or remote
       else {
@@ -364,7 +353,13 @@ export function sitePre( ): Function {
         });
       }
       // Dispatch Current site
-      dispatch(sitePreSuccess(res._id));
+      dispatch(sitePreSuccess({
+        siteId: res._id,
+        title: res.title,
+        url: res.url,
+        application: res.application,
+        otherApplication: res.otherApplication,
+      }));
       // Load
       if(allSet) {
         dispatch(siteLoaded(config.mode ? config.mode : 'local'));

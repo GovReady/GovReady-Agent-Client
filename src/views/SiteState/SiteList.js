@@ -72,9 +72,8 @@ class SiteList extends Component {
 
     // Gets title of site
     let title = 'Choose a site';
-    if( siteState.currentSite && siteState.sites ) {
-      const currentSite = getSiteFromSites(siteState.sites, siteState.currentSite);
-      title = (currentSite.title) ? currentSite.title : title;
+    if( siteState.currentSite ) {
+      title = (siteState.currentSite.title) ? siteState.currentSite.title : title;
     }
 
     // What text to display in sites list

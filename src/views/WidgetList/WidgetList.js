@@ -9,15 +9,6 @@ import { actions } from '../../redux/modules/siteReducer';
 class WidgetsListPage extends Component {
   render () {
 
-    // We aren't loaded
-    if(!config.siteId) {
-      return (
-        <div className='loading'>
-          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
-        </div>
-      )
-    }
-
     // Simple render function from widgetName
     const renderWidget = (name, params = {}) => {
       params.widgetName = name;
@@ -25,7 +16,20 @@ class WidgetsListPage extends Component {
       return React.createElement(widgets[name].component, params);
     }
 
-    if(config.mode === 'standalone') {
+    let {siteState} = this.props;
+
+    // We aren't loaded
+    if(!config.siteId || !siteState.currentSite) {
+      return (
+        <div className='loading'>
+          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
+        </div>
+      )
+    }
+
+    // We don't have application data for widgets
+    // so render as agent
+    if(!siteState.currentSite.application) {
       return(
         <div className='widget-layout'>
           <div className='row row-first'>

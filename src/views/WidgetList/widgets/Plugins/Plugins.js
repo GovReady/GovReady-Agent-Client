@@ -40,7 +40,7 @@ class Plugins extends Component {
 
     let updates = 0;
     let totalPlugins = 0;
-    let coreUpdate = (widget.data.core && widget.data.core.updates) ? widget.data.core.updates : false ;
+    let coreUpdate = (widget.data.core && widget.data.core.updates) ? widget.data.core.updates : '' ;
 
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
