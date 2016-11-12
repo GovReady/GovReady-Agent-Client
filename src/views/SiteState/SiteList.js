@@ -55,8 +55,7 @@ class SiteList extends Component {
 
     // Only show if we're in agent / standalone
     // OR if there is no siteId
-    const show = ( config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview'  || !config.siteId )
-               && siteState.sites && siteState.sites.length;
+    const show = config.mode === 'agent' || config.mode === 'standalone' || config.mode === 'preview'  || !config.siteId;
 
     if ( !show ) {
       return (

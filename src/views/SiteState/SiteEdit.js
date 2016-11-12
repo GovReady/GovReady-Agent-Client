@@ -38,10 +38,13 @@ class SiteEdit extends Component {
     
     let { siteState, actions }  = this.props;
 
+    // @TODO figure out post accessible as status: {}
     const submitFields = [
       'title',
       'url',
-      'application'
+      'accessible',
+      'application',
+      'otherApplication'
     ];
 
     const assignProps = (toSet, setData) => {

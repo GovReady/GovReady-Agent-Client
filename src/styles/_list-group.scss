@@ -1,5 +1,9 @@
 .govready-container .view-container {
   .list-group {
     margin-left: 0;
+    
+    &:only-child {
+      margin-bottom: 0;
+    }
   }
 }
