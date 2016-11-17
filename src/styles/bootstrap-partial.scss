@@ -14,10 +14,24 @@
      * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
      */
     /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-    html {
+    html,
+    .govready-content {
       font-family: sans-serif;
       -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;
+    }
+    .govready-content {
+      padding-top: 50px;
+
+      #auth0-widget {
+        max-width: 700px;
+        margin: 30px auto;
+        text-align: center;
+      }
+
+      .a0-panel {
+        margin: 30px auto;
+      }
     }
     body {
       margin: 0;
@@ -4282,10 +4296,15 @@
     }
     .navbar-brand {
       float: left;
-      padding: 15px 15px;
+      padding: 0;
       font-size: 18px;
       line-height: 20px;
       height: 50px;
+
+      img {
+        max-height: 100%;
+        width: auto;
+      }
     }
     .navbar-brand:hover,
     .navbar-brand:focus {
@@ -6761,12 +6780,10 @@
       }
     }
     .navbar {
-      background-image: -webkit-linear-gradient(#54b4eb, #2fa4e7 60%, #1d9ce5);
-      background-image: -o-linear-gradient(#54b4eb, #2fa4e7 60%, #1d9ce5);
-      background-image: -webkit-gradient(linear, left top, left bottom, from(#54b4eb), color-stop(60%, #2fa4e7), to(#1d9ce5));
-      background-image: linear-gradient(#54b4eb, #2fa4e7 60%, #1d9ce5);
+      background-image: -webkit-linear-gradient(#3c3c3c, #222 60%);
+      background-image: -o-linear-gradient(#3c3c3c, #222 60%);
+      background-image: linear-gradient(#3c3c3c, #222 60%);
       background-repeat: no-repeat;
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff54b4eb', endColorstr='#ff1d9ce5', GradientType=0);
       border-bottom: 1px solid #178acc;
       -webkit-filter: none;
               filter: none;
