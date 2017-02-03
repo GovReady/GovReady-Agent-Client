@@ -51,22 +51,14 @@ class Recommended extends Component {
       return Widget.loadingDisplay();
     }
 
-    if(this.props.display === 'page') {
-      // @TODO?
-      return (
-        <div>RecommendedPage</div>
-      )
-    }
-    else {
-      const plugins = widget.data && widget.data.plugins ? widget.data.plugins : [];
-      return (
-        <RecommendedWidget 
-          pluginText={config.pluginText}
-          pluginUrl={config.pluginUrl}
-          header={Widget.titleSection('Recommended security ' + config.pluginText.toLowerCase() + 's' , false, 'h3')} 
-          plugins={plugins} />
-      )
-    }
+    const plugins = widget.data && widget.data.plugins ? widget.data.plugins : [];
+    return (
+      <RecommendedWidget 
+        pluginText={config.pluginText}
+        pluginUrl={config.pluginUrl}
+        headerText={'Recommended security ' + config.pluginText.toLowerCase() + 's'}
+        plugins={plugins} />
+    )
   }
 }
 

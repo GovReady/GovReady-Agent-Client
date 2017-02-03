@@ -38,7 +38,9 @@ class StackWidget extends Component {
       <div className='widget stack-widget'>
         <div>
           {this.props.refreshButton}
-          {this.props.header}
+          <div className="text">
+            <h3>System</h3>
+          </div>
           {this.systemTable(this.props.systemData, this.props.assessmentState)}
         </div>
       </div>
@@ -47,7 +49,6 @@ class StackWidget extends Component {
 }
 
 StackWidget.propTypes = {
-  header: PT.object,
   systemData: PT.object.isRequired,
   assessmentState: PT.object.isRequired
 };

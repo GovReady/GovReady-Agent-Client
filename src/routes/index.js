@@ -52,6 +52,7 @@ export default (store) => {
       <Route onEnter={requireSiteInit}>
         <Route path="/site-list" component={SiteList}/>
         <Route path="/site-edit" component={SiteEdit}/>
+        <Route path="/site-edit/:siteId" component={SiteEdit}/>
       </Route>
       { /* Routes requiring site fully loaded */ }
       <Route onEnter={requireSiteLoaded}>

@@ -3,6 +3,7 @@ import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
 import DatePickerWrap from 'components/DatePickerWrap';
+import BackButton from 'components/BackButton';
 // Form fields
 export const fields = [
   '_id',
@@ -42,7 +43,7 @@ export const freqOptions = [
 
 class MeasuresEditPage extends Component {
 
-  editForm() {
+  editForm(backUrl) {
     // Extract props
     const { fields: { 
       _id,
@@ -52,6 +53,15 @@ class MeasuresEditPage extends Component {
       due,
       confirmDelete 
     }, handleSubmit, measureSubmit, measureDelete, submitting, measure } = this.props;
+    // No measure
+    if(!measure) {
+      return (
+        <div>
+          <h2>Sorry there was an issue editing the measure.</h2>
+          <BackButton text='Go back' classes='btn btn-default' />
+        </div>
+      )
+    }
     return (
       <form onSubmit={handleSubmit(measureSubmit)}>
         <fieldset disabled={submitting}>
@@ -107,7 +117,7 @@ class MeasuresEditPage extends Component {
             <button className="btn btn-primary" type="submit" disabled={submitting}>
               {submitting ? <i/> : <i/>} Submit
             </button>
-            {this.props.backLink}
+            <BackButton text="Cancel" classes='btn btn-default' backUrl={backUrl} />
           </div>
           <div className="pull-left">
             {(false && _id.value) && (
@@ -126,10 +136,18 @@ class MeasuresEditPage extends Component {
   }
 
   render () {
+    const backUrl = this.props.measure && this.props.measure._id
+                  ? '/dashboard/Measures/' + this.props.measure._id
+                  : '/dashboard/Measures';
     return (
       <div>
-        {this.props.header}
-        {this.editForm()}
+        <div className='text'>
+          <h2>
+            <span>{this.props.headerText}</span>
+            <BackButton backUrl={backUrl} />
+          </h2>
+        </div>
+        {this.editForm(backUrl)}
       </div>
     );
   }
@@ -137,12 +155,11 @@ class MeasuresEditPage extends Component {
 
 MeasuresEditPage.propTypes = {
   ...propTypes,
-  header: PT.object.isRequired,
+  headerText: PT.object.isRequired,
   measure: PT.object.isRequired,
   createNewLink: PT.func.isRequired,
   measureSubmit: PT.func.isRequired,
-  measureDelete: PT.func.isRequired,
-  backLink: PT.object.isRequired
+  measureDelete: PT.func.isRequired
 };
 
 export default reduxForm({

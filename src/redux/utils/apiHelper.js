@@ -14,6 +14,8 @@ const apiHelper = {
     }
     return fetch(url, apiHelper.requestParams(requestMethod, data)).then((response: object) => {
       return apiHelper.responseCheck(response);
+    }).catch((response: error) => {
+      return apiHelper.responseCheck(error);
     });
   }, 
 

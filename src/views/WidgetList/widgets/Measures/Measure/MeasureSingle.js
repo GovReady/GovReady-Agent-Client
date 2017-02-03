@@ -1,10 +1,12 @@
 import React, { PropTypes as PT, Component } from 'react';
 import Submissions from '../Submissions/Submissions';
 import { freqOptions } from './MeasureEditPage';
+import BackButton from 'components/BackButton';
 
 class MeasureSingle extends Component {
   render () {
     let {header, due, measure, createNewLink} = this.props;
+    // Returns Frequency text
     const frequency = () => {
       const freq = freqOptions.find((item) => {
         return item.time === measure.frequency;
@@ -13,14 +15,20 @@ class MeasureSingle extends Component {
     };
     if(!measure || !measure._id) {
       return (
-        <div className='loading'>
-          <i className='fa fa-spinner fa-2x fa-spin'></i><span className='sr-only'>Loading</span>
+        <div>
+            <h2>Sorry there was an issue getting the measure.</h2>
+            <BackButton text='Go back' classes='btn btn-default' />
         </div>
       )
     }
     return (
       <div>
-        {header}
+        <div className='text'>
+          <h2>
+            <span>{measure.title}</span>
+            <BackButton backUrl='/dashboard/Measures' />
+          </h2>
+        </div>
         <ul className="list-inline">
           <li><h4>{due}</h4></li>
           <li>{createNewLink('Edit', measure._id + '/edit', 'btn btn-default')}</li>
@@ -51,7 +59,6 @@ class MeasureSingle extends Component {
 }
 
 MeasureSingle.propTypes = {
-  header: PT.object.isRequired,
   createNewLink: PT.func.isRequired,
   measure: PT.object.isRequired,
   due: PT.object.isRequired,

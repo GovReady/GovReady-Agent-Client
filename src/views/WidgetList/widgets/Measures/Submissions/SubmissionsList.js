@@ -38,7 +38,7 @@ class SubmissionsList extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
+        <h3>Active Tasks</h3>
         {this.submissionsList(this.props.submissions)}
       </div>
     );

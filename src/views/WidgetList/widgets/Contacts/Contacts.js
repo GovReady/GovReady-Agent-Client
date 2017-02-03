@@ -93,24 +93,16 @@ class Contacts extends Component {
     if(display === 'page') {
       return (
         <ContactsEditPage 
-          header={Widget.titleSection('Edit contacts', false, 'h2', false, true)} 
           contactsData={contacts}
           contactsSubmit={this.handleSubmit.bind(this)}
           contactsDelete={this.contactsDelete.bind(this)}
-          emptyText={this.emptyText()}
-          backLink={Widget.backLink('Cancel', 'btn btn-default')} />
+          emptyText={this.emptyText()} />
       )
     }
     else {
-      const subHeader = () => {
-        return (
-          <h5>Keep this handy list <Link to='/dashboard/Contacts'>updated</Link> with important contacts to maintain your site</h5>
-        )
-      }
       return (
         <ContactsWidget 
-          header={Widget.titleSection('Points of Contact to Maintain your Site', widgetName)} 
-          subHeader={subHeader()}
+          headerLink={<Link to='/dashboard/Contacts'>Points of Contact to Maintain your Site</Link>} 
           contacts={contacts}
           emptyText={this.emptyText(true)} />
       )

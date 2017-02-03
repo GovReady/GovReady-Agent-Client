@@ -120,26 +120,12 @@ class Submissions extends Component {
         submission = this.getSingle(measureId, submissions);
         headerText = submission.title;
       }
-      // Submission loading failed
-      if(!submission) {
-        return (
-          <div>
-            <h2>Sorry there was an issue editing the submission.</h2>
-            {Widget.backLink('Go back', 'btn btn-default')}
-          </div>
-        )
-      }
       return (
         <SubmissionEditPage
           submission={submission}
           submissionSubmit={this.handleSubmit.bind(this)} />
       )
     }
-    // if(display === 'page') {
-    //   return (
-    //     <SubmissionsPage />
-    //   )
-    // }
     if(display === 'list') {
       // Individual measure
       if(measureId) {

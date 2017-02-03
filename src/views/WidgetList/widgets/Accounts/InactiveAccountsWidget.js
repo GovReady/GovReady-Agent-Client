@@ -17,16 +17,6 @@ class InactiveAccountsWidget extends Component {
         return user.roles.join(', ');
       }
     }
-    // // Last login
-    // const printLastLogin = (user) => {
-    //   let loginInt = parseInt(user.lastLogin);    
-    //   // string   
-    //   if(isNaN(loginInt)) {   
-    //     return user.lastLogin;    
-    //   }   
-    //   // php timestamp
-    //   return window.moment(loginInt*1000).format('MMMM Do YYYY');
-    // }
     return (
       <div className='table-responsive'>
         <table className='table'>
@@ -62,8 +52,13 @@ class InactiveAccountsWidget extends Component {
       <div className='widget account-widget'>
         <div>
           {this.props.refreshButton}
-          {this.props.header}
-          {this.props.subHeader}
+          <div className="title">
+            <h3><a target="_blank" href={this.props.userUrl}>Inactive Accounts</a></h3>
+          </div>
+          <h5>
+            Are these users still in your organization?  <a target="_blank" href={this.props.userUrl}>Edit them</a>.  
+            If not, <a target="_blank" href={this.props.userUrl}>delete them</a>.
+          </h5>
           {this.listUsersTable(this.props.accounts)}
         </div>
       </div>
@@ -72,8 +67,7 @@ class InactiveAccountsWidget extends Component {
 }
 
 InactiveAccountsWidget.propTypes = {
-  header: PT.object,
-  subHeader: PT.object,
+  userUrl: PT.string,
   accounts: PT.array.isRequired
 };
 

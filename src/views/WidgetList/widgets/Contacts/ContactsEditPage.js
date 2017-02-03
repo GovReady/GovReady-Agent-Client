@@ -3,6 +3,7 @@ import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
 import DatePickerWrap from 'components/DatePickerWrap';
+import BackButton from 'components/BackButton';
 export const fields = [
   'contacts[].responsibility',
   'contacts[].name',
@@ -118,13 +119,12 @@ class ContactsEditPage extends Component {
               email: '',
               phone: ''
              }, contacts.length);
-             // addContact('contactsEdit', 'contacts')
           }}><i/> Add Contact
           </button>
           <button className="btn btn-primary" type="submit" disabled={submitting}>
             {submitting ? <i/> : <i/>} Submit
           </button>
-          {backLink}
+          <BackButton text='Cancel' classes='btn btn-default' />
         </div>
       </form>
     )
@@ -133,7 +133,12 @@ class ContactsEditPage extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
+        <div className='text'>
+          <h2>
+            <span>Edit Contacts</span>
+            <BackButton backUrl='/dashboard' />
+          </h2>
+        </div>
         <hr/>
         <p>Points of contact track those responsible for areas of your organization, and when that information was last verified.  Who has the login information for your domain provider?  Who is in charge of hosting requests?</p>
         <p>Keeping track of this type of information will allow your organization to better respond to issues, and help faciliate personnel transitions.</p> 
@@ -146,12 +151,10 @@ class ContactsEditPage extends Component {
 
 ContactsEditPage.propTypes = {
   ...propTypes,
-  header: PT.object.isRequired,
   contactsData: PT.array.isRequired,
   emptyText: PT.object.isRequired,
   contactsSubmit: PT.func.isRequired,
-  contactsDelete: PT.func.isRequired,
-  backLink: PT.object.isRequired
+  contactsDelete: PT.func.isRequired
 };
 
 export default reduxForm({

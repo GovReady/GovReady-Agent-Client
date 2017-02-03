@@ -9,16 +9,16 @@ import { actions as widgetActions } from 'redux/modules/widgetReducer';
 class RefreshButton extends Component {
 
   refreshClick(event) {
-    let {widgetName} = this.props;
     event.preventDefault();
-    this.props.widgetActions.widgetLoading(widgetName);
+    let {widgetName, widgetQuery, actions, widgetActions} = this.props;
+    widgetActions.widgetLoading(widgetName);
     // Aggregate widget
-    this.props.actions.siteAggAll(config.mode, [widgetName.toLowerCase()]).then(() => {
+    actions.siteAggAll(config.mode, [widgetName.toLowerCase()]).then(() => {
       // Reload widget data
-      this.props.widgetActions.widgetLoadData(
+      widgetActions.widgetLoadData(
         widgetName,
-        this.props.widgetQuery.url, 
-        this.props.widgetQuery.process
+        widgetQuery.url, 
+        widgetQuery.process
       )
     });
   }

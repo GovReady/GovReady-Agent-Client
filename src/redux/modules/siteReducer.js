@@ -220,6 +220,7 @@ export function siteSites(): Function {
     // Failed to get all sites, load anyways
     const failed = (error) => {
       dispatch(siteSitesFailed(error));
+      dispatch(siteLogOut());
     }
     dispatch(siteSitesStart());
     return dispatch(sitePost('/sites', true, {}, 'GET')
@@ -323,6 +324,7 @@ export function sitePre( ): Function {
     // Then try the ping check
     const failed = (error) => {
       dispatch(sitePreFailed(error));
+      dispatch(siteLogOut());
     }
     dispatch(sitePreStart());
     return dispatch(sitePost('/sites/' + config.siteId, true, {}, 'GET')
@@ -554,13 +556,27 @@ export function siteAggAll(mode: string, calls: array): Function {
   }
 }
 
+const createCookie = function (name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toGMTString();
+  }
+  document.cookie = name + "=" + value + expires + "; path=/";
+};
+
+const deleteCookie = function (name) {
+  createCookie(name, '', -10);
+};
+
 //
 // Logs out
 //
 export function siteLogOut(data: object): Function {
   return (dispatch: Function) => {
     deleteCookie('govreadyDashboardToken');
-    window.location = config.authUrl;
+    window.location = config.logoutUrl;
   }
 }
 

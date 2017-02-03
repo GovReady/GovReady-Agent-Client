@@ -2,6 +2,7 @@ import React, { Component, PropTypes as PT } from 'react';
 import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 import { Link } from 'react-router';
+import BackButton from 'components/BackButton';
 
 class DomainsPage extends Component {
 
@@ -9,7 +10,12 @@ class DomainsPage extends Component {
     let { header, domains, ssl } = this.props;
     return (
       <div>
-        {header}
+        <div className='text'>
+          <h2>
+            <span>Domains and SSL</span>
+            <BackButton backUrl='/dashboard' />
+          </h2>
+        </div>
         <hr/>
         <p>Information about your site domain and SSL certificate can be found below.  It's important to keep track of who has the information necessary to update and renew.</p> 
         <p><Link className="btn btn-default btn-sm" to={'/dashboard/Contacts/'} >Go to contacts</Link></p>
@@ -47,7 +53,6 @@ class DomainsPage extends Component {
 }
 
 DomainsPage.propTypes = {
-  header: PT.object.isRequired,
   domains: PT.array.isRequired,
   ssl: PT.object.isRequired
 };

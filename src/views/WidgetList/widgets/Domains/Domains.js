@@ -79,7 +79,6 @@ class Domains extends Component {
 
         return (
           <DomainsPage 
-            header={Widget.titleSection('Domains and SSL', false, 'h2', false, true)} 
             domains={domains} 
             ssl={ssl} />
         )
@@ -109,7 +108,6 @@ class Domains extends Component {
 
       return (
         <DomainsPage 
-          header={Widget.titleSection('Domains and SSL', false, 'h2', false, true)} 
           domains={domains} 
           ssl={ssl} />
       )

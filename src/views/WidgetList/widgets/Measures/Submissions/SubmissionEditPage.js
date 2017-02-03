@@ -3,6 +3,7 @@ import { reduxForm, initialize, propTypes } from 'redux-form';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
 import DatePickerWrap from 'components/DatePickerWrap';
+import BackButton from 'components/BackButton';
 // Form fields
 export const fields = [
   '_id',
@@ -25,7 +26,15 @@ class SubmissionEditPage extends Component {
       data,
       confirmDelete 
     }, handleSubmit, submissionSubmit, submitting } = this.props;
-
+    // No submission
+    if(!measureId) {
+      return (
+        <div>
+          <h2>Sorry there was an issue editing the submission.</h2>
+          <BackButton text='Go back' classes='btn btn-default' />
+        </div>
+      )
+    }
     return (
       <form onSubmit={handleSubmit(submissionSubmit)}>
         <div className="row">
@@ -54,7 +63,6 @@ class SubmissionEditPage extends Component {
             <button className="btn btn-primary" type="submit" disabled={submitting}>
               {submitting ? <i/> : <i/>} Submit
             </button>
-            {this.props.backLink}
           </div>
         </div>
       </form>
@@ -77,8 +85,7 @@ SubmissionEditPage.propTypes = {
   ...propTypes,
   header: PT.object,
   submission: PT.object.isRequired,
-  submissionSubmit: PT.func.isRequired,
-  backLink: PT.object
+  submissionSubmit: PT.func.isRequired
 };
 
 export default reduxForm({

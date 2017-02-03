@@ -31,7 +31,9 @@ class CmsVulnerabilitiesWidget extends Component {
     const indexMod = this.coreVulnerabilty(this.props.core) ? 1 : 0;
     return (
       <div>
-        {this.props.header}
+        <div className="title">
+          <h3>Known vulnerabilities</h3>
+        </div>
         <Accordion>
           {this.coreSection(this.props.core)}
           {this.props.plugins.map((plugin, index) => (
@@ -49,7 +51,6 @@ class CmsVulnerabilitiesWidget extends Component {
 
 CmsVulnerabilitiesWidget.propTypes = {
   cms: PT.string.isRequired,
-  header: PT.object,
   core: PT.object.isRequired,
   plugins: PT.array.isRequired
 };

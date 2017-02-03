@@ -31,8 +31,10 @@ class MeasuresWidget extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
-        {this.props.subHeader}
+        <div className="title">
+          <h3>{this.props.headerLink}</h3>
+        </div>
+        <h5>Track your manual tasks here. {this.props.subHeaderLink}</h5>
         <div className="row">
           <div className="col-sm-6">
             <h4>Upcoming / Past-due</h4>
@@ -49,8 +51,8 @@ class MeasuresWidget extends Component {
 }
 
 MeasuresWidget.propTypes = {
-  header: PT.object,
-  subHeader: PT.object,
+  headerLink: PT.object,
+  subHeaderLink: PT.object,
   createDefault: PT.func.isRequired,
   createNewLink: PT.func.isRequired,
   measures: PT.array.isRequired,

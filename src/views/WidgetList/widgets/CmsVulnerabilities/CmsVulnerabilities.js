@@ -55,21 +55,12 @@ class CmsVulnerabilities extends Component {
 
     let fullVuln = this.getPluginDataWithVuln(plugins.data);
 
-    if(this.props.display === 'page') {
-      // @TODO?
-      return (
-        <div>CmsVulnerabilitiesPage</div>
-      )
-    }
-    else {
-      return (
-        <CmsVulnerabilitiesWidget 
-          cms={config.cmsNice}
-          header={Widget.titleSection('Known vulnerabilities', false, 'h3')}
-          core={fullVuln.core}
-          plugins={fullVuln.plugins} />
-      )
-    }
+    return (
+      <CmsVulnerabilitiesWidget 
+        cms={config.cmsNice}
+        core={fullVuln.core}
+        plugins={fullVuln.plugins} />
+    )
   }
 }
 

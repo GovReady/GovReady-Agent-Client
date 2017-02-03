@@ -51,22 +51,12 @@ class Stack extends Component {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
       return errorDisplay ? errorDisplay : Widget.loadingDisplay();
     }
-
-    if(this.props.display === 'page') {
-      // @TODO?
-      return (
-        <div>StackPage</div>
-      )
-    }
-    else {
-      return (
-        <StackWidget 
-          header={Widget.titleSection('System', false, 'h3')} 
-          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
-          systemData={widget.data} 
-          assessmentState={this.assessmentStateMarkup(widget.data.scan)} />
-      )
-    }
+    return (
+      <StackWidget 
+        refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+        systemData={widget.data} 
+        assessmentState={this.assessmentStateMarkup(widget.data.scan)} />
+    )
   }
 }
 

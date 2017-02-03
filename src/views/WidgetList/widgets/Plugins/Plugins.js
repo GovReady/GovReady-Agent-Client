@@ -71,7 +71,6 @@ class Plugins extends Component {
           pluginText={config.pluginText}
           cmsUrl={cmsUrl}
           pluginUrl={config.pluginUrl}
-          header={Widget.titleSection(config.pluginText + 's', false, 'h2', false, true)} 
           updates={updates} 
           core={widget.data.core} 
           plugins={widget.data.plugins} />

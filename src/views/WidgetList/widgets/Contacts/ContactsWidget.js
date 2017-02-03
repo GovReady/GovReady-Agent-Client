@@ -44,8 +44,10 @@ class ContactsWidget extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
-        {this.props.subHeader}
+        <div className="title">
+          <h3>{this.props.headerLink}</h3>
+        </div>
+        <h5>Keep this handy list  with important contacts to maintain your site</h5>
         {this.listContactsTable(this.props.contacts, this.props.emptyText)}
         {this.props.footer}
       </div>
@@ -54,8 +56,7 @@ class ContactsWidget extends Component {
 }
 
 ContactsWidget.propTypes = {
-  header: PT.object,
-  subHeader: PT.object,
+  headerLink: PT.object,
   contacts: PT.array.isRequired,
   emptyText: PT.object.isRequired,
   footer: PT.object

@@ -3,6 +3,7 @@ import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 import { default as config } from 'config';
 import Vulnerability from 'components/Vulnerability';
+import BackButton from 'components/BackButton';
 
 class PluginsPage extends Component {
 
@@ -53,7 +54,12 @@ class PluginsPage extends Component {
     }
     return (
       <div>
-        {header}
+        <div className='text'>
+          <h2>
+            <span>{pluginText + 's'}</span>
+            <BackButton backUrl='/dashboard' />
+          </h2>
+        </div>
         <hr/>
         <p>{pluginText + 's'} displayed below represent a heads-up-display of your site health. Those marked in yellow are behind the most current version, and should probably be updated.</p> 
         <p><a className="btn btn-default btn-sml" target="_blank" href={cmsUrl}>Go to CMS page</a></p>
@@ -105,7 +111,6 @@ class PluginsPage extends Component {
 PluginsPage.propTypes = {
   cms: PT.string.isRequired,
   pluginText: PT.string.isRequired,
-  header: PT.object.isRequired,
   cmsUrl: PT.string.isRequired,
   pluginUrl: PT.string.isRequired,
   updates: PT.number.isRequired,

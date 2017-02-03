@@ -9,21 +9,24 @@ import objectAssign from 'object-assign';
 
 class Widget {
 
-  static registerWidget(widget, payload = false) {
+  // Registers widget with import, load data functions
+  static registerWidget(widgetCntrl, payload = false) {
+    let {widget, actions, widgetName, widgetQuery} = widgetCntrl.props;
     // Do we need to register initial state info?
-    if(!widget.props.widget || !widget.props.widget.status) {
-      widget.props.actions.widgetImported(widget.props.widgetName);
+    if(!widget || !widget.status) {
+      actions.widgetImported(widgetName);
     }
     // Do we need to get payload?
-    if(payload && (!widget.props.widget || widget.props.widget.status !== 'loaded')) {
-      widget.props.actions.widgetLoadData(
-        widget.props.widgetName,
-        widget.props.widgetQuery.url, 
-        widget.props.widgetQuery.process
+    if(payload && (!widget || widget.status !== 'loaded')) {
+      actions.widgetLoadData(
+        widgetName,
+        widgetQuery.url, 
+        widgetQuery.process
       );
     }
   }
 
+  // Default widget 
   static propTypes (props = {}) {
     return objectAssign(props, {
       widgetType: PT.string,
@@ -35,18 +38,21 @@ class Widget {
     });
   }
 
+  // Helper redux state
   static mapStateToProps (state, ownProps) {
     return {
       widget: state.widgetState.widgets[ownProps.widgetName]
     };
   }
 
+  // Helper redux dispatch
   static mapDispatchToProps (dispatch) {
     return {
       actions: bindActionCreators(actions, dispatch)
     };
   }
 
+  // Helper connect
   static connect (widget) {
     return connect(
       this.mapStateToProps,
@@ -89,6 +95,7 @@ class Widget {
     );
   }
 
+  // Displays failed text
   static loadFailed (widgetName) {
     return (
       <p>
@@ -97,6 +104,7 @@ class Widget {
     );
   }
 
+  // Helper function sets hmtl field
   static setHtml(text) {
     return {
       dangerouslySetInnerHTML: {
@@ -105,30 +113,7 @@ class Widget {
     }
   }
 
-  static backLink (text= 'Back', classes = 'back', backUrl = false) {
-    const backClick = (event) => {
-      event.preventDefault();
-      //@TODO currently no way to do this????
-      // Just override with back url
-      if(backUrl) {
-        hashHistory.push(backUrl);
-      }
-      // Attempt a "smart back"
-      else {
-        const currentHash = window.location.hash;
-        hashHistory.goBack();
-        setTimeout(() => {
-          if(currentHash === window.location.hash) {
-            hashHistory.push(backUrl);
-          }
-        }, 0);
-      }
-    }
-    return (
-      <a href="#" className={classes} onClick={backClick}>{text}</a>
-    );
-  }
-
+  // Creates page header section
   static titleSection (text, pageUrl, header = 'h3', absolute = false, backlink = false, overrideUrl = '/dashboard') {
     const headerInner = () => {
       if(pageUrl && !absolute) {
@@ -149,7 +134,7 @@ class Widget {
           </div>
         )
       }
-      else if(backlink) {
+      else if(false && backlink) {
         return (
           <span>
             <span>{text}</span>
@@ -169,12 +154,10 @@ class Widget {
     );
   }
 
+  // Creates a panel footer with link
   static panelFooter (text, pageUrl, absolute = false, refresh = false, widgetName) {
     return (
       <div className='panel-footer'>
-        {refresh && (
-          <RefreshButton refreshFunc={refresh} widgetName={widgetName} />
-        )}
         {pageUrl && !absolute &&
           <Link className='title-text' to={`/dashboard/${pageUrl}`}>
             {text} <i className='fa fa-chevron-right'></i>

@@ -20,20 +20,23 @@ else if(window.Drupal && window.Drupal.settings.govready) {
 }
 
 // Assign common props
-Object.assign(config, {
-  dateFormat: 'MMMM Do YYYY' // for use with moment, display
-});
+config.dateFormat = 'MMMM Do YYYY';
+// Current client url
+config.clientUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+// Callback for logout
+config.logoutUrl = 'https://govready.auth0.com/v2/logout?returnTo=' + encodeURIComponent(config.clientUrl);
 
 // @TODO change site
 export function configChangeSite(siteId) {
+  // Active siteId
   config.siteId = siteId;
-  return config;
 }
 
 // @TODO change site
 export function configChangeMode(mode) {
+  // Mode of site 
+  // standalone, agent, local, remote
   config.mode = mode;
-  return config;
 }
 
 // Switches CMS language fragments
@@ -51,13 +54,10 @@ export function configCmsSettings(cms, url = '') {
     config.cmsNice = 'Drupal';
     config.pluginUrl = 'https://drupal.org/project/';
   }
-  return config;
 }
 
 // Switches CMS endpoints
 export function configCmsPaths(cms) {
-  // To log out
-  config.authUrl = 'https://govready.auth0.com/v2/logout?returnTo=https%3A%2F%2Fplugin.govready.com';
   // WP
   if(cms === 'wordpress') {
     let url = '/wp-admin/admin-ajax.php?';

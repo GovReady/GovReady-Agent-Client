@@ -82,29 +82,12 @@ class Accounts extends Component {
 
     // Inactive
     if(this.props.widgetType === 'inactive') {
-      // @ TODO?
-      if(this.props.display === 'page') {
-        return (
-          <div>InactiveAccountsPage</div>
-        )
-      }
-      else {
-        const subHeader = () => {
-          return (
-            <h5>
-              Are these users still in your organization?  <a target="_blank" href={userUrl}>Edit them</a>.  
-              If not, <a target="_blank" href={userUrl}>delete them</a>.
-            </h5>
-          );
-        }
-        return (
-          <InactiveAccountsWidget
-            header={Widget.titleSection('Inactive Accounts', userUrl, 'h3', true)} 
-            subHeader={subHeader()}
-            refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
-            accounts={this.getInactiveAccounts()} />
-        )
-      }
+      return (
+        <InactiveAccountsWidget
+          userUrl={userUrl} 
+          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+          accounts={this.getInactiveAccounts()} />
+      )
     }
     // Normal accounts widget
     else {

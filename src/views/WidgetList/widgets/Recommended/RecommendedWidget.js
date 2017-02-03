@@ -50,7 +50,9 @@ class RecommendedWidget extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
+        <div className="text">
+          <h3>{this.props.headerText}</h3>
+        </div>
         {this.recommendedList(this.props.plugins)}
       </div>
     );
@@ -60,7 +62,7 @@ class RecommendedWidget extends Component {
 RecommendedWidget.propTypes = {
   pluginText: PT.string.isRequired,
   pluginUrl: PT.string.isRequired,
-  header: PT.object,
+  headerText: PT.string.isRequired,
   plugins: PT.array.isRequired
 };
 
