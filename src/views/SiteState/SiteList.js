@@ -94,7 +94,7 @@ class SiteList extends Component {
             <h4 className="list-group-item-heading">{site.title}</h4>
             <p><a href={site.url} target="_blank"><i className="fa fa-share"></i> {site.url}</a></p>
             <a href="#" onClick={(event)=>this.viewClick(event, site)} className="btn btn-primary">{viewText}</a>
-            {config.mode === 'standalone' && (
+            {(false && config.mode === 'standalone') && (
               <a href="#" onClick={(event)=>this.editClick(event, site)} className="btn btn-default">Edit</a>
             )}
           </div>
