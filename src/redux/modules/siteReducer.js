@@ -233,6 +233,7 @@ export function siteSites(): Function {
       // If we have active CMS (wp or drupal)
       // Filter list by like types
       if(config.mode === 'preview' && config.application) {
+        console.log('true')
         sites = sites.filter((site) => {
           return config.application == site.application;
         });
@@ -575,8 +576,21 @@ const deleteCookie = function (name) {
 //
 export function siteLogOut(data: object): Function {
   return (dispatch: Function) => {
-    deleteCookie('govreadyDashboardToken');
-    window.location = config.logoutUrl;
+    // CMS based application
+    if(config.application) {
+      return dispatch(sitePost('/reset-token', true, {}, 'GET')).then((res) => {
+        console.log(res);
+        // location.reload();
+      }).catch((error) => {
+        console.log(error);
+        // location.reload();
+      });
+    }
+    else {
+      deleteCookie('govreadyDashboardToken');
+      window.location = config.logoutUrl;
+      return;
+    }
   }
 }
 
