@@ -579,11 +579,11 @@ export function siteLogOut(data: object): Function {
     // CMS based application
     if(config.application) {
       return dispatch(sitePost('/reset-token', true, {}, 'GET')).then((res) => {
-        console.log(res);
-        // location.reload();
+        // console.log(res);
+        location.reload();
       }).catch((error) => {
-        console.log(error);
-        // location.reload();
+        // console.log(error);
+        location.reload();
       });
     }
     else {
