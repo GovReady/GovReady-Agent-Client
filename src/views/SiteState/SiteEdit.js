@@ -1,6 +1,7 @@
 import React, { Component, PropTypes as PT } from 'react';
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
+import objectAssign from 'object-assign';
 import { WidgetList } from '../WidgetList';
 import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
@@ -15,12 +16,16 @@ class SiteEdit extends Component {
   // Gets a single measure or empty
   getSiteObject(_id = null) {
     if(_id) {
-      // const measure = measures.find((item) => {
-      //   return item._id === _id;
-      // });
-      // if(measure) {
-      //   return measure;
-      // }
+      const site = this.props.siteState.sites.find((item) => {
+        return item.siteId === _id;
+      });
+      if(site) {
+        console.log(site);
+        return objectAssign({
+          _id,
+          type: site.application ? site.application : 'other' 
+        }, site);
+      }
     }
     return {
       '_id': '',
@@ -29,7 +34,8 @@ class SiteEdit extends Component {
       'url': config.mode !== 'standalone' ? config.clientUrl : '',
       'accessible': '', 
       'otherApplication': '',
-      'application': config.application ? config.application : ''
+      'application': config.application ? config.application : '',
+      'confirmDelete': ''
     };
   }
 
@@ -59,7 +65,10 @@ class SiteEdit extends Component {
     if(siteState.status !== SITE_UPDATE_START) {
       // Existing record
       if(data._id) {
-        this.props.actions.siteUpdate(data);
+        // posting null to API was resulting in a string
+        this.props.actions.siteUpdate(objectAssign({}, data, {
+          application: data.application || ''
+        }));
       } 
       // New item
       else {
@@ -70,16 +79,18 @@ class SiteEdit extends Component {
 
   // Deletes a site
   siteDelete(data) {
-    console.log('TODO');
+    if (data._id && data._id.value) {
+      this.props.actions.siteDelete(data._id.value);
+    }
   }
 
   render () {
-    let { siteState } = this.props;
-    const site = this.getSiteObject();
+    const { siteState } = this.props;
+    const site = this.getSiteObject(siteState.editSite);
     return (
       <SiteEditForm 
         site={site}
-        locked={config.application ? true : false}
+        locked={site.application ? true : false}
         appDisabled={config.application ? true : false}
         siteSubmit={this.siteSubmit.bind(this)}
         siteDelete={this.siteDelete.bind(this)} />

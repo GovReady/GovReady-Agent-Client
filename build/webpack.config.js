@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import config from '../config';
 import _debug from 'debug';
+import PrintChunksPlugin from './PrintChunksPlugin'
 
 const debug = _debug('app:webpack:config');
 const paths = config.utils_paths;
@@ -56,6 +57,7 @@ webpackConfig.plugins = [
       collapseWhitespace: true
     }
   }),
+  new PrintChunksPlugin({}),
   new webpack.ProvidePlugin({
     'Promise': 'exports?window.Promise!bluebird',
     'fetch': 'exports?window.fetch!whatwg-fetch'

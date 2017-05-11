@@ -24,7 +24,8 @@ config.dateFormat = 'MMMM Do YYYY';
 // Current client url
 config.clientUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
 // Callback for logout
-config.logoutUrl = 'https://govready.auth0.com/v2/logout?returnTo=' + encodeURIComponent(config.clientUrl);
+config.authUrl = 'https://govready.auth0.com/';
+config.logoutUrl = `${config.authUrl}v2/logout?returnTo=' + encodeURIComponent(config.clientUrl)`;
 
 // @TODO change site
 export function configChangeSite(siteId) {

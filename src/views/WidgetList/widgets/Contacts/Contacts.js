@@ -7,9 +7,11 @@ import objectAssign from 'object-assign';
 import { Link } from 'react-router';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as crudActions } from 'redux/modules/contactsReducer';
+import { actions as messageActions } from 'redux/modules/messageReducer';
 import {isoToDate, dateToIso} from 'utils/date';
 import ContactsWidget from './ContactsWidget';
 import ContactsEditPage from './ContactsEditPage';
+import TableLoading from 'components/loading/VerticalTable';
 
 
 class Contacts extends Component {
@@ -30,7 +32,10 @@ class Contacts extends Component {
       this, 
       false
     );
-    this.props.crudActions.fetchRemote(config.apiUrl + 'contacts');
+    this.props.crudActions
+      .fetchRemote(config.apiUrl + 'contacts')
+      .then(() => Widget.loadComplete(this))
+      .catch((e) => Widget.loadComplete(this, e));
   }
 
   emptyText(includeLink) {
@@ -60,16 +65,31 @@ class Contacts extends Component {
 
     if(widget && widget.status !== 'posting') {
       let calls = [];
+      let alerted = false;
+      // Fire message
+      const finishSubmit = () => {
+        if(alerted) {
+          return;
+        }
+        alerted = true;
+        // Set a message
+        this.props.messageActions.messageAdd({
+          level: 'success',
+          content: 'Contacts have been updated.'
+        });
+      }
       data.contacts.map((contact, index) => {
         // Convert to server time format
         contact.lastConfirmed = dateToIso(contact.lastConfirmed);
         // Existing record
         if(contact._id) {
-          crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact);
+          crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact)
+            .then(finishSubmit());
         } 
         // New item
         else {
-          crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact));
+          crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact))
+            .then(finishSubmit());
         }
       });
     }
@@ -89,6 +109,15 @@ class Contacts extends Component {
   render () {
 
     let { widget, contacts, display, widgetName } = this.props;
+
+    if(window.loadShow) { 
+      return <TableLoading text={true} colCount={1} />;
+    }
+
+    // Return loading if not set
+    if (!widget || !widget.status || (widget.status !== 'loaded' && display !== 'page')) {
+      return <TableLoading text={true} colCount={1} />;
+    }
 
     if(display === 'page') {
       return (
@@ -125,7 +154,8 @@ function mapStateToProps (state, ownProps) {
 function mapDispatchToProps (dispatch) {
   return {
     actions: bindActionCreators(actions, dispatch),
-    crudActions: bindActionCreators(crudActions, dispatch)
+    crudActions: bindActionCreators(crudActions, dispatch),
+    messageActions:  bindActionCreators(messageActions, dispatch),
   };
 }
 

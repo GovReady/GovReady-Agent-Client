@@ -1,15 +1,23 @@
 
 .govready-container .view-container {
-  .loading {
-    text-align: center;
-    min-height: 100px;
-  }
 
   .title {
     h2,h3 {
       a:not(.btn) {
         color: #317eac;
       }
+    }
+  }
+
+  // Simple panel
+  .panel-invisible {
+    border: none;
+    box-shadow: none;
+    
+
+    .panel-body {
+      padding-right: 0;
+      padding-left: 0;
     }
   }
 
@@ -133,6 +141,13 @@
     border-top: 1px solid #ddd;
     margin-top: 20px;
     padding-top: 10px;
+  }
+
+  // Contacts list
+  .contacts-list {
+    td, th {
+      font-size: .8em;
+    }
   }
 
 

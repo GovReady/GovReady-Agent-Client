@@ -62,7 +62,6 @@ class WidgetsListPage extends Component {
             {renderWidget('Stack')}
           </div>
           <div className='col-sm-6'>
-            {renderWidget('Recommended')}
             {renderWidget('CmsVulnerabilities')}
           </div>
         </div>

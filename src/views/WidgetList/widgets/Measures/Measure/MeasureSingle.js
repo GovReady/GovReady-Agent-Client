@@ -1,18 +1,14 @@
 import React, { PropTypes as PT, Component } from 'react';
+import Messages from 'components/Messages';
 import Submissions from '../Submissions/Submissions';
 import { freqOptions } from './MeasureEditPage';
 import BackButton from 'components/BackButton';
 
 class MeasureSingle extends Component {
+
   render () {
-    let {header, due, measure, createNewLink} = this.props;
-    // Returns Frequency text
-    const frequency = () => {
-      const freq = freqOptions.find((item) => {
-        return item.time === measure.frequency;
-      });
-      return freq ? freq.label : 'Unknown';
-    };
+    let {header, due, measure, createNewLink} = this.props; 
+    // empty
     if(!measure || !measure._id) {
       return (
         <div>
@@ -21,6 +17,13 @@ class MeasureSingle extends Component {
         </div>
       )
     }
+    // Returns Frequency text
+    const frequency = () => {
+      const freq = freqOptions.find((item) => {
+        return item.time === measure.frequency;
+      });
+      return freq ? freq.label : 'Unknown';
+    };
     return (
       <div>
         <div className='text'>
@@ -29,6 +32,7 @@ class MeasureSingle extends Component {
             <BackButton backUrl='/dashboard/Measures' />
           </h2>
         </div>
+        <Messages />
         <ul className="list-inline">
           <li><h4>{due}</h4></li>
           <li>{createNewLink('Edit', measure._id + '/edit', 'btn btn-default')}</li>
@@ -48,8 +52,10 @@ class MeasureSingle extends Component {
           </pre>
         </div>
         <hr/>
-        <h4>Submit New Task Report</h4>
-        <Submissions display="form" bodyTemplate={measure.body} isNew={true} measureId={measure._id} />
+        <Submissions 
+          display="formDropdown" 
+          bodyTemplate={measure.body} 
+          isNew={true} measureId={measure._id} />
         <hr/>
         <h4>Recent Task Reports</h4>
         <Submissions display="list" measureId={measure._id} />

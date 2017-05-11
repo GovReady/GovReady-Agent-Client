@@ -4,6 +4,10 @@
   overflow: hidden;
   position: relative;
 
+  &.container {
+    margin-left: 0px;
+  }
+
   .sites-list-wrapper {
     position: static;
   }
@@ -83,18 +87,39 @@
     }
   }
 
-  .gov-footer.well-faint {
-    background: #f9f9f9;
-    border-color: #f2f2f2;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.01);
-    margin-bottom: 0;
-    margin-top: 30px;
+  .gov-footer {
+    &.well-faint {
+      background: #f9f9f9;
+      border-color: #f2f2f2;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.01);
+      margin-bottom: 0;
+      margin-top: 30px;
+    }
+
+    .dash-logged-in {
+      margin-top: 10px;
+    }
   }
+
+
 
   @media (min-width: 768px) {
     
     .content-container {
       min-height: 700px;
+    }
+
+    .gov-footer {
+      div {
+        display: inline-block;
+      }
+
+      .dash-logged-in { 
+        margin-top: 0;
+        margin-left: 10px;
+        padding-left: 10px;
+        border-left: 1px solid #ddd;
+      } 
     }
   }
 }

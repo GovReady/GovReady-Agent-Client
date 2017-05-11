@@ -47,7 +47,7 @@ class Recommended extends Component {
     let widget = this.props.widget;
     
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget || widget.status === 'loading') {
       return Widget.loadingDisplay();
     }
 

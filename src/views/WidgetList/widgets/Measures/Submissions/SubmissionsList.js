@@ -38,7 +38,9 @@ class SubmissionsList extends Component {
   render () {
     return (
       <div>
-        <h3>Active Tasks</h3>
+        {this.props.header && (
+          <div>{this.props.header}</div>
+        )}
         {this.submissionsList(this.props.submissions)}
       </div>
     );
@@ -46,6 +48,7 @@ class SubmissionsList extends Component {
 }
 
 SubmissionsList.propTypes = {
+  header: PT.string,
   submissions: PT.array.isRequired
 };
 

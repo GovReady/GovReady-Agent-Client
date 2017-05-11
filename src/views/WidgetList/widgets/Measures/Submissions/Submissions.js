@@ -4,13 +4,21 @@ import Widget from '../../Widget';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import objectAssign from 'object-assign';
-import { reset as formReset } from 'redux-form';
+import { reset as formReset, startSubmit } from 'redux-form';
 import { actions as crudActions } from 'redux/modules/submissionsReducer';
+import { actions as messageActions } from 'redux/modules/messageReducer';
 import SubmissionsList from './SubmissionsList';
 import SubmissionsRecent from './SubmissionsRecent';
 import SubmissionEditPage from './SubmissionEditPage';
 
 class Submissions extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      formOpen: false
+    };
+  }
 
   static defaultProps = {
     widget: {},
@@ -74,6 +82,19 @@ class Submissions extends Component {
     }).slice(0, count);
   }
 
+  // Done with CRUD
+  finishSubmit(message) {
+    this.toggleForm(null, false);
+    // Reset form
+    this.props.formActions.reset('submissionEdit');
+    // Set a message
+    this.props.messageActions.messageAdd({
+      level: 'success',
+      content: message
+    });
+
+  }
+
   handleSubmit(data) {
     const assignProps = (toSet, setData) => {
       this.props.submitFields.map((field) => {
@@ -83,7 +104,9 @@ class Submissions extends Component {
       });
       return toSet;
     }
-    let { crudActions, formActions } = this.props;
+    // Start Submission
+    this.props.formActions.startSubmit('submissionEdit');
+    let { crudActions } = this.props;
     // Existing record
     if(data._id) {
       crudActions.updateRemote(
@@ -91,7 +114,7 @@ class Submissions extends Component {
         data,
         '/dashboard/Measures/' + data.measureId,
         false
-      ).then(formActions.reset('submissionEdit'));
+      ).then(this.finishSubmit('The submission has been updated.'));
     } 
     // New item
     else {
@@ -100,19 +123,27 @@ class Submissions extends Component {
         assignProps({}, data),
         '/dashboard/Measures/' + data.measureId,
         false
-      ).then(formActions.reset('submissionEdit'));
+      ).then(this.finishSubmit('A new submission has been created.'));
     }
+  }
+
+  // Func toggles form open on submission edit
+  toggleForm (e, state = !this.state.formOpen) {
+    if (e) { 
+      e.preventDefault(); 
+    }
+    this.setState({formOpen: state});
   }
 
   render () {
 
     let { display, measureId, isNew, bodyTemplate, count } = this.props;
 
-    if(display === 'form' || display === 'pageIndividualEdit') {
+    if(display === 'form' ||  display === 'formDropdown' || display === 'pageIndividualEdit') {
       let submission, headerText;
 
       // Creating new submission
-      if(isNew && measureId){
+      if(isNew){
         submission = this.getSingle(null);
       }
       // not a new submission, so filter
@@ -120,11 +151,19 @@ class Submissions extends Component {
         submission = this.getSingle(measureId, submissions);
         headerText = submission.title;
       }
+      // Bind toggle form func ?
+      const toggleForm = display === 'formDropdown'
+                       ? this.toggleForm.bind(this)
+                       : null;
       return (
-        <SubmissionEditPage
-          submission={submission}
-          submissionSubmit={this.handleSubmit.bind(this)} />
-      )
+          <SubmissionEditPage 
+            header={headerText}
+            formOpen={this.state.formOpen}
+            toggleForm={toggleForm} 
+            submission={submission}
+            submissionSubmit={this.handleSubmit.bind(this)} />
+        )
+      
     }
     if(display === 'list') {
       // Individual measure
@@ -160,9 +199,11 @@ function mapStateToProps (state, ownProps) {
 function mapDispatchToProps (dispatch) {
   return {
     formActions: {
-      reset: bindActionCreators(formReset, dispatch)
+      reset: bindActionCreators(formReset, dispatch),
+      startSubmit: bindActionCreators(startSubmit, dispatch)
     },
-    crudActions: bindActionCreators(crudActions, dispatch)
+    crudActions: bindActionCreators(crudActions, dispatch),
+    messageActions:  bindActionCreators(messageActions, dispatch)
   };
 }
 

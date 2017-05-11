@@ -1,0 +1,5 @@
+.govready-container .view-container {
+  .animate-height {
+    @include transition(height ease-out .1s);
+  }
+}

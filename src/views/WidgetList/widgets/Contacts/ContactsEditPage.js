@@ -1,5 +1,6 @@
 import React, { PropTypes as PT, Component } from 'react';
 import { reduxForm, initialize, propTypes } from 'redux-form';
+import Messages from 'components/Messages';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
 import DatePickerWrap from 'components/DatePickerWrap';
@@ -139,6 +140,7 @@ class ContactsEditPage extends Component {
             <BackButton backUrl='/dashboard' />
           </h2>
         </div>
+        <Messages />
         <hr/>
         <p>Points of contact track those responsible for areas of your organization, and when that information was last verified.  Who has the login information for your domain provider?  Who is in charge of hosting requests?</p>
         <p>Keeping track of this type of information will allow your organization to better respond to issues, and help faciliate personnel transitions.</p> 

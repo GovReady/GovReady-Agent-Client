@@ -5,6 +5,8 @@ import AccountsWidget from './AccountsWidget';
 import RefreshButton from 'components/RefreshButton';
 import InactiveAccountsWidget from './InactiveAccountsWidget';
 import { Link } from 'react-router';
+import PanelLoading from 'components/loading/Panel';
+import TableLoading from 'components/loading/VerticalTable';
 
 class Accounts extends Component {
 
@@ -58,11 +60,24 @@ class Accounts extends Component {
   }
 
   render () {
-    let widget = this.props.widget;
+    let { widget, widgetType }  = this.props;
+
+    if(window.loadShow) { 
+      if (widgetType === 'inactive') {
+        return <TableLoading text={true} colCount={1} />;
+      } else  {
+        return <PanelLoading />;
+      }
+    }
+      
 
     // Return loading if not set
     if(!widget || widget.status !== 'loaded') {
-      return Widget.loadingDisplay();
+      if (widgetType === 'inactive') {
+        return <TableLoading text={true} colCount={1} />;
+      } else  {
+        return <PanelLoading />;
+      }
     }
 
     let userUrl, adminRole;
@@ -81,7 +96,7 @@ class Accounts extends Component {
 
 
     // Inactive
-    if(this.props.widgetType === 'inactive') {
+    if(widgetType === 'inactive') {
       return (
         <InactiveAccountsWidget
           userUrl={userUrl} 

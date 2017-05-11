@@ -4,6 +4,8 @@ import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
 import DatePickerWrap from 'components/DatePickerWrap';
 import BackButton from 'components/BackButton';
+import Panel from 'react-bootstrap/lib/Panel';
+
 // Form fields
 export const fields = [
   '_id',
@@ -15,6 +17,7 @@ export const fields = [
 
 class SubmissionEditPage extends Component {
 
+  // Form fragment
   editForm() {
     // Extract props
     const { fields: { 
@@ -75,7 +78,18 @@ class SubmissionEditPage extends Component {
         {this.props.header && (
           <div>{this.props.header}</div>
         )}
-        {this.editForm()}
+        {this.props.toggleForm ? (
+          <div>
+            <button onClick={ this.props.toggleForm } className="btn btn-success">
+              Create New Task Report
+            </button>
+            <Panel className="panel-invisible" collapsible expanded={this.props.formOpen}>
+              {this.editForm()}
+            </Panel>
+          </div>
+        ) : (
+          <div>{this.editForm()}</div>
+        )}
       </div>
     );
   }
@@ -83,6 +97,8 @@ class SubmissionEditPage extends Component {
 
 SubmissionEditPage.propTypes = {
   ...propTypes,
+  formOpen: PT.bool,
+  toggleForm: PT.func,
   header: PT.object,
   submission: PT.object.isRequired,
   submissionSubmit: PT.func.isRequired

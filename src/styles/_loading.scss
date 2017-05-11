@@ -1,0 +1,39 @@
+.govready-container .view-container {
+  .loading {
+    text-align: center;
+    min-height: 100px;
+  }
+
+  .loading-shim {
+    opacity: .4;
+
+    .loading-shim {
+      opacity: 1;
+    }
+  }
+
+  .loading-shim-block-tiny,
+  .loading-shim-block-small,
+  .loading-shim-block-normal,
+  .loading-shim-block-large {
+    background: #ddd;
+    display: block;
+    height: 1.1em;
+  }
+
+  .loading-shim-block-tiny {
+    width: 25%;
+  }
+
+  .loading-shim-block-small {
+    width: 50%;
+  }
+
+  .loading-shim-block-normal {
+    width: 65%;
+  }
+
+  .loading-shim-block-large {
+    width: 80%;
+  }
+}

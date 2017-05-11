@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import objectAssign from 'object-assign';
 import { actions } from 'redux/modules/widgetReducer';
+import Loading from 'components/loading/Generic';
 
 import CmsVulnerabilitiesWidget from './CmsVulnerabilitiesWidget';
 
@@ -47,10 +48,11 @@ class CmsVulnerabilities extends Component {
   render () {
 
     let {widget, widgetName, plugins} = this.props;
+
     // Return loading if not set
     if((!widget || widget.status !== 'loaded') || (!plugins || plugins.status !== 'loaded')) {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName);
-      return errorDisplay ? errorDisplay : Widget.loadingDisplay();
+      return errorDisplay ? errorDisplay : <Loading />;
     }
 
     let fullVuln = this.getPluginDataWithVuln(plugins.data);

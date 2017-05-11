@@ -7,12 +7,14 @@ import objectAssign from 'object-assign';
 import { Link } from 'react-router';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as crudActions } from 'redux/modules/measuresReducer';
-import { isoToDate, dateToIso, isoSort } from 'utils/date';
+import { actions as messageActions } from 'redux/modules/messageReducer';
+import { isoToDate, dateToIso, isoSort, timeOptions } from 'utils/date';
 import MeasuresWidget from './MeasuresWidget';
 import MeasuresPage from './MeasuresPage';
 import MeasureSingle from './Measure/MeasureSingle';
 import MeasureEditPage from './Measure/MeasureEditPage';
 import { freqOptions } from './Measure/MeasureEditPage';
+import Loading from './Loading.js';
 
 class Measures extends Component {
 
@@ -31,7 +33,9 @@ class Measures extends Component {
       this, 
       false
     );
-    this.props.crudActions.fetchRemote(config.apiUrl + 'measures');
+    this.props.crudActions.fetchRemote(config.apiUrl + 'measures')
+      .then(() => Widget.loadComplete(this))
+      .catch((e) => Widget.loadComplete(this, e));;
   }
 
   processData (data) {
@@ -55,22 +59,38 @@ class Measures extends Component {
     );
   }
 
-
   // Returns markup for next due
   nextSubmissionDue(measure) {
-    if(!measure) {
+    if (!measure) {
       return '';
     }
     const due = window.moment(measure.due);
-    const now = window.moment();
+    const dueDay = due.diff(timeOptions.now, 'd');
     let isPast = false;
-    if(due.diff(now) < 0) {
-      isPast = true;
+    let timeString;
+    // Somewhere in the -1 - 1 day range
+    if ((dueDay * dueDay) <= 1) {
+      if (due.isSame(timeOptions.yest, 'd')) {
+        isPast = true;
+        timeString = 'yesterday';
+      } else if (due.isSame(timeOptions.tom, 'd')) {
+        timeString = 'tomorrow';
+      } else {
+        // Today
+        timeString = 'today';
+      }
+    } else {
+      // In past ?
+      if(due.diff(timeOptions.now) < 0) {
+        isPast = true;
+      }
+      timeString = due.fromNow();
     }
+
     const classes = () => isPast ? 'label label-warning' : 'label label-info';
     return (
       <div className={classes()}>
-        Due {due.fromNow()}
+        Due {timeString}
       </div>
     )
   }
@@ -100,6 +120,15 @@ class Measures extends Component {
     return isoSort(this.props.measures.filter((measure) => measure.due), 'due').slice(0, count);
   }
 
+  // Done with CRUD
+  finishSubmit(message) {
+    // Set a message
+    this.props.messageActions.messageAdd({
+      level: 'success',
+      content: message
+    });
+  }
+
   handleSubmit(data) {
 
     let { widget, submitFields, crudActions }  = this.props;
@@ -125,7 +154,7 @@ class Measures extends Component {
           data,
           '/dashboard/Measures/',
           true
-        );
+        ).then(this.finishSubmit('The measure has been updated.'));
       } 
       // New item
       else {
@@ -134,28 +163,36 @@ class Measures extends Component {
           assignProps({}, data),
           '/dashboard/Measures/',
           true
-        );
+        ).then(this.finishSubmit('A new measure has been created.'));
       }
     }
   }
 
   measureDelete(measure) {
-    // Launch all actions
     if(measure._id && measure._id.value) {
-      this.props.crudActions.deleteRemote(config.apiUrl + 'measures/' + measure._id.value, measure, '/dashboard/Measures');
+      this.props.crudActions.deleteRemote(
+        config.apiUrl + 'measures/' + measure._id.value, 
+        measure, 
+        '/dashboard/Measures'
+      ).then(this.finishSubmit('The measure has been deleted.'));
     }
     else {
       //error
+
     }
   }
 
   render () {
 
     let { widget, widgetName, measures, display, isNew, individual } = this.props;
-    
+
     // Return loading if not set
-    if(!widget || !widget.status) {
-      return Widget.loadingDisplay();
+    if(!widget || widget.status !== 'loaded') {
+      if(display === 'widget'){
+        return <Loading />;
+      } else {
+        return Widget.loadingDisplay();
+      }
     }
     // Measure view page
     if(display === 'pageIndividual') {
@@ -234,7 +271,8 @@ function mapStateToProps (state, ownProps) {
 function mapDispatchToProps (dispatch) {
   return {
     actions: bindActionCreators(actions, dispatch),
-    crudActions: bindActionCreators(crudActions, dispatch)
+    crudActions: bindActionCreators(crudActions, dispatch),
+    messageActions:  bindActionCreators(messageActions, dispatch),
   };
 }
 

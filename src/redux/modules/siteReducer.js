@@ -27,6 +27,9 @@ export const SITE_CREATE_FORM = 'SITE_CREATE_FORM';
 export const SITE_UPDATE_START = 'SITE_UPDATE_START';
 export const SITE_UPDATE_SUCCESS = 'SITE_UPDATE_SUCCESS';
 export const SITE_UPDATE_FAILED = 'SITE_UPDATE_FAILED';
+export const SITE_DELETE_START = 'SITE_DELETE_START';
+export const SITE_DELETE_SUCCESS = 'SITE_DELETE_SUCCESS';
+export const SITE_DELETE_FAILED = 'SITE_DELETE_FAILED';
 export const SITE_USER_START = 'SITE_USER_START';
 export const SITE_USER_FAILED = 'SITE_USER_FAILED';
 export const SITE_PRE_START = 'SITE_PRE_START';
@@ -51,6 +54,9 @@ export const siteStates = {
   SITE_UPDATE_START,
   SITE_UPDATE_SUCCESS,
   SITE_UPDATE_FAILED,
+  SITE_DELETE_START,
+  SITE_DELETE_SUCCESS,
+  SITE_DELETE_FAILED,
   SITE_PRE_START,
   SITE_PRE_SUCCESS,
   SITE_PRE_FAILED,
@@ -113,6 +119,21 @@ export function siteUpdateSuccess (siteId: string): Action {
 // Site update failed
 export function siteUpdateFailed (siteId: string, error: object): Action {
   return { type: SITE_UPDATE_FAILED, siteId: siteId, error: error };
+}
+
+// Site update starting
+export function siteDeleteStart (siteId: string): Action {
+  return { type: SITE_DELETE_START, siteId: siteId };
+}
+
+// Site update succeeded
+export function siteDeleteSuccess (siteId: string): Action {
+  return { type: SITE_DELETE_SUCCESS, siteId: siteId };
+}
+
+// Site update failed
+export function siteDeleteFailed (siteId: string, error: object): Action {
+  return { type: SITE_DELETE_FAILED, siteId: siteId, error: error };
 }
 
 // Changes site status
@@ -258,7 +279,7 @@ export function siteSites(): Function {
 }
 
 //
-// Grabs other user sites
+// Updates / creates site
 //
 export function siteUpdate(data: object): Function {
   return (dispatch: Function) => {
@@ -273,7 +294,7 @@ export function siteUpdate(data: object): Function {
     let requestMethod = 'POST',
         url = '/sites';
     if(data._id) {
-      url = '/' + data._id;
+      url = '/sites/' + data._id;
       requestMethod = 'PATCH';
     }
     return dispatch(sitePost(url, true, data, requestMethod)
@@ -291,6 +312,37 @@ export function siteUpdate(data: object): Function {
     });
   }
 }
+
+//
+// Deletes site
+//
+export function siteDelete(_id: string): Function {
+  return (dispatch: Function) => {
+    // Failed to update / create site
+     const failed = (error) => {
+      let siteId = data._id ? data._id : '';
+      dispatch(siteDeleteFailed(siteId, error));
+      dispatch(siteReset());
+      hashHistory.push('/');
+    }
+    // Dispatch update start
+    dispatch(siteDeleteStart());
+    return dispatch(sitePost('/sites/' + _id, true, {}, 'DELETE')
+    ).then((res) => {
+      // We have an error
+      if(res instanceof Error) {
+        return failed(res);
+      }
+      // Sites deleted go back to square 1
+      dispatch(siteDeleteSuccess(_id));
+      dispatch(siteReset());
+      hashHistory.push('/');
+    }).catch((error) => {
+      failed(error);
+    });
+  }
+}
+
 
 //
 // Changes the active site
@@ -600,6 +652,7 @@ export const actions = {
   siteInit,
   siteCreateForm,
   siteUpdate,
+  siteDelete,
   sitePre,
   sitePing,
   siteModeChange,

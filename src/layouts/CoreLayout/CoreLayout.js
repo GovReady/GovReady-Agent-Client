@@ -1,6 +1,6 @@
 import React, { PropTypes as PT } from 'react';
-import { default as config } from 'config';
 import SiteList from 'views/SiteState/SiteList';
+import Footer from 'components/Footer';
 import '../../styles/bootstrap-partial.scss';
 import '../../styles/core.scss';
 
@@ -14,7 +14,7 @@ import '../../styles/core.scss';
 //
 // CoreLayout is a pure function of its props, so we can
 // define it with a plain javascript function...
-function CoreLayout ({ children }) {
+function CoreLayout ({ children, footer }) {
   return (
     <div className='page-container govready-container'>
       <div className='view-container container'>
@@ -22,16 +22,15 @@ function CoreLayout ({ children }) {
           <SiteList offCanvas={true} />
           {children}
         </div>
-        <p className="gov-footer well well-sm well-faint text-center">
-          <small>Dashboard connected to {config.connectUrl}</small>
-        </p>
+        <Footer />
       </div>
     </div>
   );
 }
 
 CoreLayout.propTypes = {
-  children: PT.element
+  children: PT.element,
+  footer: PT.element
 };
 
 export default CoreLayout;

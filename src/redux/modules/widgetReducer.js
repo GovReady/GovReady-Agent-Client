@@ -85,7 +85,7 @@ const assignWidgetState = (state, widgetName, widget) => {
   let newWidget = {};
   newWidget[widgetName] = widget;
   return {
-    widgets: Object.assign({}, state.widgets, newWidget)
+    widgets: objectAssign({}, state.widgets, newWidget)
   };
 }
 

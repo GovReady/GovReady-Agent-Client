@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { default as config } from 'config';
 import Widget from '../Widget';
 import RefreshButton from 'components/RefreshButton';
+import Loading from 'components/loading/HorizontalTable';
 import StackWidget from './StackWidget';
 // import StackPage from './StackPage';
 
@@ -45,11 +46,11 @@ class Stack extends Component {
   render () {
 
     let {widget, widgetName, display} = this.props;
-    
+
     // Return loading if not set
     if(!widget || widget.status !== 'loaded') {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
-      return errorDisplay ? errorDisplay : Widget.loadingDisplay();
+      return errorDisplay ? errorDisplay : <Loading />;
     }
     return (
       <StackWidget 

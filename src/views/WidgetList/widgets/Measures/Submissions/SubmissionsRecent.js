@@ -51,7 +51,6 @@ class SubmissionsRecent extends Component {
   render () {
     return (
       <div>
-        {this.props.header}
         {this.submissionsList(this.props.submissions)}
       </div>
     );

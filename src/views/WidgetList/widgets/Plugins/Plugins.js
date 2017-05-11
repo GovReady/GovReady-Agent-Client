@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import RefreshButton from 'components/RefreshButton';
 import PluginsWidget from './PluginsWidget';
 import PluginsPage from './PluginsPage';
+import Loading from 'components/loading/Panel';
 
 class Plugins extends Component {
 
@@ -33,9 +34,15 @@ class Plugins extends Component {
     let { widget, widgetName, display } = this.props;
     
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if (!widget || widget.status !== 'loaded') {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
-      return errorDisplay ? errorDisplay : Widget.loadingDisplay();
+      if (errorDisplay) {
+        return errorDisplay;
+      } else if (display === 'page') {
+        return Widget.loadingDisplay()
+      } else {
+        return <Loading />;
+      }
     }
 
     let updates = 0;

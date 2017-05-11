@@ -26,6 +26,16 @@ class Widget {
     }
   }
 
+  // Calls loaded for widgets with CRUD reducers
+  static loadComplete(widgetCntrl, error) {
+    let { widgetName, actions } = widgetCntrl.props;
+    if(error) {
+      actions.widgetLoadFailed(widgetName, error);
+    } else {
+      actions.widgetLoaded(widgetName);
+    }
+  }
+
   // Default widget 
   static propTypes (props = {}) {
     return objectAssign(props, {

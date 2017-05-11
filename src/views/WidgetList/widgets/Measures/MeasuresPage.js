@@ -1,4 +1,5 @@
 import React, { PropTypes as PT, Component } from 'react';
+import Messages from 'components/Messages';
 import BackButton from 'components/BackButton';
 
 class MeasuresPage extends Component {
@@ -44,6 +45,7 @@ class MeasuresPage extends Component {
             <BackButton backUrl='/dashboard' />
           </h2>
         </div>
+        <Messages />
         <hr/>
         <p>Manual measures are meant to track organizational tasks that need to happen on a regular basis.  Create a measure that has a frequency and task template then your team will be alerted when these tasks are "due."  By submitting a task report, you can track who / when / how maintenance has been completed.</p>
         {this.props.createNewLink('Add new task', 'new', 'btn btn-success')}
@@ -55,7 +57,6 @@ class MeasuresPage extends Component {
 }
 
 MeasuresPage.propTypes = {
-  header: PT.object.isRequired,
   createNewLink: PT.func.isRequired,
   measures: PT.array.isRequired
 };

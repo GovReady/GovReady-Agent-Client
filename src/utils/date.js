@@ -1,5 +1,11 @@
 import { default as config } from 'config';
 
+export const timeOptions = {
+  yest: window.moment().add(-1, 'days'),
+  now: window.moment(),
+  tom: window.moment().add(1, 'days')
+}
+
 // date in form: 2016-06-06T07:00:00.000Z
 export function isoToDate(date: string) {
   return window.moment(date).format(config.dateFormat);

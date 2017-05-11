@@ -3,9 +3,34 @@ import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 import { default as config } from 'config';
 import Vulnerability from 'components/Vulnerability';
+import SearchList from 'components/SearchList';
 import BackButton from 'components/BackButton';
 
 class PluginsPage extends Component {
+
+  sortByUpdate() {
+    let aName, bName;
+    return this.props.plugins.sort((a, b) => {
+      // Sort by update?
+      if(a.updates || b.updates) {
+        if (a.updates && !b.updates) {
+          return -1;
+        } else if (!a.updates && b.updates) {
+          return 1;
+        } else if (a.updates === 'security') {
+          return -1;
+        } else if (b.updates === 'security') {
+          return 1;
+        }
+      }
+      // Alpha
+      aName = a.label.toUpperCase();
+      bName = b.label.toUpperCase();
+      if(aName < bName) return -1;
+      if(aName > bName) return 1;
+      return 0;
+    })
+  }
 
   render () {
     let {header, pluginText, cmsUrl, updates, core, cms, plugins} = this.props;
@@ -50,7 +75,35 @@ class PluginsPage extends Component {
       return (
         <span className="pull-right"><span className="label label-warning">Update Available</span></span>
       );
-      
+    }
+    // plugin listing to pass to search
+    const pluginListItem = (plugin) => {
+      return (
+        <li key={plugin.namespace} className={pluginClasses(plugin)}>
+          <h4 className="list-group-item-heading">{plugin.label} {pluginUpdate(plugin)}</h4>
+          <div className="list-group-item-text">
+            <div className="clearfix">
+              <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
+              {plugin.project_link && (  
+                <span className="pull-right">
+                  <a className="btn btn-default btn-xs" target="_blank" href={plugin.project_link}>{pluginText} page</a>
+                </span>
+              )}
+            </div>
+            {plugin.vulnerabilities && plugin.vulnerabilities.length && (
+              <div>
+                <br />
+                <div className="well">
+                  <h4 className="margin-top-none">Vulnerabilties</h4>
+                  {plugin.vulnerabilities.map((vulnerability, index) => (
+                    <Vulnerability data={vulnerability} key={index} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </li>
+      )
     }
     return (
       <div>
@@ -75,34 +128,7 @@ class PluginsPage extends Component {
             <div className="alert alert-success">{pluginText + 's'} up to date</div>
           )}
         </div>
-        <ul className="list-group">
-          {plugins.map((plugin) => (
-            <li key={plugin.namespace} className={pluginClasses(plugin)}>
-              <h4 className="list-group-item-heading">{plugin.label} {pluginUpdate(plugin)}</h4>
-              <div className="list-group-item-text">
-                <div className="clearfix">
-                  <span className="pull-left">Version: <span className="badge">{plugin.version}</span></span>
-                  {plugin.project_link && (  
-                    <span className="pull-right">
-                      <a className="btn btn-default btn-xs" target="_blank" href={plugin.project_link}>{pluginText} page</a>
-                    </span>
-                  )}
-                </div>
-                {plugin.vulnerabilities && plugin.vulnerabilities.length && (
-                  <div>
-                    <br />
-                    <div className="well">
-                      <h4 className="margin-top-none">Vulnerabilties</h4>
-                      {plugin.vulnerabilities.map((vulnerability, index) => (
-                        <Vulnerability data={vulnerability} key={index} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+        <SearchList items={this.sortByUpdate()} searchKey="label" component={pluginListItem} />
       </div>
     );
   }

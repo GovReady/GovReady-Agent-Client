@@ -10,7 +10,8 @@ export const fields = [
   'url',
   'accessible',
   'otherApplication',
-  'application'
+  'application',
+  'confirmDelete'
 ];
 
 class SiteEditPage extends Component {
@@ -24,7 +25,8 @@ class SiteEditPage extends Component {
       url,
       accessible,
       otherApplication,
-      application
+      application,
+      confirmDelete
     }, handleSubmit, siteSubmit, siteDelete, submitting, site, locked, appDisabled } = this.props;
     return (
       <form onSubmit={handleSubmit(siteSubmit)}>
@@ -86,12 +88,14 @@ class SiteEditPage extends Component {
                       <label className="control-label">Url</label>
                       <PureInput type="text" field={url}/>
                     </div>
-                    <div className="checkbox">
-                      <label>
-                        <input {...accessible} type="checkbox" checked={accessible.value} /> Publicly Accessible?
-                      </label>
-                      <span className="help-block">If this box is check GovReady will attempt to collect security-related information about your domain.</span>
-                    </div>
+                    {false && (
+                      <div className="checkbox">
+                        <label>
+                          <input {...accessible} type="checkbox" checked={accessible.value} /> Publicly Accessible?
+                        </label>
+                        <span className="help-block">If this box is check GovReady will attempt to collect security-related information about your domain.</span>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group">
                     {appDisabled && (
@@ -100,7 +104,7 @@ class SiteEditPage extends Component {
                         <PureInput disabled="disabled" type="text" field={application}/>
                       </div>
                     )}
-                    {!appDisabled && (
+                    {type.value === 'other' && (
                       <div>
                         <label className="control-label">CMS / Application</label>
                         <PureInput type="text" field={otherApplication}/>
@@ -140,7 +144,11 @@ class SiteEditPage extends Component {
   render () {
     return (
       <div>
-        <h2>Create New Site</h2>
+        <h2>{
+          this.props.site.title ? 
+          `Edit ${this.props.site.title}` : 
+          'Create New Site' 
+        }</h2>
         {this.editForm()}
       </div>
     );

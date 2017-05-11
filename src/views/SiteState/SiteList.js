@@ -82,7 +82,7 @@ class SiteList extends Component {
   // Prints list of sites
   siteList(sites) {
     // What text to display in sites list
-    const viewText = config.application ? 'Preview' : 'View';
+    const viewText = config.application ? 'Preview Dashboard' : 'View Dashboard';
 
     return (
       <div className="list-group">
@@ -91,10 +91,10 @@ class SiteList extends Component {
         </div>
         {sites.map((site, key) => (
           <div key={key} className="list-group-item">
-            <h4 className="list-group-item-heading">{site.title}</h4>
-            <p><a href={site.url} target="_blank"><i className="fa fa-share"></i> {site.url}</a></p>
+            <h4 className="list-group-item-heading">{site.title} <br/><small>{site.url}</small></h4>
             <a href="#" onClick={(event)=>this.viewClick(event, site)} className="btn btn-primary">{viewText}</a>
-            {(false && config.mode === 'standalone') && (
+            <a href={site.url} target="_blank" className="btn btn-default">View Site</a>
+            {(config.mode === 'standalone') && (
               <a href="#" onClick={(event)=>this.editClick(event, site)} className="btn btn-default">Edit</a>
             )}
           </div>

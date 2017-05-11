@@ -7,7 +7,7 @@ class ContactsWidget extends Component {
     if(contacts && contacts.length) {
       return (
         <div className='table-responsive'>
-          <table className='table'>
+          <table className='table contacts-list'>
             <thead>
               <tr>
                 <th>

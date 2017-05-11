@@ -10,6 +10,7 @@ import Widget from '../Widget';
 import DomainsWidget from './DomainsWidget';
 import DomainsPage from './DomainsPage';
 import DomainsLocalMode from './DomainsLocalMode';
+import Loading from 'components/loading/Panel';
 
 class Domains extends Component {
 
@@ -66,8 +67,12 @@ class Domains extends Component {
     }
 
     // Return loading if not set
-    if(!widget || !widget.status || widget.status === 'loading') {
-      return Widget.loadingDisplay();
+    if(!widget || widget.status !== 'loaded') {
+      if(this.props.display === 'page') {
+        return Widget.loadingDisplay();
+      } else {
+        return <Loading />;
+      }
     }
 
     let ssl = {};
