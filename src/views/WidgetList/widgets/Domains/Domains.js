@@ -67,7 +67,7 @@ class Domains extends Component {
     }
 
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget.status || widget.status === 'loading') {
       if(this.props.display === 'page') {
         return Widget.loadingDisplay();
       } else {

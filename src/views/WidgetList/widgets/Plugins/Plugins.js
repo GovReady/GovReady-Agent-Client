@@ -34,7 +34,7 @@ class Plugins extends Component {
     let { widget, widgetName, display } = this.props;
     
     // Return loading if not set
-    if (!widget || widget.status !== 'loaded') {
+    if (!widget.status || widget.status !== 'loaded') {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
       if (errorDisplay) {
         return errorDisplay;
@@ -45,15 +45,23 @@ class Plugins extends Component {
       }
     }
 
-    let updates = 0;
-    let totalPlugins = 0;
+    const updates = {
+      reg: 0,
+      sec: 0,
+    }
+    let totalPlugins;
     let coreUpdate = (widget.data.core && widget.data.core.updates) ? widget.data.core.updates : '' ;
 
     // Compile data for display
     if (widget.data && widget.data.plugins && widget.data.plugins.length) {
       widget.data.plugins.map((plugin) => {
         if (plugin.updates) {
-          updates++;
+          if(plugin.updates === 'security' ){
+            updates.sec++;
+          } else {
+            updates.reg++;
+          }
+          
         }
       });
       totalPlugins = widget.data.plugins.length;

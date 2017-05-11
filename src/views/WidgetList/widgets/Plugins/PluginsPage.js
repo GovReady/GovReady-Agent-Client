@@ -117,11 +117,16 @@ class PluginsPage extends Component {
         <p>{pluginText + 's'} displayed below represent a heads-up-display of your site health. Those marked in yellow are behind the most current version, and should probably be updated.</p> 
         <p><a className="btn btn-default btn-sml" target="_blank" href={cmsUrl}>Go to CMS page</a></p>
         <hr/>
-        <div className="alert-region">
+        <div className="alert-region messages">
           {coreUpdate()}
-          {updates > 0 && (
+          {updates.sec > 0 && (
             <div className="alert alert-danger">
-              {updates} <small>{pluginText + 's'} updates</small>
+              {updates.sec} <small>{pluginText} security updates</small>
+            </div>
+          )}
+          {updates.reg > 0 && (
+            <div className="alert alert-warning">
+              {updates.reg} <small>{pluginText + 's'} updates</small>
             </div>
           )}
           {!updates && (
@@ -139,7 +144,7 @@ PluginsPage.propTypes = {
   pluginText: PT.string.isRequired,
   cmsUrl: PT.string.isRequired,
   pluginUrl: PT.string.isRequired,
-  updates: PT.number.isRequired,
+  updates: PT.object.isRequired,
   core: PT.object.isRequired,
   plugins: PT.array.isRequired
 };

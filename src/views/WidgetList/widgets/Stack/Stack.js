@@ -48,7 +48,7 @@ class Stack extends Component {
     let {widget, widgetName, display} = this.props;
 
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget.status || widget.status !== 'loaded') {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName); 
       return errorDisplay ? errorDisplay : <Loading />;
     }

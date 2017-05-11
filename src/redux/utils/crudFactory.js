@@ -10,7 +10,7 @@ import {default as uniqueArr} from 'utils/unique';
 // ------------------------------------
 
 export function crudActionTypes(name) {
-  return objectAssign({}, {
+  return {
     // Fetch
     FETCH_START: name + '_FETCH_START',
     FETCH_SUCCESS: name + '_FETCH_SUCCESS',
@@ -23,11 +23,15 @@ export function crudActionTypes(name) {
     UPDATE_START: name + '_UPDATE_START',
     UPDATE_SUCCESS: name + '_UPDATE_SUCCESS',
     UPDATE_ERROR: name + '_UPDATE_ERROR',
+    // Update
+    SYNC_START: name + '_SYNC_START',
+    SYNC_SUCCESS: name + '_SYNC_SUCCESS',
+    SYNC_ERROR: name + '_SYNC_ERROR',
     // Delete
     DELETE_START: name + '_DELETE_START',
     DELETE_SUCCESS: name + '_DELETE_SUCCESS',
     DELETE_ERROR: name + '_DELETE_ERROR',
-  });
+  };
 }
 
 // ------------------------------------
@@ -35,7 +39,7 @@ export function crudActionTypes(name) {
 // ------------------------------------
 
 export function crudSyncActions(types) {
-  return objectAssign({}, {
+  return {
     fetchStart: function(): Action {
       return {
         type: types['FETCH_START'],
@@ -103,6 +107,28 @@ export function crudSyncActions(types) {
       }
     },
 
+    syncStart: function(record): Action {
+      return {
+        type:    types['SYNC_START'],
+        record:  record,
+      }
+    },
+
+    syncSuccess: function(record): Action {
+      return {
+        type:    types['SYNC_SUCCESS'],
+        record:  record,
+      }
+    },
+
+    syncError: function(error, record): Action {
+      return {
+        type:    types['SYNC_ERROR'],
+        error:   error,
+        record:  record,
+      }
+    },
+
     deleteStart: function(record): Action {
       return {
         type:    types['DELETE_START'],
@@ -124,11 +150,11 @@ export function crudSyncActions(types) {
         record:  record,
       }
     }
-  });
+  };
 }
 
 export function crudAsyncActions(syncActions, success = {}, errors = {}) {
-  return objectAssign({}, {
+  return {
     // Fired when widget should get data
     fetchRemote: function (url: string): Function {
       return (dispatch: Function) => {
@@ -178,7 +204,7 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
         return apiHelper.fetch(url, 'PATCH', record).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
-            dispatch(syncActions['updateError'](json, record));
+            dispatch(syncActions['updateError'](error, record));
           }
           else {
             dispatch(syncActions['updateSuccess'](json));
@@ -193,6 +219,25 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
       };
     },
 
+    // Fetches a single record
+    syncRemote: function (url: string, record: object): Function {
+      return (dispatch: Function) => {
+        dispatch(syncActions['syncStart'](record));
+        // Load data
+        return apiHelper.fetch(url, 'GET').then((json: object) => {
+          const error = apiHelper.jsonCheck(json);
+          if(error) {
+            dispatch(syncActions['syncError'](error, record));
+          }
+          else {
+            dispatch(syncActions['syncSuccess'](json));
+          }
+        }).catch(function (error) {
+          dispatch(syncActions['syncError'](error, record));
+        });
+      };
+    },
+
     deleteRemote: function (url: string, record: object, redirect: string = false): Function { 
       return (dispatch: Function) => {
         dispatch(syncActions['deleteStart'](record));
@@ -200,7 +245,7 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
         return apiHelper.fetch(url, 'DELETE', record).then((json: object) => {
           const error = apiHelper.jsonCheck(json);
           if(error) {
-            dispatch(syncActions['deleteError'](json, record));
+            dispatch(syncActions['deleteError'](error, record));
           }
           else {
             dispatch(syncActions['deleteSuccess'](json));
@@ -214,7 +259,7 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
         });
       }
     }
-  });
+  };
 }
 
 // ------------------------------------
@@ -222,7 +267,7 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
 // ------------------------------------
 
 export function crudActionHandlers(types) {
-  return objectAssign({}, {
+  return {
     [types['FETCH_START']]: (state: object, action: {}): object => {
       return state;
     },
@@ -313,6 +358,43 @@ export function crudActionHandlers(types) {
         return rec;
       });
     },
+    [types['SYNC_START']]: (state: object, action: {record: object}): object => {
+      let record = action.record;
+      return state.map(rec => {
+        // mark record as unsaved and busy
+        if(rec._id === record._id) {
+          record = objectAssign({}, record, {
+            unsaved: true,
+            busy:    true
+          });
+          return record;
+        }
+        return rec;
+      });
+    },
+    [types['SYNC_SUCCESS']]: (state: object, action: {record: object}): object => {
+      let record = action.record;
+      return state.map(rec => {
+        // mark record as unsaved and busy
+        return rec._id === record._id ? record : rec;
+      });
+    },
+    [types['SYNC_ERROR']]: (state: object, action: {error: object, record: object}): object => {
+      let record = action.record;
+      // @todo log error ?
+      return state.map(rec => {
+        // mark record as unsaved and busy
+        if(rec._id === record._id) {
+          record = objectAssign({}, record, {
+            unsaved: true,
+            busy:    false,
+            error:   'update'
+          });
+          return record;
+        }
+        return rec;
+      });
+    },
     [types['DELETE_START']]: (state: object, action: {record: object}): object => {
       let record = action.record;
       return state.map(rec => {
@@ -349,5 +431,5 @@ export function crudActionHandlers(types) {
         return rec;
       });
     }
-  });
+  };
 };

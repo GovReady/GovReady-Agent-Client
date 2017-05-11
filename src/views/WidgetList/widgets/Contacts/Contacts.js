@@ -115,7 +115,7 @@ class Contacts extends Component {
     }
 
     // Return loading if not set
-    if (!widget || !widget.status || (widget.status !== 'loaded' && display !== 'page')) {
+    if (!widget.status || (widget.status !== 'loaded' && display !== 'page')) {
       return <TableLoading text={true} colCount={1} />;
     }
 

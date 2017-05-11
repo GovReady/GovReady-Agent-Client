@@ -1,5 +1,15 @@
 // DKAN / others try to embed icon here
 .govready-container .view-container {
+  .messages {
+    .alert {
+      margin-bottom: 10px;
+
+      &:last-child {
+        margin-bottom: 20px;
+      } 
+    }
+  }
+
   .alert:before {
     content: '';
   }

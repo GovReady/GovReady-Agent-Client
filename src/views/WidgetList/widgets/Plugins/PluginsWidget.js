@@ -3,27 +3,28 @@ import React, { PropTypes as PT, Component } from 'react';
 class PluginsWidget extends Component {
 
   render () {
-    const coreUpdate = () => {
-      if(!this.props.coreUpdate) {
+    const { updates, cms , coreUpdate } = this.props;
+    const coreLabel = () => {
+      if(!coreUpdate) {
         return '';
       }
-      if(this.props.coreUpdate === 'security') {
+      if(coreUpdate === 'security') {
         return (
-          <div><span className="label label-danger">{this.props.cms} Core security update!</span></div>
+          <div><span className="label label-danger">{cms} Core security update!</span></div>
         )
       }
       return (
-        <div><span className="label label-warning">{this.props.cms} Core update available</span></div>
+        <div><span className="label label-warning">{cms} Core update available</span></div>
       )
     }
     return (
       <div className='panel panel-default'>
         <div className='panel-body'>
           <h4>
-            {this.props.updates}
+            {(updates.reg + updates.sec)}
             <br/>
             <small>{this.props.pluginText} updates</small>
-            {coreUpdate()}
+            {coreLabel()}
           </h4>
         </div>
         {this.props.refreshButton}
@@ -36,7 +37,7 @@ class PluginsWidget extends Component {
 PluginsWidget.propTypes = {
   cms: PT.string.isRequired,
   pluginText: PT.string.isRequired,
-  updates: PT.number.isRequired,
+  updates: PT.object.isRequired,
   coreUpdate: PT.string,
   footer: PT.object.isRequired
 };

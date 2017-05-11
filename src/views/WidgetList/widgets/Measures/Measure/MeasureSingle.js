@@ -55,7 +55,9 @@ class MeasureSingle extends Component {
         <Submissions 
           display="formDropdown" 
           bodyTemplate={measure.body} 
-          isNew={true} measureId={measure._id} />
+          isNew={true} 
+          measureId={measure._id}
+          submissionCallback={this.props.submissionCallback} />
         <hr/>
         <h4>Recent Task Reports</h4>
         <Submissions display="list" measureId={measure._id} />
@@ -68,7 +70,8 @@ MeasureSingle.propTypes = {
   createNewLink: PT.func.isRequired,
   measure: PT.object.isRequired,
   due: PT.object.isRequired,
-  submissions: PT.array.isRequired
+  submissions: PT.array.isRequired,
+  submissionCallback: PT.func.isRequired,
 };
 
 export default MeasureSingle;

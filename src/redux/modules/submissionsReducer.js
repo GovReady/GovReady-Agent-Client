@@ -6,7 +6,7 @@ import {
   crudSyncActions, 
   crudAsyncActions, 
   crudActionHandlers
-} from '../utils/crudHelper';
+} from '../utils/crudFactory';
 
 // ------------------------------------
 // Constants

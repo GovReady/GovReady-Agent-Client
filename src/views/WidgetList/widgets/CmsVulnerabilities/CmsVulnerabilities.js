@@ -50,7 +50,7 @@ class CmsVulnerabilities extends Component {
     let {widget, widgetName, plugins} = this.props;
 
     // Return loading if not set
-    if((!widget || widget.status !== 'loaded') || (!plugins || plugins.status !== 'loaded')) {
+    if(!widget.status || widget.status !== 'loaded' || !plugins.status || plugins.status !== 'loaded') {
       let errorDisplay = Widget.errorDisplay(widget.status, widgetName);
       return errorDisplay ? errorDisplay : <Loading />;
     }

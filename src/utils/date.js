@@ -35,8 +35,8 @@ export function dateToMoment(date: string) {
   return null;
 }
 
-export function isoSort(collection, field = 'datetime') {
-  return collection.sort((a, b) => {
-    return (a[field] < b[field]) ? -1 : ((a[field] > b[field]) ? 1 : 0);
-  })
+export function isoSort(collection, field = 'datetime', dir = 'asc') {
+  return dir === 'asc' 
+    ? collection.sort((a, b) => (a[field] < b[field]) ? -1 : ((a[field] > b[field]) ? 1 : 0))
+    : collection.sort((a, b) => (a[field] > b[field]) ? -1 : ((a[field] < b[field]) ? 1 : 0));
 }

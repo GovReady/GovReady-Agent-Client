@@ -72,7 +72,7 @@ class Accounts extends Component {
       
 
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget.status || widget.status !== 'loaded') {
       if (widgetType === 'inactive') {
         return <TableLoading text={true} colCount={1} />;
       } else  {

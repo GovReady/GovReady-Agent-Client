@@ -129,6 +129,7 @@ class Measures extends Component {
     });
   }
 
+  
   handleSubmit(data) {
 
     let { widget, submitFields, crudActions }  = this.props;
@@ -182,12 +183,21 @@ class Measures extends Component {
     }
   }
 
+  // Get measure from url
+  measureSync(_id) {
+    const measure = this.getSingle(_id, this.props.measures);
+    return this.props.crudActions.syncRemote(
+      config.apiUrl + 'measures/' + measure._id,
+      measure
+    );
+  }
+
   render () {
 
     let { widget, widgetName, measures, display, isNew, individual } = this.props;
 
     // Return loading if not set
-    if(!widget || widget.status !== 'loaded') {
+    if(!widget.status || widget.status !== 'loaded') {
       if(display === 'widget'){
         return <Loading />;
       } else {
@@ -201,6 +211,7 @@ class Measures extends Component {
         <MeasureSingle
           createNewLink={this.createNewLink.bind(this)}
           due={this.nextSubmissionDue(measure)}
+          submissionCallback={this.measureSync.bind(this)}
           measure={measure} />
       );
     }

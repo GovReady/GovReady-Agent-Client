@@ -7,6 +7,7 @@ import objectAssign from 'object-assign';
 import { reset as formReset, startSubmit } from 'redux-form';
 import { actions as crudActions } from 'redux/modules/submissionsReducer';
 import { actions as messageActions } from 'redux/modules/messageReducer';
+import { isoSort } from 'utils/date';
 import SubmissionsList from './SubmissionsList';
 import SubmissionsRecent from './SubmissionsRecent';
 import SubmissionEditPage from './SubmissionEditPage';
@@ -70,16 +71,14 @@ class Submissions extends Component {
 
   // Gets list of submissions by measureId
   getSubmissionsRecent(count = 3) {
-    return this.props.submissions.sort((a, b) => {
-      return b.datetime > a.datetime
-    }).slice(0, count);
+    return isoSort(this.props.submissions, 'datetime', 'desc')
+      .slice(0, count);
   }
 
   // Gets list of submissions by measureId
   getSubmissionsByMeasure(measureId, count = 3) {
-    return this.props.submissions.filter((submission) => submission.measureId === measureId).sort((a, b) => {
-      return b.datetime > a.datetime
-    }).slice(0, count);
+    return isoSort(this.props.submissions.filter((submission) => submission.measureId === measureId)
+      , 'datetime', 'desc').slice(0, count);
   }
 
   // Done with CRUD
@@ -119,11 +118,13 @@ class Submissions extends Component {
     // New item
     else {
       crudActions.createRemote(
-        config.apiUrl + 'measures/' + data.measureId + '/submissions', 
-        assignProps({}, data),
-        '/dashboard/Measures/' + data.measureId,
-        false
-      ).then(this.finishSubmit('A new submission has been created.'));
+          config.apiUrl + 'measures/' + data.measureId + '/submissions', 
+          assignProps({}, data),
+          '/dashboard/Measures/' + data.measureId,
+          false
+        )
+      .then(this.finishSubmit('A new submission has been created.'))
+      .then(this.props.submissionCallback(data.measureId));
     }
   }
 
@@ -185,7 +186,8 @@ Submissions.propTypes = {
   individual: PT.number,
   isNew: PT.bool,
   measureId: PT.string,
-  bodyTemplate: PT.string
+  bodyTemplate: PT.string,
+  submissionCallback: PT.func
 };
 
 // Hooked up to multiple reducers, so dont use stock Widget methods
