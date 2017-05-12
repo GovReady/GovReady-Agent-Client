@@ -16,8 +16,8 @@ import '../../styles/core.scss';
 // define it with a plain javascript function...
 function CoreLayout ({ children, footer }) {
   return (
-    <div className='page-container govready-container'>
-      <div className='view-container container'>
+    <div id="govready-container" className="page-container govready-container">
+      <div className="view-container container">
         <div className="content-container">
           <SiteList offCanvas={true} />
           {children}
