@@ -32,7 +32,7 @@ class Messages extends Component {
       return <div key={index.toString()} className={`alert alert-${message.level}`}>{message.content}</div>
     }
     return (
-      <div className="messages">
+      <div className="govready-messages">
         {messages.map((message, index) => messageMarkup(message, index))}
       </div>
     )

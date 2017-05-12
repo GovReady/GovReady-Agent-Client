@@ -41,11 +41,12 @@
     "deploy": {
       "command": "npm run clean && npm run compile",
       "env": {
+        "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
     "deploy:dev": {
-      "command": "npm run deploy",
+      "command": "npm run clean && npm run compile",
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "app:*"

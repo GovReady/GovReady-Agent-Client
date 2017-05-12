@@ -15,6 +15,10 @@
     .loading-shim {
       opacity: 1;
     }
+
+    table, thead, tbody, tr, th, td {
+      background: none!important;
+    }
   }
 
   .loading-shim-block-tiny,
