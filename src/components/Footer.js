@@ -11,19 +11,21 @@ class Footer extends Component {
   }
 
   componentWillMount() {
-    fetch(`${config.authUrl}tokeninfo?id_token=${config.access_token}`).then((response) => {
-      if(response.status == 200) return response.json();
-      else throw new Error('Bad response!');
-    }).then((response) => {
-        this.setState({
-          user: {
-            email: response.email,
-            nickname: response.nickname
-          }
-        });
-    }).catch(() => {
-      console.log('woops');
-    });
+    if(config.access_token) {
+      fetch(`${config.authUrl}tokeninfo?id_token=${config.access_token}`).then((response) => {
+        if(response.status == 200) return response.json();
+        else throw new Error('Bad response!');
+      }).then((response) => {
+          this.setState({
+            user: {
+              email: response.email,
+              nickname: response.nickname
+            }
+          });
+      }).catch(() => {
+        console.log('woops');
+      });
+    }
   }
 
   render() {
