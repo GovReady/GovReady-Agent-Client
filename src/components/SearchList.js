@@ -45,16 +45,15 @@ class SearchList extends Component {
                  : { overflow: 'hidden' };
     return (
       <div>
-        <div className="search-list-input panel panel-invisible">
-          <div className="row">
-            <div className="col-sm-6 col-md-4">
-              <label className="control-label">Quick Filter</label>
-              <input className="form-control" 
-                     type="text" 
-                     value={this.state.searchValue} 
-                     onChange={this.searching.bind(this)} />
-            </div>
+        <div className="clearfix">
+          <div className="search-list-input panel panel-invisible">
+            <label className="control-label">Quick Filter</label>
+            <input className="form-control" 
+                   type="text" 
+                   value={this.state.searchValue} 
+                   onChange={this.searching.bind(this)} />
           </div>
+          {this.props.children}
         </div>
         <hr />
         <div className="animate-height" style={height}>

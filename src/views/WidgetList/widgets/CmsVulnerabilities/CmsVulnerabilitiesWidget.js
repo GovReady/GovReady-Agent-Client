@@ -32,7 +32,7 @@ class CmsVulnerabilitiesWidget extends Component {
     return (
       <div>
         <div className="title">
-          <h3>Known vulnerabilities</h3>
+          <h3>Known Vulnerabilities</h3>
         </div>
         <Accordion>
           {this.coreSection(this.props.core)}

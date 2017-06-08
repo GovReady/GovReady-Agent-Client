@@ -42,10 +42,13 @@ class SubmissionEditPage extends Component {
       <form onSubmit={handleSubmit(submissionSubmit)}>
         <div className="row">
           <div className="col-md-6">
-            <div className="form-group">
+            <div className={`form-group ${name.touched && name.error ? 'has-error' : ''}`}>
               <div>
                 <label className="control-label">Name (completed by)</label>
                 <PureInput type="text" field={name}/>
+                {name.touched && name.error && (
+                  <div className="help-block">{name.error}</div>
+                )}
               </div>
             </div>
           </div>
@@ -81,7 +84,7 @@ class SubmissionEditPage extends Component {
         {this.props.toggleForm ? (
           <div>
             <button onClick={ this.props.toggleForm } className="btn btn-success">
-              Create New Task Report
+              Create new task report
             </button>
             <Panel className="panel-invisible" collapsible expanded={this.props.formOpen}>
               {this.editForm()}

@@ -1,4 +1,5 @@
 import React, { PropTypes as PT, Component } from 'react';
+import { Link } from 'react-router';
 import Submissions from './Submissions/Submissions';
 
 class MeasuresWidget extends Component {
@@ -23,7 +24,7 @@ class MeasuresWidget extends Component {
     // No measures, return empty
     return (
       <div className="alert alert-warning">
-        <span>No measures added. <a href="#" onClick={this.props.createDefault}>Import default measures</a> or {this.props.createNewLink('add some')}!</span>
+        <span>No tasks added. <a href="#" onClick={this.props.createDefault}>Import default tasks</a> or {this.props.createNewLink('add some')}!</span>
       </div>
     );
   }
@@ -34,14 +35,19 @@ class MeasuresWidget extends Component {
         <div className="title">
           <h3>{this.props.headerLink}</h3>
         </div>
-        <h5>Track your manual tasks here. {this.props.subHeaderLink}</h5>
         <div className="row">
           <div className="col-sm-6">
-            <h4>Upcoming / Past-due</h4>
+            <h4>Upcoming / Past-due <span className="pull-right">
+              <Link to='/dashboard/Measures'>See all</Link>
+            </span></h4>
+            <hr />
             {this.measuresList(this.props.measures)}
           </div>
           <div className="col-sm-6">
-            <h4>Recent Task Reports</h4>
+            <h4>Recent Task Reports <span className="pull-right">
+              <Link to='/dashboard/Submissions/all'>See all</Link>
+            </span></h4>
+            <hr />
             <Submissions display="recent" />
           </div>
         </div>

@@ -155,7 +155,7 @@ class Measures extends Component {
           data,
           '/dashboard/Measures/',
           true
-        ).then(this.finishSubmit('The measure has been updated.'));
+        ).then(this.finishSubmit('The scheduled task has been updated.'));
       } 
       // New item
       else {
@@ -164,7 +164,7 @@ class Measures extends Component {
           assignProps({}, data),
           '/dashboard/Measures/',
           true
-        ).then(this.finishSubmit('A new measure has been created.'));
+        ).then(this.finishSubmit('A new scheduled task has been created.'));
       }
     }
   }
@@ -175,7 +175,7 @@ class Measures extends Component {
         config.apiUrl + 'measures/' + measure._id.value, 
         measure, 
         '/dashboard/Measures'
-      ).then(this.finishSubmit('The measure has been deleted.'));
+      ).then(this.finishSubmit('The scheduled task has been deleted.'));
     }
     else {
       //error
@@ -221,7 +221,7 @@ class Measures extends Component {
 
       // Creating new measure
       if(isNew){
-        headerText = 'New manual measure';
+        headerText = 'New Scheduled Task';
         measure = this.getSingle(null);
       }
       // not a new measure, so filter
@@ -254,8 +254,7 @@ class Measures extends Component {
     else {
       return (
         <MeasuresWidget 
-          headerLink={<Link to='/dashboard/Measures'>Manual Tasks</Link>}
-          subHeaderLink={<Link to='/dashboard/Measures'>See all.</Link>}
+          headerLink={<Link to='/dashboard/Measures'>Scheduled Tasks</Link>}
           createDefault={this.importDefaultMeasures.bind(this)}
           createNewLink={this.createNewLink.bind(this)}
           nextSubmissionDue={this.nextSubmissionDue.bind(this)}

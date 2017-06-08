@@ -57,7 +57,7 @@ class MeasuresEditPage extends Component {
     if(!measure) {
       return (
         <div>
-          <h2>Sorry there was an issue editing the measure.</h2>
+          <h2>Sorry there was an issue editing the task.</h2>
           <BackButton text='Go back' classes='btn btn-default' />
         </div>
       )
@@ -100,7 +100,7 @@ class MeasuresEditPage extends Component {
                   <label className="control-label">Task Template</label>
                   <textarea rows="10" className="form-control" {...body}/>
                   <div className="help-block">
-                    <p>This field will become the "template" for submissions on this measure ex:</p>
+                    <p>This field will become the "template" for submissions on this task ex:</p>
                     <pre>
                       <div>Successfully located backup: (yes / no)</div>
                       <div>Backup copied off site: (yes / no)</div>

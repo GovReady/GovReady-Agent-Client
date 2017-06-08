@@ -115,6 +115,41 @@
     padding-top: 20px;
   }
 
+  h4, h3 {
+    + hr {
+      margin-top: 0;
+      margin-bottom: 13px;
+    }
+  }
+
+  // Overflowing text col
+  .overflow-col {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // plugins page
+  // ----------------------------
+  @media (min-width: 768px) {
+    .search-list-input {
+      float: left;
+      width: 410px;
+    }
+    .sort-buttons {
+      float: right;
+      width: 185px;
+
+      .btn {
+        width: 107px;
+      }
+
+      .btn:first-child {
+        width: 79px;
+      }
+    }
+  }
+
   // vulnerability widget
   // ----------------------------
 

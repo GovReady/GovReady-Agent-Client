@@ -95,6 +95,9 @@ class Submissions extends Component {
   }
 
   handleSubmit(data) {
+   if (!data.name) {
+      return Promise.reject({ name: 'Name is required', _error: 'Login failed!' });
+    }
     const assignProps = (toSet, setData) => {
       this.props.submitFields.map((field) => {
         if(setData[field] || setData[field] === false) {

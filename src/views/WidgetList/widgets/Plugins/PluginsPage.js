@@ -8,6 +8,13 @@ import BackButton from 'components/BackButton';
 
 class PluginsPage extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      sortBy: 'updates'
+    }
+  }
+
   sortByUpdate() {
     let aName, bName;
     return this.props.plugins.sort((a, b) => {
@@ -30,6 +37,23 @@ class PluginsPage extends Component {
       if(aName > bName) return 1;
       return 0;
     })
+  }
+
+  sortByTitle() {
+    let aName, bName;
+    return this.props.plugins.sort((a, b) => {
+      // Alpha
+      aName = a.label.toUpperCase();
+      bName = b.label.toUpperCase();
+      if(aName < bName) return -1;
+      if(aName > bName) return 1;
+      return 0;
+    })
+  }
+
+  toggleSort(e, sortBy) {
+    e.preventDefault();
+    this.setState({ sortBy: sortBy });
   }
 
   render () {
@@ -105,6 +129,12 @@ class PluginsPage extends Component {
         </li>
       )
     }
+
+    // the plugins
+    const sorted = this.state.sortBy === 'updates'
+                 ? this.sortByUpdate()
+                 : this.sortByTitle();
+
     return (
       <div>
         <div className='text'>
@@ -133,7 +163,28 @@ class PluginsPage extends Component {
             <div className="alert alert-success">{pluginText + 's'} up to date</div>
           )}
         </div>
-        <SearchList items={this.sortByUpdate()} searchKey="label" component={pluginListItem} />
+
+        <SearchList items={sorted} searchKey="label" component={pluginListItem}>
+          <div className="clearfix sort-buttons">
+            <div><label className="control-label">Sort By</label></div>
+            <div className="btn-group" role="group" aria-label="...">
+              <button type="button"
+                      onClick={(e) => {
+                        console.log('ummm wtf');
+                        console.log(this);
+                        this.toggleSort(e, 'updates')
+                      }}
+                      className={`btn btn-default${this.state.sortBy === 'updates' ? ' active' : ''}`}>
+                Updates
+              </button>
+              <button type="button" 
+                      onClick={(e) => this.toggleSort(e, 'title')}
+                      className={`btn btn-default${this.state.sortBy === 'title' ? ' active' : ''}`}>
+                Plugin Name
+              </button>
+            </div>
+          </div>
+        </SearchList>
       </div>
     );
   }

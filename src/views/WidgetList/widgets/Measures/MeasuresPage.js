@@ -31,7 +31,7 @@ class MeasuresPage extends Component {
     // No measures, return empty
     return (
       <div className="alert alert-warning">
-        <span>No measures added. <a href="#" onClick={this.props.createDefault}>Import default measures</a> or {this.props.createNewLink('add some')}!</span>
+        <span>No scheduled tasks added. <a href="#" onClick={this.props.createDefault}>Import default tasks</a> or {this.props.createNewLink('add some')}!</span>
       </div>
     );
   }
@@ -41,13 +41,13 @@ class MeasuresPage extends Component {
       <div>
         <div className='text'>
           <h2>
-            <span>Manual Tasks</span>
+            <span>Scheduled Tasks</span>
             <BackButton backUrl='/dashboard' />
           </h2>
         </div>
         <Messages />
         <hr/>
-        <p>Manual measures are meant to track organizational tasks that need to happen on a regular basis.  Create a measure that has a frequency and task template then your team will be alerted when these tasks are "due."  By submitting a task report, you can track who / when / how maintenance has been completed.</p>
+        <p>Scheduled tasks are meant to track organizational tasks that need to happen on a regular basis.  Create a task that has a frequency and task template then your team will be alerted when these tasks are "due."  By submitting a task report, you can track who / when / how maintenance has been completed.</p>
         {this.props.createNewLink('Add new task', 'new', 'btn btn-success')}
         <hr/>
         {this.measuresList(this.props.measures)}
