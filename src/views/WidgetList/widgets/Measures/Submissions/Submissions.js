@@ -5,14 +5,26 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import objectAssign from 'object-assign';
 import { reset as formReset, startSubmit } from 'redux-form';
+import { actions } from 'redux/modules/widgetReducer';
 import { actions as crudActions } from 'redux/modules/submissionsReducer';
 import { actions as messageActions } from 'redux/modules/messageReducer';
 import { isoSort } from 'utils/date';
 import SubmissionsList from './SubmissionsList';
-import SubmissionsRecent from './SubmissionsRecent';
+import SubmissionsWidget from './SubmissionsWidget';
+import SubmissionsPage from './SubmissionsPage';
 import SubmissionEditPage from './SubmissionEditPage';
 
 class Submissions extends Component {
+
+  static defaultProps = {
+    widget: {},
+    widgetName: 'Submissions',
+    submitFields: [
+      'measureId',
+      'name',
+      'body'
+    ]
+  }
 
   constructor(props) {
     super(props);
@@ -21,33 +33,62 @@ class Submissions extends Component {
     };
   }
 
-  static defaultProps = {
-    widget: {},
-    submitFields: [
-      'measureId',
-      'name',
-      'body'
-    ]
-  }
-
-  componentWillMount() {
-    if(this.props.measureId && this.props.display === 'list') {
-      this.fetchSubmissionsByMeasure(this.props.measureId);
+  componentWillMount () {
+    Widget.registerWidget(
+      this, 
+      false
+    );
+    // Loading all 
+    if (this.props.widget.status !== 'loaded') {
+      this.props.crudActions.fetchRemote(config.apiUrl + 'submissions?limit=100', true)
+        .then(() => Widget.loadComplete(this))
+        .catch((e) => Widget.loadComplete(this, e));
     }
-    else if(this.props.display === 'recent') {
-      this.fetchSubmissionsRecent();
+    // Loading single
+    if (this.props.measureId && this.props.display === 'list') {
+      this.props.crudActions.fetchRemote(config.apiUrl + 'measures/' + this.props.measureId + '/submissions', true);
     }
   }
 
-  // Fetches submissions by measureID
-  fetchSubmissionsByMeasure(measureId) {
-    this.props.crudActions.fetchRemote(config.apiUrl + 'measures/' + measureId + '/submissions');
+  processData (data) {
+    return {
+      submissions: data
+    }
   }
 
-  // Gets most recent
-  fetchSubmissionsRecent() {
-    this.props.crudActions.fetchRemote(config.apiUrl + 'submissions');
-  }
+  // static defaultProps = {
+  //   widget: {},
+  //   submitFields: [
+  //     'measureId',
+  //     'name',
+  //     'body'
+  //   ]
+  // }
+
+  // componentWillMount() {
+  //   // 
+  // //   else if(this.props.display === 'page') {
+  // //     fetchSubmissionsAllRecent();
+  // //   }
+  // //   else if(this.props.display === 'recent') {
+  // //     this.fetchSubmissionsRecent();
+  // //   }
+  // }
+
+  // // Fetches submissions by measureID
+  // fetchSubmissionsByMeasure(measureId) {
+    
+  // }
+
+  // // Gets most recent
+  // fetchSubmissionsRecent() {
+  //   this.props.crudActions.fetchRemote(config.apiUrl + 'submissions', false);
+  // }
+
+  // // Gets all most recent
+  // fetchSubmissionsAllRecent() {
+  //   this.props.crudActions.fetchRemote(config.apiUrl + 'submissions?limit=100', false);
+  // }
 
   // Gets a single submission or empty
   getSingle(_id, submissions = []) {
@@ -91,7 +132,6 @@ class Submissions extends Component {
       level: 'success',
       content: message
     });
-
   }
 
   handleSubmit(data) {
@@ -125,9 +165,10 @@ class Submissions extends Component {
           assignProps({}, data),
           '/dashboard/Measures/' + data.measureId,
           false
-        )
-      .then(this.finishSubmit('A new submission has been created.'))
-      .then(this.props.submissionCallback(data.measureId));
+        ).then(() => {
+          this.finishSubmit('A new submission has been created.');
+          this.props.submissionCallback(data.measureId);
+        });
     }
   }
 
@@ -177,32 +218,39 @@ class Submissions extends Component {
             submissions={this.getSubmissionsByMeasure(measureId, count)} />
         )
       }
+    } else if (display === 'page') {
+      return (
+        <SubmissionsPage
+          submissions={this.getSubmissionsRecent(1000)} />
+      )
     }
     return (
-      <SubmissionsRecent 
+      <SubmissionsWidget
         submissions={this.getSubmissionsRecent(count)} />
     )
   }
 }
 
-Submissions.propTypes = {
+Submissions.propTypes = Widget.propTypes({
   individual: PT.number,
   isNew: PT.bool,
   measureId: PT.string,
   bodyTemplate: PT.string,
   submissionCallback: PT.func
-};
+});
 
 // Hooked up to multiple reducers, so dont use stock Widget methods
 
 function mapStateToProps (state, ownProps) {
   return {
+    widget: state.widgetState.widgets['Submissions'],
     submissions: state.submissionsState
   };
 }
 
 function mapDispatchToProps (dispatch) {
   return {
+    actions: bindActionCreators(actions, dispatch),
     formActions: {
       reset: bindActionCreators(formReset, dispatch),
       startSubmit: bindActionCreators(startSubmit, dispatch)

@@ -5,6 +5,14 @@
 }
 
 #govready-container .view-container {
+  .margin-right-10 {
+    margin-right: 10px;
+  }
+
+  .color-text {
+    color: #555555;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     &.margin-top-none {
       margin-top: 0;

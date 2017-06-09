@@ -4,6 +4,7 @@ import Domains from './Domains';
 import Accounts from './Accounts';
 import Stack from './Stack';
 import Contacts from './Contacts';
+import Submissions from './Measures/Submissions';
 import CmsVulnerabilities from './CmsVulnerabilities';
 
 const widgets = {
@@ -13,6 +14,7 @@ const widgets = {
   Accounts,
   Stack,
   Contacts,
+  Submissions,
   CmsVulnerabilities
 };
 

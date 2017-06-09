@@ -169,11 +169,7 @@ class PluginsPage extends Component {
             <div><label className="control-label">Sort By</label></div>
             <div className="btn-group" role="group" aria-label="...">
               <button type="button"
-                      onClick={(e) => {
-                        console.log('ummm wtf');
-                        console.log(this);
-                        this.toggleSort(e, 'updates')
-                      }}
+                      onClick={(e) => this.toggleSort(e, 'updates')}
                       className={`btn btn-default${this.state.sortBy === 'updates' ? ' active' : ''}`}>
                 Updates
               </button>

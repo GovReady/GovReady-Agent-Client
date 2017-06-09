@@ -8,7 +8,7 @@ class SubmissionsRecent extends Component {
   submissionsList (submissions) {
     if(submissions && submissions.length) {
       return submissions.map((submission, index) => (
-        <div className='row list-border list-border-small'>
+        <div key={submission._id} className='row list-border list-border-small'>
           <div className="col-sm-8">
             <div className="row">
               <div className="col-sm-8 overflow-col">
@@ -24,29 +24,6 @@ class SubmissionsRecent extends Component {
           </div>
         </div>
       ));
-      // const header= (submission) => {
-      //   return (
-          
-      //   )
-      // }
-      // return (
-      //   <Accordion>
-      //     {submissions.map((submission, index) => (
-      //       <Panel header={header(submission)} eventKey={index} key={index}>
-      //         <p>
-                
-      //         </p>
-      //         <pre>
-      //           {submission.body}
-      //         </pre>
-      //         <hr />
-      //         <div>
-                
-      //         </div>
-      //       </Panel>
-      //     ))}
-      //   </Accordion>
-      // )
     }
     // No submissions, return empty
     return (

@@ -33,9 +33,11 @@ class Measures extends Component {
       this, 
       false
     );
-    this.props.crudActions.fetchRemote(config.apiUrl + 'measures')
-      .then(() => Widget.loadComplete(this))
-      .catch((e) => Widget.loadComplete(this, e));;
+    if (this.props.widget.status !== 'loaded') {
+      this.props.crudActions.fetchRemote(config.apiUrl + 'measures')
+        .then(() => Widget.loadComplete(this))
+        .catch((e) => Widget.loadComplete(this, e));
+    }
   }
 
   processData (data) {

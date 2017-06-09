@@ -59,7 +59,7 @@ class MeasureSingle extends Component {
           measureId={measure._id}
           submissionCallback={this.props.submissionCallback} />
         <hr/>
-        <h4>Recent Task Reports</h4>
+        <h3>Recent Task Reports</h3>
         <Submissions display="list" measureId={measure._id} />
       </div>
     );

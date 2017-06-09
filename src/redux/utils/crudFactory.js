@@ -14,6 +14,7 @@ export function crudActionTypes(name) {
     // Fetch
     FETCH_START: name + '_FETCH_START',
     FETCH_SUCCESS: name + '_FETCH_SUCCESS',
+    FETCH_SUCCESS_APPEND: name + '_FETCH_SUCCESS_APPEND',
     FETCH_ERROR: name + '_FETCH_ERROR',
     // Create
     CREATE_START: name + '_CREATE_START',
@@ -49,6 +50,13 @@ export function crudSyncActions(types) {
     fetchSuccess: function(records): Action {
       return {
         type:    types['FETCH_SUCCESS'],
+        records: records,
+      }
+    },
+
+    fetchSuccessAppend: function(records): Action {
+      return {
+        type:    types['FETCH_SUCCESS_APPEND'],
         records: records,
       }
     },
@@ -156,7 +164,7 @@ export function crudSyncActions(types) {
 export function crudAsyncActions(syncActions, success = {}, errors = {}) {
   return {
     // Fired when widget should get data
-    fetchRemote: function (url: string): Function {
+    fetchRemote: function (url: string, appendOnly:boolean = true): Function {
       return (dispatch: Function) => {
         dispatch(syncActions['fetchStart']());
         // Load data
@@ -166,7 +174,11 @@ export function crudAsyncActions(syncActions, success = {}, errors = {}) {
             dispatch(syncActions['fetchError'](error));
           }
           else {
-            dispatch(syncActions['fetchSuccess'](json));
+            if(appendOnly) {
+              dispatch(syncActions['fetchSuccessAppend'](json));
+            } else {
+              dispatch(syncActions['fetchSuccess'](json));
+            }
           }
         }).catch(function (error) {
           dispatch(syncActions['fetchError'](error));
@@ -273,11 +285,21 @@ export function crudActionHandlers(types) {
     },
     [types['FETCH_SUCCESS']]: (state: object, action: {records: Array}): object => {
       let records = action.records;
+      return records;
+    },
+    [types['FETCH_SUCCESS_APPEND']]: (state: object, action: {records: Array}): object => {
+      let records = action.records;
       // Try to combine
-      // if(state && state.length) {
-      //   return uniqueArr(state.concat(records), '_id');
-      // }
-      // just return
+      if(state && state.length) {
+        let current = {};
+        state.forEach((record, key) => {
+          current[record._id] = key;
+        });
+        return [
+          ...state.slice(),
+          ...records.filter(record => current[record._id] === undefined)
+        ];
+      }
       return records;
     },
     [types['FETCH_ERROR']]: (state: object, action: {error: object}): object => {

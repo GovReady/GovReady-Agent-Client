@@ -45,7 +45,7 @@ class MeasuresWidget extends Component {
           </div>
           <div className="col-sm-6">
             <h4>Recent Task Reports <span className="pull-right">
-              <Link to='/dashboard/Submissions/all'>See all</Link>
+              <Link to='/dashboard/Submissions'>See all</Link>
             </span></h4>
             <hr />
             <Submissions display="recent" />
