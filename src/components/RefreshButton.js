@@ -12,8 +12,14 @@ class RefreshButton extends Component {
     event.preventDefault();
     let {widgetName, widgetQuery, actions, widgetActions} = this.props;
     widgetActions.widgetLoading(widgetName);
+
+    // Plugins needs stack to be called first
+    const calls = widgetName.toLowerCase() === 'plugins' 
+                ? ['stack', 'plugins'] 
+                : [widgetName.toLowerCase()];
+
     // Aggregate widget
-    actions.siteAggAll(config.mode, [widgetName.toLowerCase()]).then(() => {
+    actions.siteAggAll(config.mode, calls).then(() => {
       // Reload widget data
       widgetActions.widgetLoadData(
         widgetName,
