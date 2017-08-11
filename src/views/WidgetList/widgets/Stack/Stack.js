@@ -6,17 +6,19 @@ import Loading from 'components/loading/HorizontalTable';
 import StackWidget from './StackWidget';
 // import StackPage from './StackPage';
 
-class Stack extends Component {
-
-  static defaultProps = {
-    widget: {},
-    widgetQuery: {
-      url: 'stack',
-      process: (data) => {
-        return data;
-      }
+export const stackDef = {
+  widget: {},
+  widgetQuery: {
+    url: 'stack',
+    process: (data) => {
+      return data;
     }
   }
+}
+
+class Stack extends Component {
+
+  static defaultProps = stackDef
 
   componentWillMount () {
     Widget.registerWidget(

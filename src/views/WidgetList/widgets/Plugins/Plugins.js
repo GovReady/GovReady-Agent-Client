@@ -7,20 +7,22 @@ import PluginsWidget from './PluginsWidget';
 import PluginsPage from './PluginsPage';
 import Loading from 'components/loading/Panel';
 
+export const pluginsDef = {
+  widget: {},
+  widgetQuery: {
+    url: 'plugins',
+    process: (data) => {
+      return {
+        core: ( data.core && data.core.length ) ? data.core.pop() : {},
+        plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
+      }
+    } 
+  }
+}
+
 class Plugins extends Component {
 
-  static defaultProps = {
-    widget: {},
-    widgetQuery: {
-      url: 'plugins',
-      process: (data) => {
-        return {
-          core: ( data.core && data.core.length ) ? data.core.pop() : {},
-          plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
-        }
-      } 
-    }
-  }
+  static defaultProps = pluginsDef
 
   componentWillMount () {
     Widget.registerWidget(

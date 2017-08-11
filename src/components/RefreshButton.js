@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
 import { actions } from 'redux/modules/siteReducer';
 import { actions as widgetActions } from 'redux/modules/widgetReducer';
-
+import stackDef from 'views/WidgetList/widgets/Stack';
+import pluginsDef from 'views/WidgetList/widgets/Plugins';
 
 class RefreshButton extends Component {
 
@@ -13,19 +14,37 @@ class RefreshButton extends Component {
     let {widgetName, widgetQuery, actions, widgetActions} = this.props;
     widgetActions.widgetLoading(widgetName);
 
+    const callBoth = widgetName === 'Stack' || widgetName === 'Plugins';
+
     // Plugins needs stack to be called first
-    const calls = widgetName.toLowerCase() === 'plugins' 
+    const calls = callBoth 
                 ? ['stack', 'plugins'] 
                 : [widgetName.toLowerCase()];
 
     // Aggregate widget
     actions.siteAggAll(config.mode, calls).then(() => {
-      // Reload widget data
-      widgetActions.widgetLoadData(
-        widgetName,
-        widgetQuery.url, 
-        widgetQuery.process
-      )
+      // Plugins needs stack to be loaded
+      if (callBoth) {
+        // Reload stack data
+        widgetActions.widgetLoadData(
+          'Stack',
+          stackDef.url,
+          stackDef.process
+        );
+        // Reload plugin data
+        widgetActions.widgetLoadData(
+          'Plugins',
+          pluginsDef.url,
+          pluginsDef.process
+        );
+      } else {
+        // Reload widget data
+        widgetActions.widgetLoadData(
+          widgetName,
+          widgetQuery.url, 
+          widgetQuery.process
+        );
+      }
     });
   }
 
