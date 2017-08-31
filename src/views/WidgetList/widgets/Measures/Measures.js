@@ -1,4 +1,5 @@
-import React, { PropTypes as PT, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import { default as config } from 'config';
 import Widget from '../Widget';
 import { connect } from 'react-redux';
@@ -267,7 +268,10 @@ class Measures extends Component {
 }
 
 Measures.propTypes = Widget.propTypes({
-  individual: PT.number,
+  individual: PT.oneOfType([
+    PT.number,
+    PT.string,
+  ]),
   isNew: PT.bool
 });
 

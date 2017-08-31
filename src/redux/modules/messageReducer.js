@@ -89,7 +89,7 @@ const ACTION_HANDLERS = {
 
 const initialState = {
   messages: [],
-  false
+  viewed: false
 };
 
 export default function messageReducer (state: object = initialState, action: Action): object {

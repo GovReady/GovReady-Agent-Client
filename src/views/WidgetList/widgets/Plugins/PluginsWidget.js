@@ -1,4 +1,5 @@
-import React, { PropTypes as PT, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 
 class PluginsWidget extends Component {
 

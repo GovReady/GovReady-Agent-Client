@@ -1,4 +1,5 @@
-import React, { PropTypes as PT, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import { reduxForm, initialize, propTypes } from 'redux-form';
 import Messages from 'components/Messages';
 import PureInput from 'components/PureInput';

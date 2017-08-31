@@ -96,7 +96,7 @@
       margin-top: 30px;
     }
 
-    .dash-logged-in {
+    .dash-item + .dash-item {
       margin-top: 10px;
     }
   }
@@ -114,7 +114,7 @@
         display: inline-block;
       }
 
-      .dash-logged-in { 
+      .dash-item + .dash-item {
         margin-top: 0;
         margin-left: 10px;
         padding-left: 10px;

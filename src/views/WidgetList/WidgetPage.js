@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as PT } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import EmptyPage from 'components/EmptyPage';
 import { default as config } from 'config';
 import widgets from './widgets';

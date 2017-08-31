@@ -1,4 +1,5 @@
-import React, { PropTypes as PT } from 'react';
+import React from 'react';
+import { PropTypes as PT } from 'prop-types';
 import SiteList from 'views/SiteState/SiteList';
 import Footer from 'components/Footer';
 import '../../styles/bootstrap-partial.scss';
@@ -14,7 +15,7 @@ import '../../styles/core.scss';
 //
 // CoreLayout is a pure function of its props, so we can
 // define it with a plain javascript function...
-function CoreLayout ({ children, footer }) {
+function CoreLayout ({ children }) {
   return (
     <div id="govready-container" className="page-container govready-container">
       <div className="view-container container">
@@ -29,8 +30,7 @@ function CoreLayout ({ children, footer }) {
 }
 
 CoreLayout.propTypes = {
-  children: PT.element,
-  footer: PT.element
+  children: PT.node
 };
 
 export default CoreLayout;

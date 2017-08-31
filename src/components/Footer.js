@@ -28,13 +28,18 @@ class Footer extends Component {
     }
   }
 
+
+
   render() {
     const { user: { email, nickname } } = this.state;
     return (
       <div className="gov-footer well well-sm well-faint text-center">
-        <div className="dash-connected"><small>Dashboard connected to {config.connectUrl}</small></div>
+        <div className="dash-item dash-connected"><small>Dashboard connected to {config.connectUrl}</small></div>
+        <div className="dash-item dash-version">
+          <small>Client version: {__VERSION__}</small>
+        </div>
         {email && (
-          <div className="dash-logged-in">
+          <div className="dash-item dash-logged-in">
             <small>Logged in as {nickname} ({email})</small>
           </div>
         )}

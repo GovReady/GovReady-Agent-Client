@@ -1,4 +1,5 @@
-import React, { PropTypes as PT } from 'react';
+import React from 'react';
+import { PropTypes as PT } from 'prop-types';
 
 const Generic = ({ header = 'h3', rowCount = 3 }) => {
   return (

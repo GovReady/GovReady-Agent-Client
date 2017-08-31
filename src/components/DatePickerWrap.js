@@ -1,4 +1,5 @@
-import React, { PropTypes as PT } from 'react';
+import React from 'react';
+import { PropTypes as PT } from 'prop-types';
 import DatePicker from 'react-datepicker';
 import { default as config } from 'config';
 

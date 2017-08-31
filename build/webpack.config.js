@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -42,10 +44,19 @@ webpackConfig.output = {
   publicPath: config.compiler_public_path
 };
 
+
+// Get version from package.json
+let packageFile = JSON.parse(
+  fs.readFileSync(path.resolve('./package.json'), 'utf8')
+);
+
 // ------------------------------------
 // Plugins
 // ------------------------------------
 webpackConfig.plugins = [
+  new webpack.DefinePlugin({
+    __VERSION__: `"${packageFile.version}"`,
+  }),
   new webpack.DefinePlugin(config.globals),
   new HtmlWebpackPlugin({
     template: paths.client('index.html'),

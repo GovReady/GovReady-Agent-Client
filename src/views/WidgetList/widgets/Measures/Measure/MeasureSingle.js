@@ -1,4 +1,5 @@
-import React, { PropTypes as PT, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import Messages from 'components/Messages';
 import Submissions from '../Submissions/Submissions';
 import { freqOptions } from './MeasureEditPage';
@@ -29,13 +30,15 @@ class MeasureSingle extends Component {
         <div className='text'>
           <h2>
             <span>{measure.title}</span>
-            <BackButton backUrl='/dashboard/Measures' />
+            <ul className="list-inline pull-right">
+              <li>{createNewLink('Edit', measure._id + '/edit', 'btn btn-default')}</li>
+              <li><BackButton classes="btn btn-primary" backUrl='/dashboard/Measures' /></li>
+            </ul>
           </h2>
         </div>
         <Messages />
         <ul className="list-inline">
           <li><h4>{due}</h4></li>
-          <li>{createNewLink('Edit', measure._id + '/edit', 'btn btn-default')}</li>
         </ul>
         <div className="row">
           <div className="col-sm-12">
@@ -45,15 +48,8 @@ class MeasureSingle extends Component {
             <p></p>
           </div>
         </div>
-        <div>
-          <label>Task Template:</label>
-          <pre>
-            {measure.body}
-          </pre>
-        </div>
-        <hr/>
         <Submissions 
-          display="formDropdown" 
+          display="form"
           bodyTemplate={measure.body} 
           isNew={true} 
           measureId={measure._id}
@@ -70,7 +66,7 @@ MeasureSingle.propTypes = {
   createNewLink: PT.func.isRequired,
   measure: PT.object.isRequired,
   due: PT.object.isRequired,
-  submissions: PT.array.isRequired,
+  submissions: PT.array,
   submissionCallback: PT.func.isRequired,
 };
 

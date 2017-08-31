@@ -1,4 +1,5 @@
-import React, { PropTypes as PT } from 'react';
+import React from 'react';
+import { PropTypes as PT } from 'prop-types';
 import { hashHistory, Link } from 'react-router';
 
 // Creates dynamic back button

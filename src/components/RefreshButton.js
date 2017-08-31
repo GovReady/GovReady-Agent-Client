@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as PT } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { default as config } from 'config';
@@ -20,9 +21,7 @@ class RefreshButton extends Component {
     const calls = callBoth 
                 ? ['stack', 'plugins'] 
                 : [widgetName.toLowerCase()];
-
-    console.log(stackDef);
-
+    
     // Aggregate widget
     actions.siteAggAll(config.mode, calls).then(() => {
       // Plugins needs stack to be loaded

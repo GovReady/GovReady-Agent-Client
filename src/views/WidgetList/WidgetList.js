@@ -1,4 +1,5 @@
-import React, { Component, PropTypes as PT } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import widgets from './widgets';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';

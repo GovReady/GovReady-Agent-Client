@@ -1,4 +1,5 @@
-import React, { PropTypes as PT } from 'react';
+import React from 'react';
+import { PropTypes as PT } from 'prop-types';
 
 const VerticalTable = ({text = false, colCount = 4, rowCount = 3 }) => {
   return (

@@ -1,4 +1,5 @@
-import React, { PropTypes as PT, Component } from 'react';
+import React, { Component } from 'react';
+import { PropTypes as PT } from 'prop-types';
 import Messages from 'components/Messages';
 import BackButton from 'components/BackButton';
 import SubmissionsList from './SubmissionsList';
