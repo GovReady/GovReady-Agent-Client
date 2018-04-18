@@ -4,16 +4,14 @@ import { default as config } from 'config';
 import Widget from '../Widget';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import objectAssign from 'object-assign';
 import { Link } from 'react-router';
 import { actions } from 'redux/modules/widgetReducer';
 import { actions as crudActions } from 'redux/modules/contactsReducer';
 import { actions as messageActions } from 'redux/modules/messageReducer';
-import {isoToDate, dateToIso} from 'utils/date';
+import { isoToDate, isValidDate, dateToIso } from 'utils/date';
 import ContactsWidget from './ContactsWidget';
 import ContactsEditPage from './ContactsEditPage';
 import TableLoading from 'components/loading/VerticalTable';
-
 
 class Contacts extends Component {
 
@@ -41,7 +39,7 @@ class Contacts extends Component {
     }
   }
 
-  emptyText(includeLink) {
+  emptyText (includeLink) {
     return (
       <div className="alert alert-warning">
         <span>No contact information completed. Please </span>
@@ -55,23 +53,22 @@ class Contacts extends Component {
     );
   }
 
-  handleSubmit(data) {
-    let { widget, submitFields, crudActions } = this.props
+  handleSubmit (data) {
+    let { widget, submitFields, crudActions } = this.props;
     const assignProps = (toSet, setData) => {
       submitFields.map((field) => {
-        if(setData[field] || setData[field] === false) {
+        if (setData[field] || setData[field] === false) {
           toSet[field] = setData[field];
         }
       });
       return toSet;
-    }
+    };
 
-    if(widget && widget.status !== 'posting') {
-      let calls = [];
+    if (widget && widget.status !== 'posting') {
       let alerted = false;
       // Fire message
       const finishSubmit = () => {
-        if(alerted) {
+        if (alerted) {
           return;
         }
         alerted = true;
@@ -80,64 +77,64 @@ class Contacts extends Component {
           level: 'success',
           content: 'Contacts have been updated.'
         });
-      }
+      };
       data.contacts.map((contact, index) => {
-        // Convert to server time format
-        contact.lastConfirmed = dateToIso(contact.lastConfirmed);
+        // Try to convert normal date
+        if (isValidDate(contact.lastConfirmed)) {
+          contact.lastConfirmed = dateToIso(contact.lastConfirmed);
+        } else {
+          // Assume ISO
+          contact.lastConfirmed = isoToDate(contact.lastConfirmed);
+        }
         // Existing record
-        if(contact._id) {
+        if (contact._id) {
           crudActions.updateRemote(config.apiUrl + 'contacts/' + contact._id, contact)
             .then(finishSubmit());
-        } 
-        // New item
-        else {
+        } else {
+          // New item
           crudActions.createRemote(config.apiUrl + 'contacts', assignProps({}, contact))
             .then(finishSubmit());
         }
       });
     }
-    
   }
 
-  contactsDelete(contact) {
+  contactsDelete (contact) {
     // Launch all actions
-    if(contact._id && contact._id.value) {
+    if (contact._id && contact._id.value) {
       this.props.crudActions.deleteRemote(config.apiUrl + 'contacts/' + contact._id.value, contact);
-    }
-    else {
-      //error
+    } else {
+      // error
     }
   }
 
   render () {
+    let { widget, contacts, display } = this.props;
 
-    let { widget, contacts, display, widgetName } = this.props;
-
-    if(window.loadShow) { 
-      return <TableLoading text={true} colCount={1} />;
+    if (window.loadShow) {
+      return <TableLoading text colCount={1} />;
     }
 
     // Return loading if not set
     if (!widget.status || (widget.status !== 'loaded' && display !== 'page')) {
-      return <TableLoading text={true} colCount={1} />;
+      return <TableLoading text colCount={1} />;
     }
 
-    if(display === 'page') {
+    if (display === 'page') {
       return (
-        <ContactsEditPage 
+        <ContactsEditPage
           contactsData={contacts}
           contactsSubmit={this.handleSubmit.bind(this)}
           contactsDelete={this.contactsDelete.bind(this)}
           emptyText={this.emptyText()} />
-      )
-    }
-    else {
+      );
+    } else {
       return (
-        <ContactsWidget 
+        <ContactsWidget
           headerLink={<Link to='/dashboard/Contacts'>Points of Contact to Maintain your Site</Link>} 
           contacts={contacts}
           emptyText={this.emptyText(true)} />
-      )
+      );
     }
   }
 }
@@ -158,7 +155,7 @@ function mapDispatchToProps (dispatch) {
   return {
     actions: bindActionCreators(actions, dispatch),
     crudActions: bindActionCreators(crudActions, dispatch),
-    messageActions:  bindActionCreators(messageActions, dispatch),
+    messageActions: bindActionCreators(messageActions, dispatch)
   };
 }
 

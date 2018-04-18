@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { PropTypes as PT } from 'prop-types';
-import { reduxForm, initialize, propTypes } from 'redux-form';
+import { reduxForm, propTypes } from 'redux-form';
 import Messages from 'components/Messages';
 import PureInput from 'components/PureInput';
 import DeleteConfirm from 'components/DeleteConfirm';
@@ -18,30 +18,30 @@ export const fields = [
 
 class ContactsEditPage extends Component {
 
-  contactArea(contacts,contactsDelete) {
-
+  contactArea (contacts, contactsDelete) {
     let { contactsData, emptyText } = this.props;
 
     const fieldClasses = (index) => {
-      if(contactsData[index]) { 
+      if (contactsData[index]) {
         let classes = '';
-        if(contactsData[index].unsaved) {
+        if (contactsData[index].unsaved) {
           classes += 'unsaved ';
         }
-        if(contactsData[index].error) {
+        if (contactsData[index].error) {
           classes += 'save-error';
         }
         return classes;
       }
-    }
+    };
+
     const disabled = (index) => {
-      if(contactsData[index] && contactsData[index].busy) {
+      if (contactsData[index] && contactsData[index].busy) {
         return true;
       }
       return false;
-    }
+    };
 
-    if(contacts && contacts.length) {
+    if (contacts && contacts.length) {
       return (
         <div className="contacts-edit">
           {contacts.map((contact, index) => (
@@ -53,13 +53,13 @@ class ContactsEditPage extends Component {
                       <div className="form-group">
                         <label className="col-sm-5 col-md-4 control-label">Name</label>
                         <div className="col-sm-7 col-md-8">
-                          <PureInput type="text" field={contact.name}/>
+                          <PureInput type="text" field={contact.name} />
                         </div>
                       </div>
                       <div className="form-group">
                         <label className="col-sm-5 col-md-4 control-label">What to call them for</label>
                         <div className="col-sm-7 col-md-8">
-                          <PureInput type="text" field={contact.responsibility}/>
+                          <PureInput type="text" field={contact.responsibility} />
                         </div>
                       </div>
                     </div>
@@ -67,33 +67,33 @@ class ContactsEditPage extends Component {
                       <div className="form-group">
                         <label className="col-sm-5 col-md-4 control-label">Email</label>
                         <div className="col-sm-7 col-md-8">
-                          <PureInput type="email" field={contact.email}/>
+                          <PureInput type="email" field={contact.email} />
                         </div>
                       </div>
                       <div className="form-group">
                         <label className="col-sm-5 col-md-4 control-label">Phone Number</label>
                         <div className="col-sm-7 col-md-8">
-                          <PureInput type="text" field={contact.phone}/>
+                          <PureInput type="text" field={contact.phone} />
                         </div>
                       </div>
                     </div>
                     <div className="col-sm-6">
                       <div className="form-group">
-                          <label className="col-sm-5 col-md-4 control-label">Last Confirmed</label>
-                          <div className="col-sm-7 col-md-8">
-                            <DatePickerWrap field={contact.lastConfirmed} placeholderText="Never Confirmed" />
-                          </div>
+                        <label className="col-sm-5 col-md-4 control-label">Last Confirmed</label>
+                        <div className="col-sm-7 col-md-8">
+                          <DatePickerWrap field={contact.lastConfirmed} placeholderText="Never Confirmed" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="col-sm-3 col-md-2">
-                  <DeleteConfirm 
-                    index={index} 
+                  <DeleteConfirm
+                    index={index}
                     confirmDelete={Boolean(contact.confirmDelete.value)}
                     deleteConfirm={contact.confirmDelete.onChange}
-                    deleteFunc={() => { 
-                      if(contact._id && contact._id.value) {
+                    deleteFunc={() => {
+                      if (contact._id && contact._id.value) {
                         contactsDelete(contact);
                       }
                       contacts.removeField(index);
@@ -108,9 +108,9 @@ class ContactsEditPage extends Component {
     return emptyText;
   }
 
-  editForm() {
+  editForm () {
     // Extract props
-    const { fields: { contacts }, handleSubmit, contactsSubmit, contactsDelete, submitting, backLink } = this.props;
+    const { fields: { contacts }, handleSubmit, contactsSubmit, contactsDelete, submitting } = this.props;
     return (
       <form className="form-horizontal" onSubmit={handleSubmit(contactsSubmit)}>
         {this.contactArea(contacts, contactsDelete)}
@@ -120,16 +120,16 @@ class ContactsEditPage extends Component {
               responsibility: '',
               email: '',
               phone: ''
-             }, contacts.length);
-          }}><i/> Add Contact
+            }, contacts.length);
+          }}><i /> Add Contact
           </button>
           <button className="btn btn-primary" type="submit" disabled={submitting}>
-            {submitting ? <i/> : <i/>} Submit
+            {submitting ? <i /> : <i />} Submit
           </button>
           <BackButton text='Cancel' classes='btn btn-default' />
         </div>
       </form>
-    )
+    );
   }
 
   render () {
@@ -142,10 +142,10 @@ class ContactsEditPage extends Component {
           </h2>
         </div>
         <Messages />
-        <hr/>
+        <hr />
         <p>Points of contact track those responsible for areas of your organization, and when that information was last verified.  Who has the login information for your domain provider?  Who is in charge of hosting requests?</p>
         <p>Keeping track of this type of information will allow your organization to better respond to issues, and help faciliate personnel transitions.</p> 
-        <hr/>
+        <hr />
         {this.editForm()}
       </div>
     );

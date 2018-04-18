@@ -63,6 +63,7 @@ class MeasuresEditPage extends Component {
         </div>
       )
     }
+
     return (
       <form onSubmit={handleSubmit(measureSubmit)}>
         <fieldset disabled={submitting}>
@@ -121,7 +122,7 @@ class MeasuresEditPage extends Component {
             <BackButton text="Cancel" classes='btn btn-default' backUrl={backUrl} />
           </div>
           <div className="pull-left">
-            {(false && _id.value) && (
+            {(_id.value) && (
               <DeleteConfirm 
                 index={_id.value} 
                 confirmDelete={Boolean(confirmDelete.value)}
