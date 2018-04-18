@@ -20,7 +20,8 @@
   },
   "rules": {
     "semi" : [2, "always"],
-    "max-len": [2, 120, 2],
+    "max-len": 0,
+    "react/jsx-no-bind": 0,
     "flow-vars/define-flow-type": 1,
     "flow-vars/use-flow-type": 1
   }
