@@ -82,9 +82,6 @@ class Contacts extends Component {
         // Try to convert normal date
         if (isValidDate(contact.lastConfirmed)) {
           contact.lastConfirmed = dateToIso(contact.lastConfirmed);
-        } else {
-          // Assume ISO
-          contact.lastConfirmed = isoToDate(contact.lastConfirmed);
         }
         // Existing record
         if (contact._id) {
