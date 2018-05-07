@@ -7,6 +7,7 @@ import { actions } from 'redux/modules/siteReducer';
 import { actions as widgetActions } from 'redux/modules/widgetReducer';
 import { stackDef } from 'views/WidgetList/widgets/Stack/Stack';
 import { pluginsDef } from 'views/WidgetList/widgets/Plugins/Plugins';
+import { isoToDate } from 'utils/date';
 
 class RefreshButton extends Component {
 
@@ -51,15 +52,35 @@ class RefreshButton extends Component {
 
   render() {
     // if(config.mode === 'local' || config.mode === 'remote') {
+      const { status } = this.props;
+      let lastRefreshed = null;
+      if (status) {
+        // Last status had an error
+        if (!status.status) {
+          lastRefreshed = (
+            <span className="has-error"><i className="fa fa-exclamation-circle"></i> failed</span>
+          );
+        } else if (status.datetime) {
+          lastRefreshed = (
+            <span><i className="fa fa-check-circle"></i> {isoToDate(status.datetime, 'l')}</span>
+          );
+        }
+      }
       return (
-        <a className="refresh-button" href="#" onClick={this.refreshClick.bind(this)}><i className="fa fa-refresh"></i><span className="sr-only">Refresh</span></a>
-      )
+        <div className="refresh-button">
+          {lastRefreshed && (
+            <h5 className="last-refreshed">{lastRefreshed}</h5>
+          )}
+          <a href="#" onClick={this.refreshClick.bind(this)}><i className="fa fa-refresh"></i><span className="sr-only">Refresh</span></a>
+        </div>
+      );
     // }
-    return <span></span>
+    return <span></span>;
   }
 }
 
 RefreshButton.propTypes = {
+  status: PT.object,
   widgetName: PT.string.isRequired,
   widgetQuery: PT.object.isRequired
 }

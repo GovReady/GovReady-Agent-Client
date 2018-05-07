@@ -7,8 +7,8 @@ export const timeOptions = {
 };
 
 // date in form: 2016-06-06T07:00:00.000Z
-export function isoToDate (date: string) {
-  return window.moment(date).format(config.dateFormat);
+export function isoToDate (date: string, format: string = config.dateFormat) {
+  return window.moment(date).format(format);
 }
 
 export function isValidDate(date: string) {

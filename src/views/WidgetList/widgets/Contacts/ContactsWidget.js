@@ -5,7 +5,7 @@ import {isoToDate} from 'utils/date';
 class ContactsWidget extends Component {
 
   listContactsTable (contacts = [], emptyText) {
-    if(contacts && contacts.length) {
+    if (contacts && contacts.length) {
       return (
         <div className='table-responsive'>
           <table className='table contacts-list'>

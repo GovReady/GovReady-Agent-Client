@@ -56,7 +56,7 @@ class Stack extends Component {
     }
     return (
       <StackWidget 
-        refreshButton={(<RefreshButton status={widget.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+        refreshButton={(<RefreshButton status={widget.data.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
         systemData={widget.data} 
         assessmentState={this.assessmentStateMarkup(widget.data.scan)} />
     )

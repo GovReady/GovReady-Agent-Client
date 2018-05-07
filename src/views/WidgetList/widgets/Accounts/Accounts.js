@@ -100,7 +100,7 @@ class Accounts extends Component {
       return (
         <InactiveAccountsWidget
           userUrl={userUrl} 
-          refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+          refreshButton={(<RefreshButton status={widget.data.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
           accounts={this.getInactiveAccounts()} />
       )
     }
@@ -130,7 +130,7 @@ class Accounts extends Component {
           <AccountsWidget
             admins={admins}
             totalAccounts={totalAccounts} 
-            refreshButton={(<RefreshButton widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+            refreshButton={(<RefreshButton status={widget.data.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
             footer={Widget.panelFooter(totalAccounts + ' total accounts', userUrl, true)} />
         )
       }

@@ -99,7 +99,7 @@ class Plugins extends Component {
         <PluginsWidget 
           cms={config.cmsNice}
           pluginText={config.pluginText}
-          refreshButton={(<RefreshButton status={widget.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
+          refreshButton={(<RefreshButton status={widget.data.lastStatus} widgetName={this.props.widgetName} widgetQuery={this.props.widgetQuery} />)}
           updates={updates} 
           coreUpdate={coreUpdate} 
           footer={Widget.panelFooter(totalPlugins + ' total ' + config.pluginText.toLowerCase() + 's', widgetName, false)} />

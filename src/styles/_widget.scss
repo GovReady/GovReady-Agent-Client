@@ -37,6 +37,25 @@
   }
 
   // Refresh buttons
+
+  .refresh-button {
+    .last-refreshed {
+      font-size: 0.7em;
+      display: inline-block;
+      margin: 0 10px 0 0;
+
+      i {
+        color: #2fa4e7;
+      }
+
+      .has-error {
+        i {
+          color: #b94a48;
+        }
+      }
+    }
+  }
+
   .widget-layout {
     .panel {
       position: relative;

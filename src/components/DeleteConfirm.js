@@ -41,7 +41,6 @@ class DeleteConfirm extends Component {
 
 DeleteConfirm.propTypes = {
   confirmDelete: PT.bool,
-  index: PT.number.isRequired,
   deleteConfirm: PT.func.isRequired,
   deleteFunc: PT.func.isRequired
 }
