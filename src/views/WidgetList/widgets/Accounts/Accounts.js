@@ -16,19 +16,20 @@ class Accounts extends Component {
       url: 'accounts',
       process: (data) => {
         return {
-          accounts: data.map((user) => {
-            if( !user.lastLogin ) {
+          lastStatus: data.lastStatus,
+          accounts: data.accounts.map((user) => {
+            if (!user.lastLogin) {
               return user;
             }
-            let loginInt = parseInt(user.lastLogin);    
+            let loginInt = parseInt(user.lastLogin);
             // string   
-            if(isNaN(loginInt)) {   
+            if (isNaN(loginInt)) {
               user.lastLogin = false;
-              return user; 
-            }   
+              return user;
+            }
             // php timestamp convert
-            let lastLogin = window.moment(loginInt*1000);
-            if(!lastLogin || !lastLogin._isAMomentObject) {
+            let lastLogin = window.moment(loginInt * 1000);
+            if (!lastLogin || !lastLogin._isAMomentObject) {
               user.lastLogin = false;
               return user; 
             }
