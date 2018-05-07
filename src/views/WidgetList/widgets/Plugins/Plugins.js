@@ -14,6 +14,7 @@ export const pluginsDef = {
     url: 'plugins',
     process: (data) => {
       return {
+        lastStatus: data.lastStatus,
         core: ( data.core && data.core.length ) ? data.core.pop() : {},
         plugins: ( data.plugins && data.plugins.length ) ? data.plugins : []
       }
